@@ -32,7 +32,7 @@ exports.user_signup = async (req, res) => {
 
 exports.user_login = async (req, res) => {
   try {
-    const user = await subAdminModel.findOne({
+    const user = await userModel.findOne({
       mobileNumber: req.body.mobileNumber,
     });
 

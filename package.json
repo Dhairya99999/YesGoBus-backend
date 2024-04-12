@@ -1,0 +1,36 @@
+{
+  "name": "yesgobus",
+  "version": "1.0.0",
+  "description": "a travling app",
+  "main": "app.js",
+  "scripts": {
+    "start": "node ./bin/www",
+    "dev": "nodemon ./bin/www"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Balaji798/yesbus-backend.git"
+  },
+  "author": "balaji yadav",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Balaji798/yesbus-backend/issues"
+  },
+  "homepage": "https://github.com/Balaji798/yesbus-backend#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.2",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "http": "^0.0.1-security",
+    "http-errors": "^2.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.3.1",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "otp-generator": "^4.0.1",
+    "twilio": "^5.0.3"
+  }
+}

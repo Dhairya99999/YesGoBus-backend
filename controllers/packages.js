@@ -90,7 +90,8 @@ exports.popular_destinations = async (req, res) => {
         witheFlitePrice: 1,
         withoutFlitePrice: 1,
         destination:1,
-        destinationID:1
+        destinationID:1,
+        totalDuration:1
       }
     );
     return res.status(200).send({

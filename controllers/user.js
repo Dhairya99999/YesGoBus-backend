@@ -13,7 +13,7 @@ exports.user_signup = async (req, res) => {
     });
 
     if (reqUser) {
-      return res.status(200).send({ error: "User already exists" });
+      return res.status(200).send({ status:false, message: "User already exists" });
     }
     const user = await userModel.create({
       firstName,
@@ -41,12 +41,12 @@ exports.user_login = async (req, res) => {
     }
     if (user) {
       const payload = {
-        userId: response._id,
+        userId: user._id,
         mobileNumber: req.body.mobileNumber,
       };
 
       const generatedToken = jwt.sign(payload, process.env.JWT_SECRET_KEY);
-      return res.status(200).send({ token: generatedToken });
+      return res.status(200).send({ token: generatedToken, userId:user._id });
     }
   } catch (err) {
     return res.status(500).send(err.message);

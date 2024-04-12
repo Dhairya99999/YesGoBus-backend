@@ -1,5 +1,4 @@
 const userModel = require("../model/user");
-const otpGenerator = require("otp-generator");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const twilio = require("twilio");
@@ -21,9 +20,13 @@ exports.user_signup = async (req, res) => {
       email,
       mobileNumber,
     });
-    return res
-      .status(201)
-      .send({ status: true,data:{user}, message: "user register successfully" });
+    const payload = {
+      userId: user._id,
+      mobileNumber: req.body.mobileNumber,
+    };
+
+    const generatedToken = jwt.sign(payload, process.env.JWT_SECRET_KEY);
+    return res.status(200).send({ status:true, data:{token: generatedToken, user:user}, message:"Signup Successfully" });
   } catch (err) {
     return res.status(500).send({status:false,data:{errorMessage:err.message},message:"server error"});
   }
@@ -45,7 +48,7 @@ exports.user_login = async (req, res) => {
       };
 
       const generatedToken = jwt.sign(payload, process.env.JWT_SECRET_KEY);
-      return res.status(200).send({ status:true, data:{token: generatedToken, userId:user._id}, message:"User Login Successfully" });
+      return res.status(200).send({ status:true, data:{token: generatedToken, user:user}, message:"User Login Successfully" });
     }
   } catch (err) {
     return res.status(500).send({status:false,data:{errorMessage:err.message},message:"server error"});

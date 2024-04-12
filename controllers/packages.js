@@ -86,7 +86,7 @@ exports.popular_destinations = async (req, res) => {
       .status(200)
       .send({
         status: true,
-        data: { destination_data },
+        data: { packages:destination_data },
         message: "packages fetch successfully",
       });
   } catch (err) {

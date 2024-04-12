@@ -28,12 +28,12 @@ exports.add_destination = async (req, res) => {
 };
 exports.get_packages = async (req, res) => {
   try {
-    const packages = await destinationModel.find()
+    const destination = await destinationModel.find()
     return res
       .status(201)
       .send({
         status: true,
-        data: { packages },
+        data: { destination:destination },
         message: "destination fetch successfully",
       });
   } catch (err) {

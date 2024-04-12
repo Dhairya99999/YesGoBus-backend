@@ -46,7 +46,7 @@ exports.user_login = async (req, res) => {
       };
 
       const generatedToken = jwt.sign(payload, process.env.JWT_SECRET_KEY);
-      return res.status(200).send({ status:true, data:{token: generatedToken, userId:user._id}, message:"User Login Successfully" });
+      return res.status(200).send({ status:true, data:{token: generatedToken, user:user}, message:"User Login Successfully" });
     }
   } catch (err) {
     return res.status(500).send({status:false,data:{errorMessage:err.message},message:"server error"});

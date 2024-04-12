@@ -13,7 +13,7 @@ exports.user_signup = async (req, res) => {
     });
 
     if (reqUser) {
-      return res.status(200).send({ status:false, message: "User already exists" });
+      return res.status(200).send({ status:false,data:{}, message: "User already exists" });
     }
     const user = await userModel.create({
       firstName,
@@ -23,10 +23,9 @@ exports.user_signup = async (req, res) => {
     });
     return res
       .status(201)
-      .send({ status: true, message: "user register successfully" });
+      .send({ status: true,data:{user}, message: "user register successfully" });
   } catch (err) {
-    console.log(err.message);
-    return res.status(500).send(err.message);
+    return res.status(500).send({status:false,data:{errorMessage:err.message},message:"server error"});
   }
 };
 
@@ -37,7 +36,7 @@ exports.user_login = async (req, res) => {
     });
 
     if(!user){
-      return res.status(200).send({status:false,message:"user dose not exist"})
+      return res.status(200).send({status:false,data:{},message:"user dose not exist"})
     }
     if (user) {
       const payload = {
@@ -46,9 +45,9 @@ exports.user_login = async (req, res) => {
       };
 
       const generatedToken = jwt.sign(payload, process.env.JWT_SECRET_KEY);
-      return res.status(200).send({ token: generatedToken, userId:user._id });
+      return res.status(200).send({ status:true, data:{token: generatedToken, userId:user._id}, message:"User Login Successfully" });
     }
   } catch (err) {
-    return res.status(500).send(err.message);
+    return res.status(500).send({status:false,data:{errorMessage:err.message},message:"server error"});
   }
 };

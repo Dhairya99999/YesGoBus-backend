@@ -22,9 +22,9 @@ exports.get_packages = async (req, res) => {
       },
       // Add more packages as needed
     ];
-    return res.status(200).send(packages);
+    return res.status(200).send({status:true,data:{packages},message:"destination fetch successfully"});
   } catch (err) {
-    return res.status(500).send(err.message);
+    return res.status(500).send({status:false,data:{errorMessage:err.message},message:"server error"});
   }
 };
 
@@ -63,8 +63,8 @@ exports.popular_destinations = async (req, res) => {
     const destination_data = popularDestinations.filter(
       (item) => {return item.destination === req.body.destination}
     );
-    return res.status(200).send(destination_data);
+    return res.status(200).send({status:true,data:{destination_data},message:"packages fetch successfully"});
   } catch (err) {
-    return res.status(500).send(err.message);
+    return res.status(500).send({status:false,data:{errorMessage:err.message},message:"server error"});
   }
 };

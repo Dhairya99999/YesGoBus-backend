@@ -1,7 +1,20 @@
 const mongoose = require("mongoose");
+const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const bookingSchema = new mongoose.Schema(
   {
+    userId: {
+      type: ObjectId,
+      required: true,
+      ref: "User",
+      trim: true,
+    },
+    packageId: {
+      type: ObjectId,
+      require: true,
+      ref: "Packages",
+      trim: true,
+    },
     fromPlace: {
       type: String,
       require: true,
@@ -10,11 +23,11 @@ const bookingSchema = new mongoose.Schema(
       type: String,
       require: true,
     },
-    durationFrom: {
+    departureDate: {
       type: Date,
       require: true,
     },
-    durationTo: {
+    returnDate: {
       type: Date,
     },
     totalGuests: {
@@ -27,23 +40,42 @@ const bookingSchema = new mongoose.Schema(
       type: String,
       enum: ["students", "college students", "corporate"],
     },
-    totalPackagePrice:{
-        type:Number
+    totalPackagePrice: {
+      type: Number,
     },
-    guestDetails: [
-        {
-            _id:false,
-            fullName:{
-                type:String
-            },
-            age:{
-                type:String
-            },
-            gender:{
-                type:String
-            }
-        }
-    ]
+    contactDetail: {
+      email: {
+        type: String,
+      },
+      mobileNumber: {
+        type: Number,
+      },
+      alternativeNumber: {
+        type: Number,
+      },
+    },
+    gstDetails: {
+      pincode: {
+        type: Number,
+      },
+      state: {
+        type: String,
+      },
+      address: {
+        type: String,
+      },
+    },
+    guestDetails: [Object],
+    paymentDone: {
+      type: Boolean,
+      default: false,
+    },
+    paymentID: {
+      type: String,
+    },
+    paymentTime: {
+      type: Date,
+    },
   },
   { timestamps: true }
 );

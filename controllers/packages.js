@@ -28,7 +28,7 @@ exports.add_destination = async (req, res) => {
 };
 exports.get_packages = async (req, res) => {
   try {
-    const destination = await destinationModel.find()
+    const destination = await destinationModel.find({}, { _id: 1, destination: 1, duration: 1, startingPrice: 1 })
     return res
       .status(201)
       .send({

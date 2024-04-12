@@ -1,9 +1,19 @@
 const mongoose = require("mongoose");
+const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const destinationSchema = new mongoose.Schema(
   {
     name: {
       type: String,
+    },
+    destinationID:{
+        type: ObjectId,
+        required: true,
+        ref: 'Destination',
+        trim: true
+    },
+    destination:{
+        type:String
     },
     image: {
       type: String,
@@ -16,9 +26,6 @@ const destinationSchema = new mongoose.Schema(
     },
     withoutFlitePrice: {
       type: Number,
-    },
-    totalDuration: {
-      type: String,
     },
   },
   { timestamps: true }

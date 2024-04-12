@@ -18,9 +18,13 @@ exports.user_signup = async (req, res) => {
       email,
       mobileNumber,
     });
-    return res
-      .status(201)
-      .send({ status: true,data:{user}, message: "user register successfully" });
+    const payload = {
+      userId: user._id,
+      mobileNumber: req.body.mobileNumber,
+    };
+
+    const generatedToken = jwt.sign(payload, process.env.JWT_SECRET_KEY);
+    return res.status(200).send({ status:true, data:{token: generatedToken, user:user}, message:"Signup Successfully" });
   } catch (err) {
     return res.status(500).send({status:false,data:{errorMessage:err.message},message:"server error"});
   }

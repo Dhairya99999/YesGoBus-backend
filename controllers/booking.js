@@ -137,7 +137,7 @@ exports.edit_booking = async (req, res) => {
           state: req.body.state,
           address: req.body.address,
         },
-        guestDetails: req.body.guestDetails,
+        guestDetails: JSON.parse(req.body.guestDetails),
         spancelRequest: req.body.spancelRequest
       }
     );
@@ -145,7 +145,7 @@ exports.edit_booking = async (req, res) => {
       .status(200)
       .send({
         status: true,
-        data: { bookingData },
+        data: { },
         message: "Booking updated successfully",
       });
   } catch (err) {

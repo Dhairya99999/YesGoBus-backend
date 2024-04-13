@@ -52,7 +52,11 @@ exports.apply_coupon_discount = async (req, res) => {
     );
     return res
       .status(200)
-      .send({ status: true, data: { bookingData:booking }, message: "Discount added" });
+      .send({
+        status: true,
+        data: { bookingData: booking },
+        message: "Discount added",
+      });
   } catch (err) {
     return res.status(500).send({
       status: false,

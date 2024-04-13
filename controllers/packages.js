@@ -26,16 +26,18 @@ exports.add_destination = async (req, res) => {
 
 exports.add_packages = async (req, res) => {
   try {
-    const { name, image, price, duration, destination,destinationID } = req.body;
+    const { name, price, duration,destinationID,totalDuration,image } = req.body;
 
+    const destinationData = await destinationModel.findOne({_id:destinationID})
     const package = await packageModel.create({
       name,
       image,
       duration,
       witheFlitePrice: price,
       withoutFlitePrice: price * 0.8,
-      destination,
-      destinationID
+      destination:destinationData.destination,
+      destinationID,
+      totalDuration
     });
     return res.status(201).send({
       status: true,

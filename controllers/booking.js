@@ -1,4 +1,5 @@
 const bookingModel = require("../model/booking");
+const hotelModel = require("../model/hotels");
 const itineraryPlansModel = require("../model/itineraryPlans");
 
 exports.make_booking = async (req, res) => {
@@ -71,11 +72,23 @@ exports.get_Itinerary_plans = async (req, res) => {
     for (let date = start; date <= end; date.setDate(date.getDate() + 1)) {
       count++;
     }
-    console.log(count);
-    const itineraryData = await itineraryPlansModel.find();
+    const hotel = await hotelModel.findOne(
+      { _id: req.body.hotelId },
+      {
+        hotelName: 1,
+        rating: 1,
+        address: 1,
+        image: 1,
+        fullAddress: 1,
+        destination: 1,
+      }
+    );
+    const itineraryData = await itineraryPlansModel.findOne({
+      hotelId: req.body.hotelId,
+    });
     return res.status(200).send({
       status: true,
-      data: { itineraryData },
+      data: { hotel_data: { hotel, itinerary: itineraryData.plans } },
       message: "Booking done successfully",
     });
   } catch (err) {

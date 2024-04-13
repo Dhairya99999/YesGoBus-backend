@@ -9,6 +9,10 @@ const destinationSchema = new mongoose.Schema(
     rating: {
       type: Number,
     },
+    image:{
+      type:String,
+      
+    },
     address: {
       type: String,
     },

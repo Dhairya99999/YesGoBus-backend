@@ -138,6 +138,7 @@ exports.edit_booking = async (req, res) => {
           address: req.body.address,
         },
         guestDetails: req.body.guestDetails,
+        spancelRequest: req.body.spancelRequest
       }
     );
     return res

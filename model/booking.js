@@ -88,6 +88,9 @@ const bookingSchema = new mongoose.Schema(
     },
     totalBasicCost:{
       type:Number
+    },
+    spancelRequest:{
+      type:String
     }
   },
   { timestamps: true }

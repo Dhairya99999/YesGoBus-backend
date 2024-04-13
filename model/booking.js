@@ -80,7 +80,15 @@ const bookingSchema = new mongoose.Schema(
     paymentTime: {
       type: Date,
     },
-    
+    couponDiscount:{
+      type:Number
+    },
+    feesTexes:{
+      type:Number
+    },
+    totalBasicCost:{
+      type:Number
+    }
   },
   { timestamps: true }
 );

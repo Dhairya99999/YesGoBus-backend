@@ -30,6 +30,9 @@ exports.make_booking = async (req, res) => {
       totalRoom,
       guestsType,
       totalPackagePrice,
+      couponDiscount:0,
+      feesTexes:totalPackagePrice,
+      totalBasicCost: totalPackagePrice
     });
     return res.status(201).send({
       status: true,

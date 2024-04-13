@@ -1,4 +1,5 @@
 const bookingModel = require("../model/booking");
+const destination = require("../model/destination");
 const hotelModel = require("../model/hotels");
 const itineraryPlansModel = require("../model/itineraryPlans");
 
@@ -86,11 +87,39 @@ exports.get_Itinerary_plans = async (req, res) => {
     const itineraryData = await itineraryPlansModel.findOne({
       hotelId: req.body.hotelId,
     });
+    console.log(itineraryData.checkIn)
+    const hotelData = {
+      hotelName: hotel.hotelName,
+      rating: hotel.rating,
+      address: hotel.address,
+      image: hotel.image,
+      fullAddress: hotel.fullAddress,
+      destination: hotel.destination,
+      checkIn: itineraryData.checkIn,
+      checkOut: itineraryData.checkOut,
+    };
+    
     return res.status(200).send({
       status: true,
-      data: { hotel_data: { hotel, itinerary: itineraryData.plans } },
+      data: {
+        hotel_data: {
+          hotel: hotelData,
+          itinerary: itineraryData.plans,
+        },
+      },
       message: "Booking done successfully",
     });
+  } catch (err) {
+    return res.status(500).send({
+      status: false,
+      data: { errorMessage: err.message },
+      message: "server error",
+    });
+  }
+};
+
+exports.edit_booking = async (req, res) => {
+  try {
   } catch (err) {
     return res.status(500).send({
       status: false,

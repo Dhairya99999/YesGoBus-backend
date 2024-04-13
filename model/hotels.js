@@ -11,7 +11,7 @@ const destinationSchema = new mongoose.Schema(
     },
     image:{
       type:String,
-      
+
     },
     address: {
       type: String,
@@ -19,6 +19,9 @@ const destinationSchema = new mongoose.Schema(
     fullAddress: {
       type: String,
     },
+    destination:{
+      type:String
+    }
   },
   { timestamps: true }
 );

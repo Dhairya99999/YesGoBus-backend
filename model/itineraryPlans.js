@@ -9,7 +9,13 @@ const destinationSchema = new mongoose.Schema(
       ref: "Hotel",
       trim: true,
     },
-    plans:[Object]
+    plans:[Object],
+    checkIn:{
+      type:String
+    },
+    checkOut:{
+      type:String
+    }
   },
   { timestamps: true }
 );

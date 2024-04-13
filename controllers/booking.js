@@ -30,9 +30,9 @@ exports.make_booking = async (req, res) => {
       totalRoom,
       guestsType,
       totalPackagePrice,
-      couponDiscount:0,
-      feesTexes:totalPackagePrice,
-      totalBasicCost: totalPackagePrice
+      couponDiscount: 0,
+      feesTexes: totalPackagePrice,
+      totalBasicCost: totalPackagePrice,
     });
     return res.status(201).send({
       status: true,
@@ -90,7 +90,7 @@ exports.get_Itinerary_plans = async (req, res) => {
     const itineraryData = await itineraryPlansModel.findOne({
       hotelId: req.body.hotelId,
     });
-    console.log(itineraryData.checkIn)
+    console.log(itineraryData.checkIn);
     const hotelData = {
       hotelName: hotel.hotelName,
       rating: hotel.rating,
@@ -123,13 +123,30 @@ exports.get_Itinerary_plans = async (req, res) => {
 
 exports.edit_booking = async (req, res) => {
   try {
-    const bookingData = await bookingModel.findOneAndUpdate({_id:req.body.bookingId},{
-      totalPackagePrice:req.body.totalPackagePrice,
-      contactDetail:req.body.contactDetail,
-      gstDetails:req.body.gstDetails,
-      guestDetails:req.body.guestDetails
-    })
-    return res.status(200).send({status:true,data:{bookingData},message:"Booking updated successfully"})
+    const bookingData = await bookingModel.findOneAndUpdate(
+      { _id: req.body.bookingId },
+      {
+        totalPackagePrice: req.body.totalPackagePrice,
+        contactDetail: {
+          email: req.body.email,
+          mobileNumber: req.body.mobileNumber,
+          alternativeNumber: req.body.alternativeNumber,
+        },
+        gstDetails: {
+          pincode: req.body.pincode,
+          state: req.body.state,
+          address: req.body.address,
+        },
+        guestDetails: req.body.guestDetails,
+      }
+    );
+    return res
+      .status(200)
+      .send({
+        status: true,
+        data: { bookingData },
+        message: "Booking updated successfully",
+      });
   } catch (err) {
     return res.status(500).send({
       status: false,

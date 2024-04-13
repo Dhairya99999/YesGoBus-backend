@@ -123,6 +123,7 @@ exports.get_Itinerary_plans = async (req, res) => {
 
 exports.edit_booking = async (req, res) => {
   try {
+    console.log(req.body)
     const bookingData = await bookingModel.findOneAndUpdate(
       { _id: req.body.bookingId },
       {
@@ -145,7 +146,7 @@ exports.edit_booking = async (req, res) => {
       .status(200)
       .send({
         status: true,
-        data: { },
+        data: {bookingData },
         message: "Booking updated successfully",
       });
   } catch (err) {

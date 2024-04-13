@@ -80,6 +80,7 @@ const bookingSchema = new mongoose.Schema(
     paymentTime: {
       type: Date,
     },
+    
   },
   { timestamps: true }
 );

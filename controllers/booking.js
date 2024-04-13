@@ -98,7 +98,7 @@ exports.get_Itinerary_plans = async (req, res) => {
       checkIn: itineraryData.checkIn,
       checkOut: itineraryData.checkOut,
     };
-    
+
     return res.status(200).send({
       status: true,
       data: {
@@ -120,6 +120,13 @@ exports.get_Itinerary_plans = async (req, res) => {
 
 exports.edit_booking = async (req, res) => {
   try {
+    const bookingData = await bookingModel.findOneAndUpdate({_id:req.body.bookingId},{
+      totalPackagePrice:req.body.totalPackagePrice,
+      contactDetail:req.body.contactDetail,
+      gstDetails:req.body.gstDetails,
+      guestDetails:req.body.guestDetails
+    })
+    return res.status(200).send({status:true,data:{bookingData},message:"Booking updated successfully"})
   } catch (err) {
     return res.status(500).send({
       status: false,

@@ -12,6 +12,7 @@ var dbCon = require("./lib/db");
 const userRoute = require("./route/user");
 const packagesRoute = require("./route/packages")
 const bookingRoute = require("./route/booking")
+const hotelRoute = require("./route/hotel")
 
 const app = express();
 
@@ -39,6 +40,7 @@ if (app.get("env") === "development") {
 app.use("/user", userRoute);
 app.use("/package", packagesRoute)
 app.use("/booking", bookingRoute)
+app.use("/hotel",hotelRoute)
 
 app.use(function (req, res, next) {
   next(createError(404));

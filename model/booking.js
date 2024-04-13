@@ -36,6 +36,10 @@ const bookingSchema = new mongoose.Schema(
     totalRoom: {
       type: Number,
     },
+    witheFlight:{
+      type:Boolean,
+      default:false
+    },
     guestsType: {
       type: String,
       enum: ["students", "college students", "corporate"],

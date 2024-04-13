@@ -13,7 +13,7 @@ const destinationSchema = new mongoose.Schema(
       type: String,
     },
     fullAddress: {
-      type: "String",
+      type: String,
     },
   },
   { timestamps: true }

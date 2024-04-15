@@ -86,19 +86,21 @@ exports.get_packages = async (req, res) => {
 exports.popular_destinations = async (req, res) => {
   try {
     console.log(req.body.destination);
-    const packages = await packageModel.find(
-      { destination: req.body.destination },
-    );
-    const wishlist = await wishlistModel.find({userId:req.user})
+    const packages = await packageModel.find({
+      destination: req.body.destination,
+    });
+    const wishlist = await wishlistModel.find({ userId: req.user });
 
-    const updatedData2 = packages.map(item => {
+    const updatedData2 = packages.map((item) => {
       const { _doc } = item; // Destructure _doc
-      const isWishlisted = wishlist.some(dataItem => dataItem.packageId === _doc._id);
+      const isWishlisted = wishlist.some(
+        (dataItem) => dataItem.packageId === _doc._id
+      );
       return { ..._doc, isWishlisted }; // Combine _doc with other properties and add isWishlisted
-  });
+    });
     return res.status(200).send({
       status: true,
-      data: { packages:updatedData2 },
+      data: { packages: updatedData2 },
       message: "packages fetch successfully",
     });
   } catch (err) {
@@ -122,7 +124,7 @@ exports.add_to_wishlist = async (req, res) => {
         packageId: req.body.packageId,
         isWishlisted: req.body.isWishlisted,
       });
-      console.log(wishlist)
+      console.log(wishlist);
       return res.status(200).send({
         status: true,
         data: { wishlist },
@@ -134,7 +136,7 @@ exports.add_to_wishlist = async (req, res) => {
         { isWishlisted: req.body.isWishlisted },
         { new: true }
       );
-      console.log(wishlist)
+      console.log(wishlist);
       return res.status(200).send({
         status: true,
         data: { wishlist },
@@ -152,13 +154,45 @@ exports.add_to_wishlist = async (req, res) => {
 
 exports.get_user_wishlist = async (req, res) => {
   try {
-    const wishlist = await wishlistModel.find({ userId: req.userId,isWishlisted:true }).populate({
-      path: "packageId",
+    const wishlist = await wishlistModel
+      .find({ userId: req.userId, isWishlisted: true })
+      .populate({
+        path: "packageId",
+      });
+    console.log(wishlist);
+    const modifiedData = wishlist.map((item) => {
+      const {
+        "packageId._id": _id,
+        "packageId.name": name,
+        "packageId.destinationID": destinationID,
+        "packageId.destination": destination,
+        "packageId.image": image,
+        "packageId.duration": duration,
+        "packageId.witheFlitePrice": witheFlitePrice,
+        "packageId.withoutFlitePrice": withoutFlitePrice,
+        "packageId.totalDuration": totalDuration,
+        "packageId.hotelId": hotelId,
+        isWishlisted,
+        userId
+      } = item;
+      return {
+        _id,
+        name,
+        destinationID,
+        destination,
+        image,
+        duration,
+        witheFlitePrice,
+        withoutFlitePrice,
+        totalDuration,
+        hotelId,
+        isWishlisted,
+        userId
+      };
     });
-    console.log(wishlist)
     return res.status(200).send({
       status: true,
-      data: { wishlist },
+      data: { wishlist:modifiedData },
       message: "Package added to wishlist successfully",
     });
   } catch (err) {

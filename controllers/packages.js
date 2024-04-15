@@ -69,6 +69,14 @@ exports.get_packages = async (req, res) => {
         rating: 1,
       }
     );
+    const wishlist = await wishlistModel.find({userId:req.user})
+
+    const updatedData2 = wishlist.map(item => {
+      const isWishlisted = destination.some(dataItem => dataItem.packageId === item._id);
+      return {...item, isWishlisted};
+  });
+  
+  console.log(updatedData2);
     return res.status(201).send({
       status: true,
       data: { destination: destination },

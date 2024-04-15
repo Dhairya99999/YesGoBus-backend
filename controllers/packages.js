@@ -190,10 +190,11 @@ exports.get_user_wishlist = async (req, res) => {
         userId
       };
     });
+    console.log(modifiedData)
     return res.status(200).send({
       status: true,
       data: { wishlist:modifiedData },
-      message: "Package added to wishlist successfully",
+      message: "wishlist data fetch successfully",
     });
   } catch (err) {
     return res.status(500).send({

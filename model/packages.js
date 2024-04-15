@@ -41,5 +41,4 @@ const destinationSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-destinationSchema.set("strictPopulate", false);
 module.exports = mongoose.model("Packages", destinationSchema);

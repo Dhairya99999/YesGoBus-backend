@@ -20,6 +20,5 @@ const wishlistSchema = new mongoose.Schema({
       }
 }, { timestamps: true });
 
-wishlistSchema.set('strictPopulate', false);
 
 module.exports = mongoose.model("Wishlist", wishlistSchema);

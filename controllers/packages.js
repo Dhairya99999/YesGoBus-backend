@@ -90,17 +90,14 @@ exports.popular_destinations = async (req, res) => {
       destination: req.body.destination,
     });
     const wishlist = await wishlistModel.find({ userId: req.user });
-
-    const updatedData2 = packages.map((item) => {
+    const updatedData = packages.map((item) => {
       const { _doc } = item; // Destructure _doc
-      const isWishlisted = wishlist.some(
-        (dataItem) => dataItem.packageId === _doc._id
-      );
+      const isWishlisted = wishlist.some((wish) => wish.packageId.toString() === _doc._id.toString());
       return { ..._doc, isWishlisted }; // Combine _doc with other properties and add isWishlisted
     });
     return res.status(200).send({
       status: true,
-      data: { packages: updatedData2 },
+      data: { packages: updatedData },
       message: "packages fetch successfully",
     });
   } catch (err) {
@@ -169,7 +166,7 @@ exports.get_user_wishlist = async (req, res) => {
         witheFlitePrice: item?.packageId?.witheFlitePrice,
         withoutFlitePrice: item?.packageId?.withoutFlitePrice,
         totalDuration: item?.packageId?.totalDuration,
-        hotelId: item?.packageId?.hotelId ? item.packageId.hotelId : '',
+        hotelId: item?.packageId?.hotelId ? item.packageId.hotelId : "",
         isWishlisted: item?.isWishlisted,
         userId: item?.userId,
       };

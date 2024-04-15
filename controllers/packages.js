@@ -79,7 +79,7 @@ exports.get_packages = async (req, res) => {
   console.log(updatedData2);
     return res.status(201).send({
       status: true,
-      data: { destination: destination },
+      data: { destination: updatedData2 },
       message: "destination fetch successfully",
     });
   } catch (err) {

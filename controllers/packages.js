@@ -161,18 +161,18 @@ exports.get_user_wishlist = async (req, res) => {
 
     const modifiedData = wishlist.map((item) => {
       return {
-        _id: item.packageId._id,
-        name: item.packageId.name,
-        destinationID: item.packageId.destinationID,
-        destination: item.packageId.destination,
-        image: item.packageId.image,
-        duration: item.packageId.duration,
-        witheFlitePrice: item.packageId.witheFlitePrice,
-        withoutFlitePrice: item.packageId.withoutFlitePrice,
-        totalDuration: item.packageId.totalDuration,
-        hotelId: item.packageId.hotelId,
-        isWishlisted: item.isWishlisted,
-        userId: item.userId
+        _id: item?.packageId?._id,
+        name: item?.packageId?.name,
+        destinationID: item?.packageId?.destinationID,
+        destination: item?.packageId?.destination,
+        image: item?.packageId?.image,
+        duration: item?.packageId?.duration,
+        witheFlitePrice: item?.packageId?.witheFlitePrice,
+        withoutFlitePrice: item?.packageId?.withoutFlitePrice,
+        totalDuration: item?.packageId?.totalDuration,
+        hotelId: item?.packageId?.hotelId,
+        isWishlisted: item?.isWishlisted,
+        userId: item?.userId
       };
     });
     return res.status(200).send({

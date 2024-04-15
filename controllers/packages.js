@@ -177,7 +177,7 @@ exports.get_user_wishlist = async (req, res) => {
     });
     return res.status(200).send({
       status: true,
-      data: { wishlist:modifiedData },
+      data: { package:modifiedData },
       message: "wishlist data fetch successfully",
     });
   } catch (err) {

@@ -181,6 +181,7 @@ exports.get_user_wishlist = async (req, res) => {
       message: "wishlist data fetch successfully",
     });
   } catch (err) {
+    console.log(err.message)
     return res.status(500).send({
       status: false,
       data: { errorMessage: err.message },

@@ -127,6 +127,7 @@ exports.add_to_wishlist = async (req, res) => {
         packageId: req.body.packageId,
         isWishlisted: req.body.isWishlisted,
       });
+      console.log(wishlist)
       return res.status(200).send({
         status: true,
         data: { wishlist },
@@ -138,6 +139,7 @@ exports.add_to_wishlist = async (req, res) => {
         { isWishlisted: req.body.isWishlisted },
         { new: true }
       );
+      console.log(wishlist)
       return res.status(200).send({
         status: true,
         data: { wishlist },
@@ -155,9 +157,10 @@ exports.add_to_wishlist = async (req, res) => {
 
 exports.get_user_wishlist = async (req, res) => {
   try {
-    const wishlist = await wishlistModel.find({ userId: req.userId }).populate({
+    const wishlist = await wishlistModel.find({ userId: req.userId,isWishlisted:true }).populate({
       path: "packageId",
     });
+    console.log(wishlist)
     return res.status(200).send({
       status: true,
       data: { wishlist },

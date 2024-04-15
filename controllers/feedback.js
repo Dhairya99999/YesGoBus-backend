@@ -6,13 +6,13 @@ exports.add_feedback = async (req, res) => {
     const day = date.getDate();
     const month = date.toLocaleString("en-US", { month: "long" });
     const year = date.getFullYear();
-    
+
     const formattedDate = `${day} ${month} ${year}`;
     const feedback = await feedbackModel.create({
       userId: req.user,
       rating: req.body.rating,
       feedback: req.body.feedback,
-      feedbackDate:formattedDate
+      feedbackDate: formattedDate,
     });
     return res.status(201).send({
       status: true,
@@ -30,9 +30,21 @@ exports.add_feedback = async (req, res) => {
 
 exports.get_feedback = async (req, res) => {
   try {
-    const feedback = await feedbackModel.find().populate({
-      path: "userId",
-    });
+    const feedback = await feedbackModel
+      .find(
+        {},
+        {
+          _id: 1,
+          userId: 1,
+          rating: 1,
+          feedback: 1,
+          feedbackDate: 1,
+        }
+      )
+      .populate({
+        path: "userId",
+        select: "_id firstName lastName",
+      });
     return res.status(200).send({
       status: true,
       data: { feedback },

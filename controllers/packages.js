@@ -1,6 +1,6 @@
 const destinationModel = require("../model/destination");
 const packageModel = require("../model/packages");
-const wishlistModel = require("../model/wishlist")
+const wishlistModel = require("../model/wishlist");
 
 exports.add_destination = async (req, res) => {
   try {
@@ -27,18 +27,21 @@ exports.add_destination = async (req, res) => {
 
 exports.add_packages = async (req, res) => {
   try {
-    const { name, price, duration,destinationID,totalDuration,image } = req.body;
+    const { name, price, duration, destinationID, totalDuration, image } =
+      req.body;
 
-    const destinationData = await destinationModel.findOne({_id:destinationID})
+    const destinationData = await destinationModel.findOne({
+      _id: destinationID,
+    });
     const package = await packageModel.create({
       name,
       image,
       duration,
       witheFlitePrice: price,
       withoutFlitePrice: price * 0.8,
-      destination:destinationData.destination,
+      destination: destinationData.destination,
       destinationID,
-      totalDuration
+      totalDuration,
     });
     return res.status(201).send({
       status: true,
@@ -87,15 +90,15 @@ exports.popular_destinations = async (req, res) => {
       { destination: req.body.destination },
       {
         _id: 1,
-        name:1,
-        image:1,
-        duration:1,
+        name: 1,
+        image: 1,
+        duration: 1,
         witheFlitePrice: 1,
         withoutFlitePrice: 1,
-        destination:1,
-        destinationID:1,
-        totalDuration:1,
-        hotelId:1
+        destination: 1,
+        destinationID: 1,
+        totalDuration: 1,
+        hotelId: 1,
       }
     );
     return res.status(200).send({
@@ -112,38 +115,59 @@ exports.popular_destinations = async (req, res) => {
   }
 };
 
-exports.add_to_wishlist = async (req,res) => {
-  try{
-    const wishlist = await wishlistModel.create({userId:req.user,packageId:req.body.packageId})
-    return res.status(200).send({
-      status: true,
-      data: { wishlist },
-      message: "Package added to wishlist successfully",
+exports.add_to_wishlist = async (req, res) => {
+  try {
+    const wishlistData = await wishlistModel.findOne({
+      packageId: req.body.packageId,
+      userId: req.user,
     });
-  }catch(err){
+    if (!wishlistData) {
+      const wishlist = await wishlistModel.create({
+        userId: req.user,
+        packageId: req.body.packageId,
+        isWishlisted: req.body.isWishlisted,
+      });
+      return res.status(200).send({
+        status: true,
+        data: { wishlist },
+        message: "Package added to wishlist successfully",
+      });
+    } else {
+      const wishlist = await wishlistModel.findOneAndUpdate(
+        { packageId: req.body.packageId, userId: req.user },
+        { isWishlisted: req.body.isWishlisted },
+        { new: true }
+      );
+      return res.status(200).send({
+        status: true,
+        data: { wishlist },
+        message: "Package added to wishlist successfully",
+      });
+    }
+  } catch (err) {
     return res.status(500).send({
       status: false,
       data: { errorMessage: err.message },
       message: "server error",
     });
   }
-}
+};
 
-exports.get_user_wishlist = async (req,res) => {
-  try{
-    const wishlist = await wishlistModel.find({userId:req.userId}).populate({
+exports.get_user_wishlist = async (req, res) => {
+  try {
+    const wishlist = await wishlistModel.find({ userId: req.userId }).populate({
       path: "packageId",
-    })
+    });
     return res.status(200).send({
       status: true,
       data: { wishlist },
       message: "Package added to wishlist successfully",
     });
-  }catch(err){
-    return res.status(500).send({ 
+  } catch (err) {
+    return res.status(500).send({
       status: false,
       data: { errorMessage: err.message },
       message: "server error",
     });
   }
-}
+};

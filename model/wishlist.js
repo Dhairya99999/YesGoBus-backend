@@ -14,6 +14,10 @@ const wishlistSchema = new mongoose.Schema({
         ref: "Packages",
         trim: true,
       },
+      isWishlisted:{
+        type:Boolean,
+        default:true
+      }
 }, { timestamps: true });
 
 module.exports = mongoose.model("Wishlist", wishlistSchema);

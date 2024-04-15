@@ -96,8 +96,6 @@ exports.popular_destinations = async (req, res) => {
       const isWishlisted = wishlist.some(dataItem => dataItem.packageId === _doc._id);
       return { ..._doc, isWishlisted }; // Combine _doc with other properties and add isWishlisted
   });
-  
-  console.log(updatedData2);
     return res.status(200).send({
       status: true,
       data: { packages:updatedData2 },

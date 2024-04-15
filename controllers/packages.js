@@ -69,17 +69,9 @@ exports.get_packages = async (req, res) => {
         rating: 1,
       }
     );
-    const wishlist = await wishlistModel.find({userId:req.user})
-
-    const updatedData2 = wishlist.map(item => {
-      const isWishlisted = destination.some(dataItem => dataItem.packageId === item._id);
-      return {...item, isWishlisted};
-  });
-  
-  console.log(updatedData2);
     return res.status(201).send({
       status: true,
-      data: { destination: updatedData2 },
+      data: { destination: destination },
       message: "destination fetch successfully",
     });
   } catch (err) {
@@ -109,6 +101,14 @@ exports.popular_destinations = async (req, res) => {
         hotelId: 1,
       }
     );
+    const wishlist = await wishlistModel.find({userId:req.user})
+
+    const updatedData2 = packages.map(item => {
+      const isWishlisted = wishlist.some(dataItem => dataItem.packageId === item._id);
+      return {...item, isWishlisted};
+  });
+  
+  console.log(updatedData2);
     return res.status(200).send({
       status: true,
       data: { packages },

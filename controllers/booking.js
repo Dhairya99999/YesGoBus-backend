@@ -106,8 +106,19 @@ exports.get_Itinerary_plans = async (req, res) => {
       status: true,
       data: {
         hotel_data: {
-          hotel: hotelData? hotelData : {},
-          itinerary: itineraryData? itineraryData.plans : [],
+          hotel: hotelData
+            ? hotelData
+            : {
+                hotelName: "",
+                rating: "",
+                address: "",
+                image: "",
+                fullAddress: "",
+                destination: "",
+                checkIn: "",
+                checkOut: "",
+              },
+          itinerary: itineraryData ? itineraryData.plans : [],
         },
       },
       message: "Booking done successfully",
@@ -138,16 +149,14 @@ exports.edit_booking = async (req, res) => {
           address: req.body.address,
         },
         guestDetails: JSON.parse(req.body.guestDetails),
-        spancelRequest: req.body.spancelRequest
+        spancelRequest: req.body.spancelRequest,
       }
     );
-    return res
-      .status(200)
-      .send({
-        status: true,
-        data: {bookingData },
-        message: "Booking updated successfully",
-      });
+    return res.status(200).send({
+      status: true,
+      data: { bookingData },
+      message: "Booking updated successfully",
+    });
   } catch (err) {
     return res.status(500).send({
       status: false,

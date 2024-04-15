@@ -136,7 +136,6 @@ exports.add_to_wishlist = async (req, res) => {
         { isWishlisted: req.body.isWishlisted },
         { new: true }
       );
-      console.log(wishlist);
       return res.status(200).send({
         status: true,
         data: { wishlist },
@@ -155,42 +154,27 @@ exports.add_to_wishlist = async (req, res) => {
 exports.get_user_wishlist = async (req, res) => {
   try {
     const wishlist = await wishlistModel
-      .find({ userId: req.userId, isWishlisted: true })
+      .find({ userId: req.user, isWishlisted: true })
       .populate({
         path: "packageId",
       });
-    console.log(wishlist);
+
     const modifiedData = wishlist.map((item) => {
-      const {
-        "packageId._id": _id,
-        "packageId.name": name,
-        "packageId.destinationID": destinationID,
-        "packageId.destination": destination,
-        "packageId.image": image,
-        "packageId.duration": duration,
-        "packageId.witheFlitePrice": witheFlitePrice,
-        "packageId.withoutFlitePrice": withoutFlitePrice,
-        "packageId.totalDuration": totalDuration,
-        "packageId.hotelId": hotelId,
-        isWishlisted,
-        userId
-      } = item;
       return {
-        _id,
-        name,
-        destinationID,
-        destination,
-        image,
-        duration,
-        witheFlitePrice,
-        withoutFlitePrice,
-        totalDuration,
-        hotelId,
-        isWishlisted,
-        userId
+        _id: item.packageId._id,
+        name: item.packageId.name,
+        destinationID: item.packageId.destinationID,
+        destination: item.packageId.destination,
+        image: item.packageId.image,
+        duration: item.packageId.duration,
+        witheFlitePrice: item.packageId.witheFlitePrice,
+        withoutFlitePrice: item.packageId.withoutFlitePrice,
+        totalDuration: item.packageId.totalDuration,
+        hotelId: item.packageId.hotelId,
+        isWishlisted: item.isWishlisted,
+        userId: item.userId
       };
     });
-    console.log(modifiedData)
     return res.status(200).send({
       status: true,
       data: { wishlist:modifiedData },

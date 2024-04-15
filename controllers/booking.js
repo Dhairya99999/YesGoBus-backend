@@ -106,8 +106,8 @@ exports.get_Itinerary_plans = async (req, res) => {
       status: true,
       data: {
         hotel_data: {
-          hotel: hotelData,
-          itinerary: itineraryData.plans,
+          hotel: hotelData? hotelData : {},
+          itinerary: itineraryData? itineraryData.plans : [],
         },
       },
       message: "Booking done successfully",
@@ -123,7 +123,6 @@ exports.get_Itinerary_plans = async (req, res) => {
 
 exports.edit_booking = async (req, res) => {
   try {
-    console.log(req.body)
     const bookingData = await bookingModel.findOneAndUpdate(
       { _id: req.body.bookingId },
       {
@@ -157,5 +156,3 @@ exports.edit_booking = async (req, res) => {
     });
   }
 };
-
-

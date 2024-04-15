@@ -1,5 +1,6 @@
 const destinationModel = require("../model/destination");
 const packageModel = require("../model/packages");
+const wishlistModel = require("../model/wishlist")
 
 exports.add_destination = async (req, res) => {
   try {
@@ -110,3 +111,39 @@ exports.popular_destinations = async (req, res) => {
     });
   }
 };
+
+exports.add_to_wishlist = async (req,res) => {
+  try{
+    const wishlist = await wishlistModel.create({userId:req.user,packageId:req.body.packageId})
+    return res.status(200).send({
+      status: true,
+      data: { wishlist },
+      message: "Package added to wishlist successfully",
+    });
+  }catch(err){
+    return res.status(500).send({
+      status: false,
+      data: { errorMessage: err.message },
+      message: "server error",
+    });
+  }
+}
+
+exports.get_user_wishlist = async (req,res) => {
+  try{
+    const wishlist = await wishlistModel.find({userId:req.userId}).populate({
+      path: "packageId",
+    })
+    return res.status(200).send({
+      status: true,
+      data: { wishlist },
+      message: "Package added to wishlist successfully",
+    });
+  }catch(err){
+    return res.status(500).send({ 
+      status: false,
+      data: { errorMessage: err.message },
+      message: "server error",
+    });
+  }
+}

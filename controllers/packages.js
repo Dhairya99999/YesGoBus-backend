@@ -88,25 +88,13 @@ exports.popular_destinations = async (req, res) => {
     console.log(req.body.destination);
     const packages = await packageModel.find(
       { destination: req.body.destination },
-      {
-        _id: 1,
-        name: 1,
-        image: 1,
-        duration: 1,
-        witheFlitePrice: 1,
-        withoutFlitePrice: 1,
-        destination: 1,
-        destinationID: 1,
-        totalDuration: 1,
-        hotelId: 1,
-      }
     );
     const wishlist = await wishlistModel.find({userId:req.user})
 
     const updatedData2 = packages.map(item => {
-      const { _doc, ...rest } = item; // Destructure _doc
+      const { _doc } = item; // Destructure _doc
       const isWishlisted = wishlist.some(dataItem => dataItem.packageId === _doc._id);
-      return { ..._doc, ...rest, isWishlisted }; // Combine _doc with other properties and add isWishlisted
+      return { ..._doc, isWishlisted }; // Combine _doc with other properties and add isWishlisted
   });
   
   console.log(updatedData2);

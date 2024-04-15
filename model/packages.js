@@ -30,8 +30,16 @@ const destinationSchema = new mongoose.Schema(
     withoutFlitePrice: {
       type: Number,
     },
+
+    hotelId: {
+      type: ObjectId,
+      required: true,
+      ref: "Hotels",
+      trim: true,
+    },
   },
   { timestamps: true }
 );
 
+destinationSchema.set("strictPopulate", false);
 module.exports = mongoose.model("Packages", destinationSchema);

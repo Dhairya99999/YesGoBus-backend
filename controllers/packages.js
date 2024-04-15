@@ -158,7 +158,6 @@ exports.get_user_wishlist = async (req, res) => {
       .populate({
         path: "packageId",
       });
-
     const modifiedData = wishlist.map((item) => {
       return {
         _id: item?.packageId?._id,
@@ -170,18 +169,18 @@ exports.get_user_wishlist = async (req, res) => {
         witheFlitePrice: item?.packageId?.witheFlitePrice,
         withoutFlitePrice: item?.packageId?.withoutFlitePrice,
         totalDuration: item?.packageId?.totalDuration,
-        hotelId: item?.packageId?.hotelId,
+        hotelId: item?.packageId?.hotelId ? item.packageId.hotelId : '',
         isWishlisted: item?.isWishlisted,
-        userId: item?.userId
+        userId: item?.userId,
       };
     });
     return res.status(200).send({
       status: true,
-      data: { packages:modifiedData },
+      data: { packages: modifiedData },
       message: "wishlist data fetch successfully",
     });
   } catch (err) {
-    console.log(err.message)
+    console.log(err.message);
     return res.status(500).send({
       status: false,
       data: { errorMessage: err.message },

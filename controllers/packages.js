@@ -104,14 +104,15 @@ exports.popular_destinations = async (req, res) => {
     const wishlist = await wishlistModel.find({userId:req.user})
 
     const updatedData2 = packages.map(item => {
-      const isWishlisted = wishlist.some(dataItem => dataItem.packageId === item._id);
-      return {...item, isWishlisted};
+      const { _doc, ...rest } = item; // Destructure _doc
+      const isWishlisted = wishlist.some(dataItem => dataItem.packageId === _doc._id);
+      return { ..._doc, ...rest, isWishlisted }; // Combine _doc with other properties and add isWishlisted
   });
   
   console.log(updatedData2);
     return res.status(200).send({
       status: true,
-      data: { packages },
+      data: { packages:updatedData2 },
       message: "packages fetch successfully",
     });
   } catch (err) {

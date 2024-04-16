@@ -17,6 +17,15 @@ const feedbackSchema = new mongoose.Schema(
     },
     feedbackDate:{
       type: String
+    },
+    totalGuest:{
+      type:Number
+    },
+    travelledTo: {
+      type:String
+    },   
+    destination: {
+      type:String
     }
   },
   { timestamps: true }

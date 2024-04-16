@@ -1,4 +1,5 @@
 const feedbackModel = require("../model/feedback");
+const bookingModel = require("../model/booking")
 
 exports.add_feedback = async (req, res) => {
   try {
@@ -8,11 +9,14 @@ exports.add_feedback = async (req, res) => {
     const year = date.getFullYear();
 
     const formattedDate = `${day} ${month} ${year}`;
+    const totalGuest = await bookingModel.findOne({userId:req.user});
     const feedback = await feedbackModel.create({
       userId: req.user,
       rating: req.body.rating,
       feedback: req.body.feedback,
       feedbackDate: formattedDate,
+      totalGuest: totalGuest?.guestDetails?.length,
+      destination: totalGuest?.toPlace
     });
     return res.status(201).send({
       status: true,
@@ -39,6 +43,8 @@ exports.get_feedback = async (req, res) => {
           rating: 1,
           feedback: 1,
           feedbackDate: 1,
+          totalGuest:1,
+          destination:1
         }
       )
       .populate({

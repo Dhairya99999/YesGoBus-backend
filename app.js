@@ -15,6 +15,7 @@ const bookingRoute = require("./route/booking")
 const hotelRoute = require("./route/hotel")
 const couponRouter = require("./route/coupon")
 const feedbackRoute = require("./route/feedback")
+const offerRoute = require("./route/offer")
 
 const app = express();
 
@@ -45,6 +46,7 @@ app.use("/booking", bookingRoute)
 app.use("/hotel",hotelRoute)
 app.use("/coupon",couponRouter)
 app.use("/feedback",feedbackRoute)
+app.use("/offers",offerRoute)
 
 app.use(function (req, res, next) {
   next(createError(404));

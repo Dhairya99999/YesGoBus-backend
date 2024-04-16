@@ -1,5 +1,5 @@
 const bookingModel = require("../model/booking");
-const destination = require("../model/destination");
+const supportModel = require("../model/customerSupport");
 const hotelModel = require("../model/hotels");
 const itineraryPlansModel = require("../model/itineraryPlans");
 
@@ -157,6 +157,58 @@ exports.edit_booking = async (req, res) => {
       data: { bookingData },
       message: "Booking updated successfully",
     });
+  } catch (err) {
+    return res.status(500).send({
+      status: false,
+      data: { errorMessage: err.message },
+      message: "server error",
+    });
+  }
+};
+
+exports.customer_sport = async (req, res) => {
+  try {
+    const sportData = await supportModel.create({
+      bookingId: req.body.bookingId,
+      userId: req.user,
+    });
+
+    return res
+      .status(201)
+      .send({
+        status: true,
+        data: { sportData },
+        message: "Query has been raised our team will connect you soon",
+      });
+  } catch (err) {
+    return res.status(500).send({
+      status: false,
+      data: { errorMessage: err.message },
+      message: "server error",
+    });
+  }
+};
+
+exports.get_customer_booking = async (req, res) => {
+  try {
+    const booking = await bookingModel.find({ userId: req.user },{_id:1,packageId:1,status:1}).populate({
+      path: "packageId",
+    });
+    const bookingData = booking.map(item=> {return {
+      _id:item._id,
+      name: item?.packageId?.name,
+      destinationID: item?.packageId?.destinationID,
+      destination: item?.packageId?.destination,
+      image: item?.packageId?.image,
+      duration: item?.packageId?.duration,
+      witheFlitePrice: item?.packageId?.witheFlitePrice,
+      withoutFlitePrice: item?.packageId?.withoutFlitePrice,
+      totalDuration: item?.packageId?.totalDuration,
+      hotelId: item?.packageId?.hotelId ? item.packageId.hotelId : "",
+      bookingStatus:item.status[item?.status?.length-1].bookingStatus,
+      statusTime:item.status[item?.status?.length-1].statusTime
+    }})
+    return res.status(200).send({status:true,data:{bookingData},message:"Booking Data fetch successfully"})
   } catch (err) {
     return res.status(500).send({
       status: false,

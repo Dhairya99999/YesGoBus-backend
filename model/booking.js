@@ -36,9 +36,9 @@ const bookingSchema = new mongoose.Schema(
     totalRoom: {
       type: Number,
     },
-    witheFlight:{
-      type:Boolean,
-      default:false
+    witheFlight: {
+      type: Boolean,
+      default: false,
     },
     guestsType: {
       type: String,
@@ -80,18 +80,29 @@ const bookingSchema = new mongoose.Schema(
     paymentTime: {
       type: Date,
     },
-    couponDiscount:{
-      type:Number
+    couponDiscount: {
+      type: Number,
     },
-    feesTexes:{
-      type:Number
+    feesTexes: {
+      type: Number,
     },
-    totalBasicCost:{
-      type:Number
+    totalBasicCost: {
+      type: Number,
     },
-    spancelRequest:{
-      type:String
-    }
+    spancelRequest: {
+      type: String,
+    },
+    status: [
+      {
+        _id: false,
+        bookingStatus: {
+          type: String,
+        },
+        statusTime: {
+          type: String,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );

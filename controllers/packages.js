@@ -92,7 +92,11 @@ exports.popular_destinations = async (req, res) => {
     const wishlist = await wishlistModel.find({ userId: req.user });
     const updatedData = packages.map((item) => {
       const { _doc } = item; // Destructure _doc
-      const isWishlisted = wishlist.some((wish) => {if(wish?.packageId?.toString() === _doc?._id?.toString()) {return true} else false});
+      const isWishlisted = wishlist.some((wish) => {
+        if (wish?.packageId?.toString() === _doc?._id?.toString()) {
+          return true;
+        } else false;
+      });
       return { ..._doc, isWishlisted }; // Combine _doc with other properties and add isWishlisted
     });
     return res.status(200).send({

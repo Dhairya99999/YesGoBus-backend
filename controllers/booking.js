@@ -168,6 +168,10 @@ exports.edit_booking = async (req, res) => {
 
 exports.customer_sport = async (req, res) => {
   try {
+    const bookingData = await bookingModel.findOne({_id:req.body.bookingId})
+    if(!bookingData){
+      return res.status(200).send({status:false,data:{},message:"Invalid booking id"})
+    }
     const sportData = await supportModel.create({
       bookingId: req.body.bookingId,
       userId: req.user,

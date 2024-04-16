@@ -112,14 +112,14 @@ exports.get_Itinerary_plans = async (req, res) => {
       hotelId: req.body.hotelId,
     });
     const hotelData = {
-      hotelName: hotel.hotelName,
-      rating: hotel.rating,
-      address: hotel.address,
-      image: hotel.image,
-      fullAddress: hotel.fullAddress,
-      destination: hotel.destination,
-      checkIn: itineraryData.checkIn,
-      checkOut: itineraryData.checkOut,
+      hotelName: hotel?.hotelName,
+      rating: hotel?.rating,
+      address: hotel?.address,
+      image: hotel?.image,
+      fullAddress: hotel?.fullAddress,
+      destination: hotel?.destination,
+      checkIn:itineraryData? itineraryData?.checkIn:"",
+      checkOut:itineraryData? itineraryData?.checkOut:"",
     };
 
     return res.status(200).send({

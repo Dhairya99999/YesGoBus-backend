@@ -111,7 +111,6 @@ exports.get_Itinerary_plans = async (req, res) => {
     const itineraryData = await itineraryPlansModel.findOne({
       hotelId: req.body.hotelId,
     });
-    console.log(itineraryData.checkIn);
     const hotelData = {
       hotelName: hotel.hotelName,
       rating: hotel.rating,

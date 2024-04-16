@@ -18,7 +18,6 @@ exports.make_booking = async (req, res) => {
       return bookingId;
     }
 
-    // Example usage:
     const bookingId = generateBookingId();
   
     const {
@@ -190,7 +189,7 @@ exports.edit_booking = async (req, res) => {
 
 exports.customer_sport = async (req, res) => {
   try {
-    const bookingData = await bookingModel.findOne({ _id: req.body.bookingId });
+    const bookingData = await bookingModel.findOne({ bookingId: req.body.bookingId });
     if (!bookingData) {
       return res
         .status(200)
@@ -218,7 +217,7 @@ exports.customer_sport = async (req, res) => {
 exports.get_customer_booking = async (req, res) => {
   try {
     const booking = await bookingModel
-      .find({ userId: req.user }, { _id: 1, packageId: 1, status: 1 })
+      .find({ userId: req.user }, { _id: 1, packageId: 1, status: 1,bookingId:1 })
       .populate({
         path: "packageId",
       });
@@ -233,9 +232,10 @@ exports.get_customer_booking = async (req, res) => {
         witheFlitePrice: item?.packageId?.witheFlitePrice,
         withoutFlitePrice: item?.packageId?.withoutFlitePrice,
         totalDuration: item?.packageId?.totalDuration,
-        hotelId: item?.packageId?.hotelId ? item.packageId.hotelId : "",
-        bookingStatus: item.status[item?.status?.length - 1].bookingStatus,
-        statusTime: item.status[item?.status?.length - 1].statusTime,
+        hotelId: item?.packageId?.hotelId ? item?.packageId?.hotelId : "",
+        bookingStatus: item?.status[item?.status?.length - 1]?.bookingStatus,
+        statusTime: item?.status[item?.status?.length - 1]?.statusTime,
+        bookingId: item?.bookingId
       };
     });
     return res

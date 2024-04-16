@@ -10,10 +10,7 @@ const customerSupport = new mongoose.Schema(
       trim: true,
     },
     bookingId: {
-      type: ObjectId,
-      require: true,
-      ref: "Booking",
-      trim: true,
+      type: String
     },
   },
   { timestamps: true }

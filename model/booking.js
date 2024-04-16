@@ -9,6 +9,10 @@ const bookingSchema = new mongoose.Schema(
       ref: "User",
       trim: true,
     },
+    bookingId:{
+      type:String,
+      unique:true
+    },
     packageId: {
       type: ObjectId,
       require: true,

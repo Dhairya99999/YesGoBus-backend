@@ -159,22 +159,41 @@ exports.get_user_wishlist = async (req, res) => {
       .populate({
         path: "packageId",
       });
-    const modifiedData = wishlist.map((item) => {
-      return {
-        _id: item?.packageId?._id,
-        name: item?.packageId?.name,
-        destinationID: item?.packageId?.destinationID,
-        destination: item?.packageId?.destination,
-        image: item?.packageId?.image,
-        duration: item?.packageId?.duration,
-        witheFlitePrice: item?.packageId?.witheFlitePrice,
-        withoutFlitePrice: item?.packageId?.withoutFlitePrice,
-        totalDuration: item?.packageId?.totalDuration,
-        hotelId: item?.packageId?.hotelId ? item.packageId.hotelId : "",
-        isWishlisted: item?.isWishlisted,
-        userId: item?.userId,
-      };
-    });
+      const modifiedData = wishlist.map((item) => {
+        if (item.packageId) {
+          return {
+            _id: item.packageId._id,
+            name: item.packageId.name,
+            destinationID: item.packageId.destinationID,
+            destination: item.packageId.destination,
+            image: item.packageId.image,
+            duration: item.packageId.duration,
+            witheFlitePrice: item.packageId.witheFlitePrice,
+            withoutFlitePrice: item.packageId.withoutFlitePrice,
+            totalDuration: item.packageId.totalDuration,
+            hotelId: item.packageId.hotelId ? item.packageId.hotelId : "",
+            isWishlisted: item.isWishlisted,
+            userId: item.userId,
+          };
+        } else {
+          // Handle case when packageId is missing
+          return {
+            _id: "",
+            name: "",
+            destinationID: "",
+            destination: "",
+            image: "",
+            duration: "",
+            witheFlitePrice: 0,
+            withoutFlitePrice: 0,
+            totalDuration: "",
+            hotelId: "",
+            isWishlisted: item.isWishlisted,
+            userId: item.userId,
+          };
+        }
+      });
+      
     return res.status(200).send({
       status: true,
       data: { packages: modifiedData },

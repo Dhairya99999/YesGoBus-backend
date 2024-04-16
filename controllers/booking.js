@@ -5,7 +5,22 @@ const itineraryPlansModel = require("../model/itineraryPlans");
 
 exports.make_booking = async (req, res) => {
   try {
-    console.log(new Date());
+    function generateBookingId() {
+      const companyName = "YESGBS";
+      const alphanumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      let idSuffix = "";
+      for (let i = 0; i < 6; i++) {
+        idSuffix += alphanumeric.charAt(
+          Math.floor(Math.random() * alphanumeric.length)
+        );
+      }
+      const bookingId = `${companyName}-${idSuffix}`;
+      return bookingId;
+    }
+
+    // Example usage:
+    const bookingId = generateBookingId();
+  
     const {
       packageId,
       fromPlace,
@@ -33,6 +48,13 @@ exports.make_booking = async (req, res) => {
       couponDiscount: 0,
       feesTexes: totalPackagePrice,
       totalBasicCost: totalPackagePrice,
+      bookingId,
+      status: [
+        {
+          bookingStatus: "Booked",
+          statusTime: `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`,
+        },
+      ],
     });
     return res.status(201).send({
       status: true,
@@ -168,22 +190,22 @@ exports.edit_booking = async (req, res) => {
 
 exports.customer_sport = async (req, res) => {
   try {
-    const bookingData = await bookingModel.findOne({_id:req.body.bookingId})
-    if(!bookingData){
-      return res.status(200).send({status:false,data:{},message:"Invalid booking id"})
+    const bookingData = await bookingModel.findOne({ _id: req.body.bookingId });
+    if (!bookingData) {
+      return res
+        .status(200)
+        .send({ status: false, data: {}, message: "Invalid booking id" });
     }
     const sportData = await supportModel.create({
       bookingId: req.body.bookingId,
       userId: req.user,
     });
 
-    return res
-      .status(201)
-      .send({
-        status: true,
-        data: { sportData },
-        message: "Query has been raised our team will connect you soon",
-      });
+    return res.status(201).send({
+      status: true,
+      data: { sportData },
+      message: "Query has been raised our team will connect you soon",
+    });
   } catch (err) {
     return res.status(500).send({
       status: false,
@@ -195,24 +217,34 @@ exports.customer_sport = async (req, res) => {
 
 exports.get_customer_booking = async (req, res) => {
   try {
-    const booking = await bookingModel.find({ userId: req.user },{_id:1,packageId:1,status:1}).populate({
-      path: "packageId",
+    const booking = await bookingModel
+      .find({ userId: req.user }, { _id: 1, packageId: 1, status: 1 })
+      .populate({
+        path: "packageId",
+      });
+    const bookingData = booking.map((item) => {
+      return {
+        _id: item._id,
+        name: item?.packageId?.name,
+        destinationID: item?.packageId?.destinationID,
+        destination: item?.packageId?.destination,
+        image: item?.packageId?.image,
+        duration: item?.packageId?.duration,
+        witheFlitePrice: item?.packageId?.witheFlitePrice,
+        withoutFlitePrice: item?.packageId?.withoutFlitePrice,
+        totalDuration: item?.packageId?.totalDuration,
+        hotelId: item?.packageId?.hotelId ? item.packageId.hotelId : "",
+        bookingStatus: item.status[item?.status?.length - 1].bookingStatus,
+        statusTime: item.status[item?.status?.length - 1].statusTime,
+      };
     });
-    const bookingData = booking.map(item=> {return {
-      _id:item._id,
-      name: item?.packageId?.name,
-      destinationID: item?.packageId?.destinationID,
-      destination: item?.packageId?.destination,
-      image: item?.packageId?.image,
-      duration: item?.packageId?.duration,
-      witheFlitePrice: item?.packageId?.witheFlitePrice,
-      withoutFlitePrice: item?.packageId?.withoutFlitePrice,
-      totalDuration: item?.packageId?.totalDuration,
-      hotelId: item?.packageId?.hotelId ? item.packageId.hotelId : "",
-      bookingStatus:item.status[item?.status?.length-1].bookingStatus,
-      statusTime:item.status[item?.status?.length-1].statusTime
-    }})
-    return res.status(200).send({status:true,data:{bookingData},message:"Booking Data fetch successfully"})
+    return res
+      .status(200)
+      .send({
+        status: true,
+        data: { bookingData },
+        message: "Booking Data fetch successfully",
+      });
   } catch (err) {
     return res.status(500).send({
       status: false,

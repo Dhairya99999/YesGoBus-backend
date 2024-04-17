@@ -10,6 +10,9 @@ exports.user_signup = async (req, res) => {
       mobileNumber: mobileNumber,
     });
     console.log(reqUser)
+    if(email !== "" && !/\w+([\.-]?\w)*@\w+([\.-]?\w)*(\.\w{2,3})+$/.test(email)){
+     return res.status(200).send({status:false,data:{},message:"Invalid email id"})
+    }
     if (reqUser) {
       return res
         .status(200)

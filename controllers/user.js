@@ -5,12 +5,11 @@ const jwt = require("jsonwebtoken");
 exports.user_signup = async (req, res) => {
   try {
     const { firstName, email, lastName, mobileNumber } = await req.body;
-    console.log("hii");
     const reqUser = await userModel.findOne({
       mobileNumber: mobileNumber,
     });
-    console.log(reqUser)
-    if(email !== "" && !/\w+([\.-]?\w)*@\w+([\.-]?\w)*(\.\w{2,3})+$/.test(email)){
+    if(email !== "" && !/\w+([\.-]?\w)*@\w+([\.-]?\w)*(\.\w{2,3})+$/.test(email.trim())){
+      console.log(/\w+([\.-]?\w)*@\w+([\.-]?\w)*(\.\w{2,3})+$/.test(email))
      return res.status(200).send({status:false,data:{},message:"Invalid email id"})
     }
     if (reqUser) {

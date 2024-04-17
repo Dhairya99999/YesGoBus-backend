@@ -9,7 +9,7 @@ exports.user_signup = async (req, res) => {
     const reqUser = await userModel.findOne({
       mobileNumber: mobileNumber,
     });
-
+    console.log(reqUser)
     if (reqUser) {
       return res
         .status(200)
@@ -33,6 +33,7 @@ exports.user_signup = async (req, res) => {
       message: "Signup Successfully",
     });
   } catch (err) {
+    console.log(err.message)
     return res.status(500).send({
       status: false,
       data: { errorMessage: err.message },

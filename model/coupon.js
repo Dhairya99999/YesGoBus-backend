@@ -12,6 +12,9 @@ const bookingSchema = new mongoose.Schema(
     couponDetail:{
       type:String
     },
+    image:{
+      type:String
+    },
     couponCode: {
       type: String,
       unique: true,

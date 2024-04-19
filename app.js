@@ -16,6 +16,11 @@ const hotelRoute = require("./route/hotel")
 const couponRouter = require("./route/coupon")
 const feedbackRoute = require("./route/feedback")
 const offerRoute = require("./route/offer")
+//const agentRoute = require("./route/agents")
+const busBookingRoute = require("./route/busBooking")
+// const cabRoute = require("./route/cab")
+// const paymentRoute = require("./route/payment")
+//const kycRoute = require("./route/verifykyc")
 
 const app = express();
 
@@ -40,6 +45,7 @@ if (app.get("env") === "development") {
   app.use(logger("dev"));
 }
 
+
 app.use("/user", userRoute);
 app.use("/package", packagesRoute)
 app.use("/booking", bookingRoute)
@@ -47,6 +53,11 @@ app.use("/hotel",hotelRoute)
 app.use("/coupon",couponRouter)
 app.use("/feedback",feedbackRoute)
 app.use("/offers",offerRoute)
+app.use("/busBooking",busBookingRoute)
+// app.use("/cab", cabRoute)
+// app.use("/payment", paymentRoute)
+//app.use("/kyc", kycRoute)
+//app.use("/agent",agentRoute)
 
 app.use(function (req, res, next) {
   next(createError(404));
@@ -63,4 +74,3 @@ app.use(function (err, req, res, next) {
 });
 
 module.exports = app;
- 

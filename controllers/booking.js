@@ -2,6 +2,10 @@ const bookingModel = require("../model/booking");
 const supportModel = require("../model/customerSupport");
 const hotelModel = require("../model/hotels");
 const itineraryPlansModel = require("../model/itineraryPlans");
+const cityModel = require("../model/cities");
+const OAuth = require("oauth-1.0a");
+const crypto = require("crypto");
+const axios = require("axios");
 
 exports.make_booking = async (req, res) => {
   try {
@@ -19,7 +23,7 @@ exports.make_booking = async (req, res) => {
     }
 
     const bookingId = generateBookingId();
-  
+
     const {
       packageId,
       fromPlace,
@@ -118,8 +122,8 @@ exports.get_Itinerary_plans = async (req, res) => {
       image: hotel?.image,
       fullAddress: hotel?.fullAddress,
       destination: hotel?.destination,
-      checkIn:itineraryData? itineraryData?.checkIn:"",
-      checkOut:itineraryData? itineraryData?.checkOut:"",
+      checkIn: itineraryData ? itineraryData?.checkIn : "",
+      checkOut: itineraryData ? itineraryData?.checkOut : "",
     };
 
     return res.status(200).send({
@@ -188,7 +192,9 @@ exports.edit_booking = async (req, res) => {
 
 exports.customer_sport = async (req, res) => {
   try {
-    const bookingData = await bookingModel.findOne({ bookingId: req.body.bookingId });
+    const bookingData = await bookingModel.findOne({
+      bookingId: req.body.bookingId,
+    });
     if (!bookingData) {
       return res
         .status(200)
@@ -216,7 +222,10 @@ exports.customer_sport = async (req, res) => {
 exports.get_customer_booking = async (req, res) => {
   try {
     const booking = await bookingModel
-      .find({ userId: req.user }, { _id: 1, packageId: 1, status: 1,bookingId:1 })
+      .find(
+        { userId: req.user },
+        { _id: 1, packageId: 1, status: 1, bookingId: 1 }
+      )
       .populate({
         path: "packageId",
       });
@@ -234,16 +243,14 @@ exports.get_customer_booking = async (req, res) => {
         hotelId: item?.packageId?.hotelId ? item?.packageId?.hotelId : "",
         bookingStatus: item?.status[item?.status?.length - 1]?.bookingStatus,
         statusTime: item?.status[item?.status?.length - 1]?.statusTime,
-        bookingId: item?.bookingId
+        bookingId: item?.bookingId,
       };
     });
-    return res
-      .status(200)
-      .send({
-        status: true,
-        data: { bookingData },
-        message: "Booking Data fetch successfully",
-      });
+    return res.status(200).send({
+      status: true,
+      data: { bookingData },
+      message: "Booking Data fetch successfully",
+    });
   } catch (err) {
     return res.status(500).send({
       status: false,
@@ -252,3 +259,23 @@ exports.get_customer_booking = async (req, res) => {
     });
   }
 };
+
+exports.get_booking = async (req, res) => {
+  try {
+    const booking = await bookingModel.findOne({
+      bookingId: req.body.bookingId,
+    });
+    return res.status(200).send({
+      status: true,
+      data: { booking },
+      message: "Booking Data fetch successfully",
+    });
+  } catch (err) {
+    return res.status(500).send({
+      status: false,
+      data: { errorMessage: err.message },
+      message: "server error",
+    });
+  }
+};
+

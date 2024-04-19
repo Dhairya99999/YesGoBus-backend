@@ -82,7 +82,6 @@ exports.cancelTicketController = async (req, res) => {
 
 exports.getBusFiltersController = async (req, res) => {
   try {
-    console.log(req.query)
     const response = await serviceModel.getBusFilters(req.query);
     res.status(response.status).send(response);
   } catch (error) {

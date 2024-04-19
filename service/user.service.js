@@ -4,14 +4,16 @@ const jwt = require("jsonwebtoken");
 
 exports.signUp = async (userData) => {
   try {
+    console.log(userData);
     const existingUser = await User.findOne({
-      $or: [{ email: userData.email }, { phoneNumber: userData.phoneNumber }],
+      mobileNumber: userData.mobileNumber,
     });
+    console.log(existingUser);
     if (!existingUser) {
-      const hashedPassword = bcrypt.hashSync(userData.password, 5);
+      //const hashedPassword = bcrypt.hashSync(userData.password, 5);
       const newUser = new User({
         ...userData,
-        password: hashedPassword,
+        //password: hashedPassword,
       });
       await newUser.save();
 
@@ -138,7 +140,9 @@ exports.facebookSignUp = async ({ name, email }) => {
 
 exports.updateUserProfile = async (userId, updatedData) => {
   try {
-    const existingUser = await User.findByIdAndUpdate(userId, updatedData, { new: true });
+    const existingUser = await User.findByIdAndUpdate(userId, updatedData, {
+      new: true,
+    });
 
     if (!existingUser) {
       return {

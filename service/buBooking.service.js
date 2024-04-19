@@ -54,7 +54,10 @@ exports.getAliasesCity = async () => {
   const url = "http://api.seatseller.travel/aliases";
   return sendRequest(url, "GET", requestData);
 };
-
+const searchBus = async (sourceId, destinationId, doj) => {
+  const url = `http://api.seatseller.travel/availabletrips?source=${sourceId}&destination=${destinationId}&doj=${doj}`;
+  return sendRequest(url, "GET", null);
+}
 exports.searchBus = async (sourceId, destinationId, doj) => {
   const url = `http://api.seatseller.travel/availabletrips?source=${sourceId}&destination=${destinationId}&doj=${doj}`;
   return sendRequest(url, "GET", null);
@@ -171,6 +174,7 @@ exports.getBusFilters = async (args) => {
       destinationCity: destinationCity.id,
     };
   } catch (error) {
+    console.log(error)
     throw error.message;
   }
 };

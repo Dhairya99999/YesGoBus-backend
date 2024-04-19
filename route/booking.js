@@ -11,6 +11,6 @@ router.post("/update_booking",middleware.authenticateToken,bookingController.edi
 router.post("/add_booking_query",middleware.authenticateToken,bookingController.customer_sport)
 router.get("/get_user_booking", middleware.authenticateToken, bookingController.get_customer_booking)
 router.get("/get_booking",  middleware.authenticateToken, bookingController.get_booking)
-//router.post("/get_bus_list",bookingController.get_bus_list)
+router.post("/get_bus_list",bookingController.get_bus_list)
 
 module.exports = router;

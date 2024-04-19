@@ -278,4 +278,73 @@ exports.get_booking = async (req, res) => {
     });
   }
 };
+exports.get_bus_list = async (req, res) => {
+  try {
+    const capitalizeFirstLetter = (str) => {
+      return str
+        .split(" ")
+        .map(
+          (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        )
+        .join(" ");
+    };
+    const sendRequest = async (url, method, data) => {
+      try {
+        const oauth = OAuth({
+          consumer: {
+            key: "xXpBse9xTp16PQKLtHP09rVzXyywLd",
+            secret: "xNC5D3MrqstrP44ehnvssUjka5gywK",
+          },
+          signature_method: "HMAC-SHA1",
+          hash_function(base_string, key) {
+            return crypto
+              .createHmac("sha1", key)
+              .update(base_string)
+              .digest("base64");
+          },
+        });
 
+        const requestData = {
+          url: url,
+          method: method,
+          data: data,
+        };
+
+        const headers = oauth.toHeader(oauth.authorize(requestData));
+
+        const response = await axios({
+          method: method,
+          url: url,
+          headers: headers,
+          data: data,
+        });
+
+        return response.data;
+      } catch (error) {
+        console.log(error);
+        throw error.message;
+      }
+    };
+    const searchBus = async (sourceId, destinationId, doj) => {
+      const url = `http://api.seatseller.travel/availabletrips?source=${sourceId}&destination=${destinationId}&doj=${doj}`;
+      return sendRequest(url, "GET", null);
+    };
+    const [sourceCity, destinationCity] = await Promise.all([
+      cityModel.findOne({ name: capitalizeFirstLetter(req.body.sourceCity) }),
+      cityModel.findOne({
+        name: capitalizeFirstLetter(req.body.destinationCity),
+      }),
+    ]);
+    console.log(destinationCity);
+    const searchResponse = await searchBus(
+      sourceCity.id,
+      destinationCity.id,
+      req.body.doj
+    );
+    console.log(searchResponse);
+    return res.status(200).send(searchResponse);
+  } catch (err) {
+    console.log(err.message);
+    return res.status(500).send(err.message);
+  }
+};

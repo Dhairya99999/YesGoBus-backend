@@ -10,6 +10,9 @@ exports.add_coupon = async (req, res) => {
     //     couponCode += characters.charAt(randomIndex);
     //   }
     const couponData = await couponModel.create({
+      couponFor: req.body.couponFor,
+      title: req.body.title,
+      couponDetail: req.body.couponDetail,
       couponCode: req.body.couponCode,
       discountValue: req.body.discountValue,
     });
@@ -50,13 +53,32 @@ exports.apply_coupon_discount = async (req, res) => {
       },
       { new: true }
     );
-    return res
-      .status(200)
-      .send({
-        status: true,
-        data: { bookingData: booking },
-        message: "Discount added",
-      });
+    return res.status(200).send({
+      status: true,
+      data: { bookingData: booking },
+      message: "Discount added",
+    });
+  } catch (err) {
+    return res.status(500).send({
+      status: false,
+      data: { errorMessage: err.message },
+      message: "server error",
+    });
+  }
+};
+
+exports.get_coupon_code = async (req, res) => {
+  try {
+    console.log(req.params)
+    const couponData = await couponModel.find(
+      { couponFor: req.params.couponFor },
+      { title: 1, couponDetail: 1, couponCode: 1, discountValue: 1 }
+    );
+    return res.status(200).send({
+      status: true,
+      data: { couponData },
+      message: "coupon data fetched successfully",
+    });
   } catch (err) {
     return res.status(500).send({
       status: false,

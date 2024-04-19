@@ -3,6 +3,15 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const bookingSchema = new mongoose.Schema(
   {
+    couponFor:{
+      type:String
+    },
+    title:{
+      type:String
+    },
+    couponDetail:{
+      type:String
+    },
     couponCode: {
       type: String,
       unique: true,

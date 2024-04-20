@@ -36,7 +36,7 @@ router.post("/add_stories",async(req,res)=>{
 
 router.get("/get_stories",async (req,res)=>{
     try{
-        const data = await storiesModel.find()
+        const data = await storiesModel.find({},{title:1,image:1})
         return res.status(200).send({
             status: true,
             data: { stories: data },

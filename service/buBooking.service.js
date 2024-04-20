@@ -629,7 +629,7 @@ exports.getSrsSchedules = async (origin_id, destination_id, travel_date) => {
   ]);
   const url = `/gds/api/schedules/${srsSourceCity.id}/${srsDesctinationCity.id}/${travel_date}.json`;
   const response = await sendSrsRequest(url, "GET");
-  const key = response.data.result[0];
+  const key = response.data?.result[0];
   let resultArray = response.data.result?.slice(1).map(row => {
     const obj = {};
     key.forEach((header, index) => {

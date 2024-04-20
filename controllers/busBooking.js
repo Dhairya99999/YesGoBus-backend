@@ -149,13 +149,11 @@ exports.bookBusController = async (req, res) => {
 exports.searchCityController = async (req, res) => {
   try {
     const response = await serviceModel.searchCity(req.params.searchParam);
-    res
-      .status(response.status)
-      .send({
-        status: true,
-        cityList: response.data,
-        message: "City details retrieved",
-      });
+    res.status(response.status).send({
+      status: true,
+      cityList: response.data,
+      message: "City details retrieved",
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).send({
@@ -337,27 +335,40 @@ exports.sendCancelTicketEmail = async (req, res) => {
 
 exports.getSrsSchedulesController = async (req, res) => {
   try {
-    const { origin_id, destination_id, travel_date } = req.params
-    const response = await serviceModel.getSrsSchedules(origin_id, destination_id, travel_date);
-    const data = response?.map((item=> {
+    const { origin_id, destination_id, travel_date } = req.params;
+    const response = await serviceModel.getSrsSchedules(
+      origin_id,
+      destination_id,
+      travel_date
+    );
+    const data = response?.map((item) => {
+      const [type] = item.bus_type?.split(",").filter((type) => type.includes("AC") || type.includes("Non-AC"));
+      const price = item.show_fare_screen.split("/")[0];
       return {
-        operatorName:item.operator_service_name,
-        bus_type:item.bus_type,
-        dep_time:item.dep_time,
-        arr_time:item.arr_time,
-        duration:item.duration,
-        available_seats:item.available_seats,
-        total_seats:item.total_seats,
-        show_fare_screen:item.show_fare_screen
-      }
-    }))
-    res.status(200).send({status:true,busData:data,message:"Bus fetch successfully"});
+        operatorName: item.operator_service_name,
+        type,
+        bus_type: item.bus_type,
+        dep_time: item.dep_time,
+        arr_time: item.arr_time,
+        duration: `${item.duration.split(":")[0]}hr ${
+          item.duration.split(":")[1]
+        }mins`,
+        available_seats: item.available_seats,
+        total_seats: item.total_seats,
+        price,
+        ratings: 0,
+        avg: 0
+      };
+    });
+    res
+      .status(200)
+      .send({ status: true, busData: data, message: "Bus fetch successfully" });
   } catch (error) {
     console.log(error);
     return res.status(500).send({
       status: 500,
       message: "Internal Server Error",
       error: error,
-    })
+    });
   }
 };

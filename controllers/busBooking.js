@@ -339,7 +339,7 @@ exports.getSrsSchedulesController = async (req, res) => {
   try {
     const { origin_id, destination_id, travel_date } = req.params
     const response = await serviceModel.getSrsSchedules(origin_id, destination_id, travel_date);
-    const data = response.data.map((item=> {
+    const data = response?.map((item=> {
       return {
         operatorName:item.operator_service_name,
         bus_type:item.bus_type,
@@ -351,7 +351,7 @@ exports.getSrsSchedulesController = async (req, res) => {
         show_fare_screen:item.show_fare_screen
       }
     }))
-    res.status(200).send(response);
+    res.status(200).send({status:true,busData:data,message:"Bus fetch successfully"});
   } catch (error) {
     console.log(error);
     return res.status(500).send({

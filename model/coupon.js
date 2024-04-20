@@ -21,6 +21,9 @@ const bookingSchema = new mongoose.Schema(
     },
     discountValue:{
       type:Number
+    },
+    validTill:{
+      type:String
     }
   },
   { timestamps: true }

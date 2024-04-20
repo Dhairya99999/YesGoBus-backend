@@ -72,7 +72,7 @@ exports.get_coupon_code = async (req, res) => {
     console.log(req.params)
     const couponData = await couponModel.find(
       { couponFor: req.params.couponFor },
-      { title: 1, couponDetail: 1, couponCode: 1, discountValue: 1,image:1 }
+      { title: 1, couponDetail: 1, couponCode: 1, discountValue: 1,image:1,validTill:1 }
     );
     return res.status(200).send({
       status: true,

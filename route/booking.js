@@ -14,7 +14,7 @@ router.get("/get_user_booking", middleware.authenticateToken, bookingController.
 router.get("/get_booking",  middleware.authenticateToken, bookingController.get_booking)
 router.post("/get_bus_list",bookingController.get_bus_list)
 
-router.post("/added_stores",async(req,res)=>{
+router.post("/added_stories",async(req,res)=>{
     try{
     const data = await storiesModel.create({
         title:req.body.title,
@@ -22,7 +22,7 @@ router.post("/added_stores",async(req,res)=>{
     })
     return res.status(200).send({
         status: true,
-        data: { stores: data },
+        data: { stories: data },
         message: "packages fetch successfully",
       }); 
     }catch(err){
@@ -34,12 +34,12 @@ router.post("/added_stores",async(req,res)=>{
     }
 })
 
-router.get("/get_stores",async (req,res)=>{
+router.get("/get_stories",async (req,res)=>{
     try{
         const data = await storiesModel.find()
         return res.status(200).send({
             status: true,
-            data: { stores: data },
+            data: { stories: data },
             message: "packages fetch successfully",
           }); 
     }catch(err){

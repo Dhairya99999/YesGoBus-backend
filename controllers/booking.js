@@ -335,13 +335,11 @@ exports.get_bus_list = async (req, res) => {
         name: capitalizeFirstLetter(req.body.destinationCity),
       }),
     ]);
-    console.log(destinationCity);
     const searchResponse = await searchBus(
       sourceCity.id,
       destinationCity.id,
       req.body.doj
     );
-    console.log(searchResponse);
     return res.status(200).send(searchResponse);
   } catch (err) {
     console.log(err.message);

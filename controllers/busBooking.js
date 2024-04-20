@@ -334,3 +334,30 @@ exports.sendCancelTicketEmail = async (req, res) => {
     });
   }
 };
+
+exports.getSrsSchedulesController = async (req, res) => {
+  try {
+    const { origin_id, destination_id, travel_date } = req.params
+    const response = await serviceModel.getSrsSchedules(origin_id, destination_id, travel_date);
+    const data = response.data.map((item=> {
+      return {
+        operatorName:item.operator_service_name,
+        bus_type:item.bus_type,
+        dep_time:item.dep_time,
+        arr_time:item.arr_time,
+        duration:item.duration,
+        available_seats:item.available_seats,
+        total_seats:item.total_seats,
+        show_fare_screen:item.show_fare_screen
+      }
+    }))
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "Internal Server Error",
+      error: error,
+    })
+  }
+};

@@ -554,7 +554,31 @@ exports.getVrlBusDetails = async (searchArgs, filters) => {
 };
 
 
+const sendSrsRequest = async (url, method, data) => {
+  console.log(data);
+  try {
+    const headers = {
+      'api-key': process.env.SRS_API_KEY,
+      'Content-Type': 'application/json',
+      'Accept-Encoding': 'application/gzip',
+    };
+    const response = await axios({
+      method: method,
+      //test
+      // url: `http://gds-stg.ticketsimply.co.in/${url}`,
 
+      //live
+      url: `https://gds.ticketsimply.com/${url}`,
+
+      headers: headers,
+      data: data,
+    });
+
+    return response;
+  } catch (error) {
+    throw error.message;
+  }
+};
 
 // srs buses APIS
 exports.sendSrsRequest = async (url, method, data) => {

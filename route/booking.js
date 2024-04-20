@@ -14,7 +14,7 @@ router.get("/get_user_booking", middleware.authenticateToken, bookingController.
 router.get("/get_booking",  middleware.authenticateToken, bookingController.get_booking)
 router.post("/get_bus_list",bookingController.get_bus_list)
 
-router.post("/added_stories",async(req,res)=>{
+router.post("/add_stories",async(req,res)=>{
     try{
     const data = await storiesModel.create({
         title:req.body.title,

@@ -40,7 +40,7 @@ router.get("/get_stories",async (req,res)=>{
         return res.status(200).send({
             status: true,
             data: { stories: data },
-            message: "packages fetch successfully",
+            message: "Stories fetch successfully",
           }); 
     }catch(err){
         return res.status(500).send({

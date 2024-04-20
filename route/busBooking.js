@@ -35,5 +35,6 @@ router.post("/sendCancelTicketMessage", middleware.authenticateToken, busBooking
 router.post("/sendBookingConfirmationEmail", middleware.authenticateToken, busBookingController.sendBookingConfirmationEmail);
 router.post("/sendCancelTicketEmail", middleware.authenticateToken, busBookingController.sendCancelTicketEmail);
 router.get("/getSrsSchedules/:origin_id/:destination_id/:travel_date", busBookingController.getSrsSchedulesController);
+router.post("/get_filtered_bus",middleware.authenticateToken,busBookingController.get_shorted_bus)
 
 module.exports = router;

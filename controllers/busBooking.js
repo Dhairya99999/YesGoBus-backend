@@ -149,7 +149,7 @@ exports.bookBusController = async (req, res) => {
 exports.searchCityController = async (req, res) => {
   try {
     const response = await serviceModel.searchCity(req.params.searchParam);
-    res.status(response.status).send(response);
+    res.status(response.status).send({status:true,cityList:response,message:"Cites fetched successfully",});
   } catch (error) {
     console.log(error);
     return res.status(500).send({

@@ -611,6 +611,7 @@ exports.getSrsSeatDetailsController = async (req, res) => {
   try {
     const { schedule_id } = req.params;
     const response = await getSrsSeatDetails(schedule_id);
+    console.log(response.result.available)
     res.status(200).send(response);
   } catch (error) {
     console.log(error);
@@ -766,7 +767,7 @@ exports.getSrsFiltersController = async (req, res) => {
 exports.getSrsSchedulesController = async (req, res) => {
   try {
     const { origin_id, destination_id, travel_date } = req.params;
-    const response = await serviceModel.getSrsSchedules(
+    const response = await getSrsSchedules(
       origin_id,
       destination_id,
       travel_date
@@ -815,7 +816,7 @@ exports.getSrsSchedulesController = async (req, res) => {
 exports.get_shorted_bus = async (req, res) => {
   try {
     const { origin_id, destination_id, travel_date } = req.body;
-    const response = await serviceModel.getSrsSchedules(
+    const response = await getSrsSchedules(
       origin_id,
       destination_id,
       travel_date

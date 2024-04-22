@@ -151,7 +151,7 @@ router.post("/getVrlBusDetails", getVrlBusDetailsController);
 // SRS buses
 router.get("/getSrsCities", getSrsCitiesController);
 router.get("/getSrsSchedules/:origin_id/:destination_id/:travel_date", getSrsSchedulesController);
-router.get("/getSrsSeatDetails/:schedule_id", getSrsSeatDetailsController);
+router.get("/getSrsSeatDetails/:schedule_id/:type", getSrsSeatDetailsController);
 router.get("/getSrsOperatorSchedules/:travel_id/:travel_date", getSrsOperatorSchedulesController);
 router.get("/getSrsAvailabilities/:origin_id/:destination_id/:travel_date", getSrsAvailabilitiesController);
 router.get("/getSrsAvailability/:schedule_id", getSrsAvailabilityController);

@@ -34,7 +34,6 @@ const sendRequest = async (url, method, data) => {
       headers: headers,
       data: data,
     });
-    console.log(response)
     return response.data;
 
   } catch (error) {
@@ -381,7 +380,20 @@ exports.getAllBookings = async (userId) => {
   }
 };
 
-
+const sendVrlRequest = async (url, data) => {
+  try {
+    data.verifyCall = process.env.VERIFY_CALL;
+    const response = await axios({
+      method: "POST",
+      url: `https://itsplatform.itspl.net/api/${url}`,
+      data: data,
+    });
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error.message;
+  }
+};
 // vrl travels buses
 exports.sendVrlRequest = async (url, data) => {
   try {
@@ -555,7 +567,6 @@ exports.getVrlBusDetails = async (searchArgs, filters) => {
 
 
 const sendSrsRequest = async (url, method, data) => {
-  console.log(data);
   try {
     const headers = {
       'api-key': process.env.SRS_API_KEY,
@@ -582,7 +593,6 @@ const sendSrsRequest = async (url, method, data) => {
 
 // srs buses APIS
 exports.sendSrsRequest = async (url, method, data) => {
-  console.log(data);
   try {
     const headers = {
       'api-key': process.env.SRS_API_KEY,
@@ -629,7 +639,7 @@ exports.getSrsSchedules = async (origin_id, destination_id, travel_date) => {
   ]);
   const url = `/gds/api/schedules/${srsSourceCity.id}/${srsDesctinationCity.id}/${travel_date}.json`;
   const response = await sendSrsRequest(url, "GET");
-  const key = response.data?.result[0];
+  const key = response?.data?.result[0];
   let resultArray = response.data.result?.slice(1).map(row => {
     const obj = {};
     key.forEach((header, index) => {

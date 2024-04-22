@@ -1,4 +1,44 @@
-const serviceModel = require("../service/buBooking.service.js");
+const {
+  getCityList,
+  getAliasesCity,
+  searchBus,
+  getSeatLayout,
+  getBpDpDetails,
+  getSeatLayoutV2,
+  blockSeat,
+  getRTCFareBreakup,
+  bookSeat,
+  cancelTicketData,
+  cancelTicket,
+  getTicket,
+  checkBookedTicket,
+  busCancellationInfo,
+  getBusFilters,
+  getBusDetails,
+  bookBus,
+  searchCity,
+  updateBookings,
+  getBookingById,
+  getAllBookings,
+  //vrl buses
+  sendVrlRequest,
+  getVrlFilters,
+  getVrlBusDetails,
+
+  //srs buses
+  getSrsCities,
+  getSrsSchedules,
+  getSrsSeatDetails,
+  getSrsOperatorSchedules,
+  getSrsAvailabilities,
+  getSrsAvailability,
+  getSrsBlockSeat,
+  srsConfirmBooking,
+  getSrsBookingDetails,
+  getSrsCanCancelDetails,
+  srsCancelBooking,
+  getSrsFilters,
+} = require("../service/buBooking.service.js");
 const { sendMessage, sendMail } = require("../utils/helper.js");
 
 exports.getCityListController = async (req, res) => {
@@ -10,79 +50,200 @@ exports.getCityListController = async (req, res) => {
     return res.status(500).send({
       status: 500,
       message: "An error occurred while getting city list",
+      error: error,
+    });
+  }
+};
+
+exports.getAliasesCityController = async (req, res) => {
+  try {
+    const response = await getAliasesCity();
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "An error occurred while getting aliases city list",
+      error: error,
     });
   }
 };
 
 exports.searchBusController = async (req, res) => {
   try {
-    console.log(req.body);
-    const response = await serviceModel.searchBus(req.body);
+    const response = await searchBus(
+      req.body.sourceCity,
+      req.body.destinationCity,
+      req.body.doj
+    );
     res.status(200).send(response);
   } catch (error) {
     console.log(error);
     return res.status(500).send({
       status: 500,
       message: "An error occurred while searching bus details",
+      error: error,
     });
   }
 };
 
 exports.getSeatLayoutController = async (req, res) => {
   try {
-    const response = await serviceModel.getSeatLayout(req.body);
+    const response = await getSeatLayout(req.params.id);
     res.status(200).send(response);
   } catch (error) {
     console.log(error);
     return res.status(500).send({
       status: 500,
       message: "An error occurred while getting seat layout",
+      error: error,
+    });
+  }
+};
+
+exports.getBpDpDetailsController = async (req, res) => {
+  try {
+    const response = await getBpDpDetails(req.params.id);
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "An error occurred while getting bpdp details",
+      error: error,
+    });
+  }
+};
+
+exports.getSeatLayoutV2Controller = async (req, res) => {
+  try {
+    const response = await getSeatLayoutV2(req.body);
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "An error occurred while getting seat layout v2",
+      error: error,
     });
   }
 };
 
 exports.blockSeatController = async (req, res) => {
   try {
-    const response = await serviceModel.blockSeat(req.body);
+    const response = await blockSeat(req.body);
     res.status(200).send(response);
   } catch (error) {
     console.log(error);
     return res.status(500).send({
       status: 500,
       message: "An error occurred while blocking seat",
+      error: error,
+    });
+  }
+};
+
+exports.getRTCFareBreakupController = async (req, res) => {
+  try {
+    const response = await getRTCFareBreakup(req.params.blockKey);
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "An error occurred while getting rtcfarebreakup details",
+      error: error,
     });
   }
 };
 
 exports.bookSeatController = async (req, res) => {
   try {
-    const response = await serviceModel.bookSeat(req.params.ticketKey);
+    const response = await bookSeat(req.params.blockKey);
     res.status(200).send(response);
   } catch (error) {
     console.log(error);
     return res.status(500).send({
       status: 500,
       message: "An error occurred while booking seat",
+      error: error,
+    });
+  }
+};
+
+exports.cancelTicketDataController = async (req, res) => {
+  try {
+    const response = await cancelTicketData(req.params.tin);
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "An error occurred while getting cancel ticket data",
+      error: error,
     });
   }
 };
 
 exports.cancelTicketController = async (req, res) => {
   try {
-    const response = await serviceModel.cancelTicket(req.body);
+    const response = await cancelTicket(req.body);
     res.status(200).send(response);
   } catch (error) {
     console.log(error);
     return res.status(500).send({
       status: 500,
       message: "An error occurred while cancelling ticket",
+      error: error,
+    });
+  }
+};
+
+exports.getTicketController = async (req, res) => {
+  try {
+    const response = await getTicket(req.params.tin);
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "An error occurred while getting ticket data",
+      error: error,
+    });
+  }
+};
+
+exports.checkBookedTicketController = async (req, res) => {
+  try {
+    const response = await checkBookedTicket(req.params.blockKey);
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "An error occurred while checking booked ticket",
+      error: error,
+    });
+  }
+};
+
+exports.busCancellationInfoController = async (req, res) => {
+  try {
+    const response = await busCancellationInfo(req.params.from, req.params.to);
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "An error occurred while getting bus cancellation info",
+      error: error,
     });
   }
 };
 
 exports.getBusFiltersController = async (req, res) => {
   try {
-    const response = await serviceModel.getBusFilters(req.query);
+    const response = await getBusFilters(req.query);
     res.status(response.status).send(response);
   } catch (error) {
     console.log(error);
@@ -116,13 +277,16 @@ exports.getBusDetailsController = async (req, res) => {
     if (req.body.busPartners !== null && req.body.busPartners?.length > 0) {
       filters.busPartners = req.body.busPartners;
     }
+    if (req.body.busTypes !== null && req.body.busTypes?.length > 0) {
+      filters.busTypes = req.body.busTypes;
+    }
     if (req.body.minPrice !== null && req.body.minPrice !== undefined) {
       filters.minPrice = req.body.minPrice;
     }
     if (req.body.maxPrice !== null && req.body.maxPrice !== undefined) {
       filters.maxPrice = req.body.maxPrice;
     }
-    const response = await serviceModel.getBusDetails(searchArgs, filters);
+    const response = await getBusDetails(searchArgs, filters);
     res.status(response.status).send(response);
   } catch (error) {
     console.log(error);
@@ -135,7 +299,7 @@ exports.getBusDetailsController = async (req, res) => {
 
 exports.bookBusController = async (req, res) => {
   try {
-    const response = await serviceModel.bookBus(req.body);
+    const response = await bookBus(req.body);
     res.status(response.status).send(response);
   } catch (error) {
     console.log(error);
@@ -148,12 +312,8 @@ exports.bookBusController = async (req, res) => {
 
 exports.searchCityController = async (req, res) => {
   try {
-    const response = await serviceModel.searchCity(req.params.searchParam);
-    res.status(response.status).send({
-      status: true,
-      cityList: response.data,
-      message: "City details retrieved",
-    });
+    const response = await searchCity(req.params.searchParam);
+    res.status(response.status).send(response);
   } catch (error) {
     console.log(error);
     return res.status(500).send({
@@ -166,7 +326,7 @@ exports.searchCityController = async (req, res) => {
 exports.updateBookingsController = async (req, res) => {
   try {
     const { bookingId } = req.params;
-    const response = await serviceModel.updateBookings(bookingId, req.body);
+    const response = await updateBookings(bookingId, req.body);
     res.status(response.status).send(response);
   } catch (error) {
     console.log(error);
@@ -180,7 +340,7 @@ exports.updateBookingsController = async (req, res) => {
 exports.getBookingByIdController = async (req, res) => {
   try {
     const { bookingId } = req.params;
-    const response = await serviceModel.getBookingById(bookingId);
+    const response = await getBookingById(bookingId);
     res.status(response.status).send(response);
   } catch (error) {
     console.log(error);
@@ -194,7 +354,7 @@ exports.getBookingByIdController = async (req, res) => {
 exports.getAllBookingsController = async (req, res) => {
   try {
     const { userId } = req.params;
-    const response = await serviceModel.getAllBookings(userId);
+    const response = await getAllBookings(userId);
     res.status(response.status).send(response);
   } catch (error) {
     console.log(error);
@@ -217,12 +377,17 @@ exports.sendBookingConfirmationMessage = async (req, res) => {
       amount,
       pickUpLocation,
       to,
+      contact,
     } = req.body;
     const truncatedPickupLocation =
       pickUpLocation.length > 15
         ? pickUpLocation.substring(0, 15) + "..."
         : pickUpLocation;
-    const message = `Dear ${fullName} Your PNR: ${opPNR} Journey: ${sourceCity} to  ${destinationCity} Seat: ${seats} Amount Rs.${amount} Date: ${doj} Contact: +91${to} Pickup: ${truncatedPickupLocation} Is Booked. Thank You, Shine Gobus`;
+
+    const contactNumbers = contact.split(" ");
+    const selectedContacts = contactNumbers.slice(0, 2).join(" ");
+
+    const message = `Dear ${fullName} Your PNR: ${opPNR} Journey: ${sourceCity} to  ${destinationCity} Seat: ${seats} Amount Rs.${amount} Date: ${doj} Contact: ${selectedContacts} Pickup: ${truncatedPickupLocation} Is Booked. Thank You, Shine Gobus`;
     const templateId = process.env.BOOKING_CONFIRMATION_TEMPLATE_ID;
     const response = await sendMessage(message, to, templateId);
     res.status(200).send(response);
@@ -247,32 +412,36 @@ exports.sendBookingConfirmationEmail = async (req, res) => {
       amount,
       pickUpLocation,
       to,
+      contact,
     } = req.body;
     const message = `Dear ${fullName},
-        Your PNR: ${opPNR}
-        Journey: ${sourceCity} to  ${destinationCity}
-        Seat: ${seats}
-        Amount Rs.${amount}
-        Date: ${doj}
-        Email: ${to}
-        Pickup: ${pickUpLocation} Is Booked.
-        Thank You, Shine Gobus`;
+      Your PNR: ${opPNR}
+      Journey: ${sourceCity} to  ${destinationCity}
+      Contact: ${contact}
+      Seat: ${seats}
+      Amount Rs.${amount}
+      Date: ${doj}
+      Email: ${to}
+      Pickup: ${pickUpLocation} Is Booked.
+      Thank You, Shine Gobus`;
     const subject = "Booking Confirmation";
     await sendMail(to, subject, message);
 
     //send mail to yesgobus
     const adminMailMessage = `New Bus Booking:
-        Name: ${fullName},
-        PNR: ${opPNR}
-        Journey: ${sourceCity} to  ${destinationCity}
-        Seat: ${seats}
-        Amount Rs.${amount}
-        Date: ${doj}
-        Email: ${to}
-        Pickup: ${pickUpLocation} Is Booked.
-        Thank You, Shine Gobus`;
+      Name: ${fullName},
+      PNR: ${opPNR}
+      Contact: ${contact}
+      Journey: ${sourceCity} to  ${destinationCity}
+      Seat: ${seats}
+      Amount Rs.${amount}
+      Date: ${doj}
+      Email: ${to}
+      Pickup: ${pickUpLocation} Is Booked.
+      Thank You, Shine Gobus`;
     const adminSubject = "New Bus Booking";
-    await sendMail("yesgobus99@gmail.com", adminSubject, adminMailMessage);
+    // await sendMail("yesgobus99@gmail.com", adminSubject, adminMailMessage);
+    await sendMail("support@yesgobus.com", adminSubject, adminMailMessage);
     res.status(200).send({
       status: 200,
       message: "Email Sent",
@@ -306,17 +475,17 @@ exports.sendCancelTicketEmail = async (req, res) => {
   try {
     const { fullName, opPNR, sourceCity, destinationCity, to } = req.body;
     const messageBody = `Dear ${fullName} 
-        Your PNR: ${opPNR} 
-        Journey: ${sourceCity} to  ${destinationCity} is Cancelled. 
-        Thank You, Shine Gobus`;
+      Your PNR: ${opPNR} 
+      Journey: ${sourceCity} to  ${destinationCity} is Cancelled. 
+      Thank You, Shine Gobus`;
     const subject = "Booking Cancelled";
     await sendMail(to, subject, messageBody);
 
     //send mail to yesgobus
     const adminMessageBody = `Name: ${fullName} 
-        PNR: ${opPNR} 
-        Journey: ${sourceCity} to  ${destinationCity} is Cancelled. 
-        Thank You, Shine Gobus`;
+      PNR: ${opPNR} 
+      Journey: ${sourceCity} to  ${destinationCity} is Cancelled. 
+      Thank You, Shine Gobus`;
     const adminSubject = "Booking Cancelled";
     await sendMail("yesgobus99@gmail.com", adminSubject, adminMessageBody);
 
@@ -333,6 +502,267 @@ exports.sendCancelTicketEmail = async (req, res) => {
   }
 };
 
+//vrl travels buses
+exports.sendVrlRequestController = async (req, res) => {
+  try {
+    const url = req.params.url;
+    const response = await sendVrlRequest(url, req.body);
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "Internal Server Error",
+      error: error,
+    });
+  }
+};
+
+//vrl filters
+exports.getVrlFiltersController = async (req, res) => {
+  try {
+    const response = await getVrlFilters(req.body);
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "An error occurred while getting filters",
+      error: error,
+    });
+  }
+};
+
+exports.getVrlBusDetailsController = async (req, res) => {
+  try {
+    const searchArgs = {
+      sourceCity: req.body.sourceCity,
+      destinationCity: req.body.destinationCity,
+      doj: req.body.doj,
+    };
+    let filters = {};
+    if (
+      req.body.boardingPoints !== null &&
+      req.body.boardingPoints?.length > 0
+    ) {
+      filters.boardingPoints = req.body.boardingPoints;
+    }
+    if (
+      req.body.droppingPoints !== null &&
+      req.body.droppingPoints?.length > 0
+    ) {
+      filters.droppingPoints = req.body.droppingPoints;
+    }
+    if (req.body.busPartners !== null && req.body.busPartners?.length > 0) {
+      filters.busPartners = req.body.busPartners;
+    }
+    if (req.body.minPrice !== null && req.body.minPrice !== undefined) {
+      filters.minPrice = req.body.minPrice;
+    }
+    if (req.body.maxPrice !== null && req.body.maxPrice !== undefined) {
+      filters.maxPrice = req.body.maxPrice;
+    }
+    const response = await getVrlBusDetails(searchArgs, filters);
+    res.status(response.status).send(response);
+  } catch (error) {
+    // console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "An error occurred while getting bus details with filters",
+    });
+  }
+};
+
+//vrl travels buses
+exports.getSrsCitiesController = async (req, res) => {
+  try {
+    const response = await getSrsCities();
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "Internal Server Error",
+      error: error,
+    });
+  }
+};
+
+exports.getSrsSchedulesController = async (req, res) => {
+  try {
+    const { origin_id, destination_id, travel_date } = req.params;
+    const response = await getSrsSchedules(
+      origin_id,
+      destination_id,
+      travel_date
+    );
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "Internal Server Error",
+      error: error,
+    });
+  }
+};
+
+exports.getSrsSeatDetailsController = async (req, res) => {
+  try {
+    const { schedule_id } = req.params;
+    const response = await getSrsSeatDetails(schedule_id);
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "Internal Server Error",
+      error: error,
+    });
+  }
+};
+
+exports.getSrsOperatorSchedulesController = async (req, res) => {
+  try {
+    const { travel_id, travel_date } = req.params;
+    const response = await getSrsOperatorSchedules(travel_id, travel_date);
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "Internal Server Error",
+      error: error,
+    });
+  }
+};
+
+exports.getSrsAvailabilitiesController = async (req, res) => {
+  try {
+    const { origin_id, destination_id, travel_date } = req.params;
+    const response = await getSrsAvailabilities(
+      origin_id,
+      destination_id,
+      travel_date
+    );
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "Internal Server Error",
+      error: error,
+    });
+  }
+};
+
+exports.getSrsAvailabilityController = async (req, res) => {
+  try {
+    const { schedule_id } = req.params;
+    const response = await getSrsAvailability(schedule_id);
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "Internal Server Error",
+      error: error,
+    });
+  }
+};
+
+exports.getSrsBlockSeatController = async (req, res) => {
+  try {
+    const { schedule_id } = req.params;
+    const response = await getSrsBlockSeat(schedule_id, req.body);
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "Internal Server Error",
+      error: error,
+    });
+  }
+};
+
+exports.srsConfirmBookingController = async (req, res) => {
+  try {
+    const { ticket_number } = req.params;
+    const response = await srsConfirmBooking(ticket_number);
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "Internal Server Error",
+      error: error,
+    });
+  }
+};
+
+exports.getSrsBookingDetailsController = async (req, res) => {
+  try {
+    const { ticket_number, agent_ref_number } = req.params;
+    const response = await getSrsBookingDetails(
+      ticket_number,
+      agent_ref_number
+    );
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "Internal Server Error",
+      error: error,
+    });
+  }
+};
+
+exports.getSrsCanCancelDetailsController = async (req, res) => {
+  try {
+    const { ticket_number, seat_numbers } = req.params;
+    const response = await getSrsCanCancelDetails(ticket_number, seat_numbers);
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "Internal Server Error",
+      error: error,
+    });
+  }
+};
+
+exports.srsCancelBookingController = async (req, res) => {
+  try {
+    const { ticket_number, seat_numbers } = req.params;
+    const response = await srsCancelBooking(ticket_number, seat_numbers);
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "Internal Server Error",
+      error: error,
+    });
+  }
+};
+
+exports.getSrsFiltersController = async (req, res) => {
+  try {
+    const response = await getSrsFilters(req.query);
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "An error occurred while getting filters",
+    });
+  }
+};
+
+
 exports.getSrsSchedulesController = async (req, res) => {
   try {
     const { origin_id, destination_id, travel_date } = req.params;
@@ -346,7 +776,9 @@ exports.getSrsSchedulesController = async (req, res) => {
         ?.split(",")
         .filter((type) => type.includes("AC") || type.includes("Non-AC"));
       const price = item.show_fare_screen.split("/")[0];
+      console.log(item.id,)
       return {
+        id: item.id,
         operatorName: item.operator_service_name,
         type,
         bus_type: item.bus_type,
@@ -360,6 +792,11 @@ exports.getSrsSchedulesController = async (req, res) => {
         price,
         ratings: 0,
         avg: 0,
+        trip_id:item.trip_id,
+        schedule_id:item.op_schedule_id,
+        is_ac_bus:item.is_ac_bus,
+        allow_reschedule:item.allow_reschedule,
+        src_type:item.type
       };
     });
     res
@@ -388,7 +825,9 @@ exports.get_shorted_bus = async (req, res) => {
         ?.split(",")
         .filter((type) => type.includes("AC") || type.includes("Non-AC"));
       const price = item.show_fare_screen.split("/")[0];
+      console.log(item.id,)
       return {
+        id: item.id,
         operatorName: item.operator_service_name,
         type,
         bus_type: item.bus_type,
@@ -402,6 +841,7 @@ exports.get_shorted_bus = async (req, res) => {
         price,
         ratings: 0,
         avg: 0,
+        id: item.id,
       };
     });
     res
@@ -413,5 +853,20 @@ exports.get_shorted_bus = async (req, res) => {
       message: "Internal Server Error",
       error: err,
     });
+  }
+};
+
+exports.sendVrlRequestController = async (req, res) => {
+  try {
+    const url = req.params.url;
+    const response = await sendVrlRequest(url, req.body);
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "Internal Server Error",
+      error: error,
+    })
   }
 };

@@ -611,8 +611,29 @@ exports.getSrsSeatDetailsController = async (req, res) => {
   try {
     const { schedule_id } = req.params;
     const response = await getSrsSeatDetails(schedule_id);
-    console.log(response.result.available)
-    res.status(200).send(response);
+    const seatsArray = response.result.bus_layout.available.split(",");
+
+    // Map over the array to create the desired format
+    const formattedSeats = seatsArray.map((seat) => {
+      const [seatNumber, price] = seat.split("|");
+      return { seatNumber, price: parseFloat(price) };
+    });
+
+    // Separate the seats into upper and lower seats
+    const upperSeats = formattedSeats.filter((seat) =>
+      seat.seatNumber.endsWith("U")
+    );
+    const lowerSeats = formattedSeats.filter((seat) =>
+      seat.seatNumber.endsWith("L")
+    );
+
+  return  res
+      .status(200)
+      .send({
+        status: true,
+        seats: { upperSeats, lowerSeats },
+        message: "Seat fetched successfully",
+      });
   } catch (error) {
     console.log(error);
     return res.status(500).send({
@@ -763,7 +784,6 @@ exports.getSrsFiltersController = async (req, res) => {
   }
 };
 
-
 exports.getSrsSchedulesController = async (req, res) => {
   try {
     const { origin_id, destination_id, travel_date } = req.params;
@@ -777,7 +797,6 @@ exports.getSrsSchedulesController = async (req, res) => {
         ?.split(",")
         .filter((type) => type.includes("AC") || type.includes("Non-AC"));
       const price = item.show_fare_screen.split("/")[0];
-      console.log(item.id,)
       return {
         id: item.id,
         operatorName: item.operator_service_name,
@@ -793,11 +812,11 @@ exports.getSrsSchedulesController = async (req, res) => {
         price,
         ratings: 0,
         avg: 0,
-        trip_id:item.trip_id,
-        schedule_id:item.op_schedule_id,
-        is_ac_bus:item.is_ac_bus,
-        allow_reschedule:item.allow_reschedule,
-        src_type:item.type
+        trip_id: item.trip_id,
+        schedule_id: item.op_schedule_id,
+        is_ac_bus: item.is_ac_bus,
+        allow_reschedule: item.allow_reschedule,
+        src_type: item.type,
       };
     });
     res
@@ -826,7 +845,6 @@ exports.get_shorted_bus = async (req, res) => {
         ?.split(",")
         .filter((type) => type.includes("AC") || type.includes("Non-AC"));
       const price = item.show_fare_screen.split("/")[0];
-      console.log(item.id,)
       return {
         id: item.id,
         operatorName: item.operator_service_name,
@@ -868,6 +886,6 @@ exports.sendVrlRequestController = async (req, res) => {
       status: 500,
       message: "Internal Server Error",
       error: error,
-    })
+    });
   }
 };

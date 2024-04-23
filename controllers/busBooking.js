@@ -325,8 +325,9 @@ exports.bookBusController = async (req, res) => {
     const boardingPoint = pickupExtractedData.filter(
       (item) => item.id === req.body.boarding_point
     );
-    const seats = req.body.seats.map((seat) => seat.seatNumber).join(",");
-    const prices = req.body.seats.map((seat) => seat.price);
+    const userSeats = Json.parse(req.body.seats)
+    const seats = userSeats.map((seat) => seat.seatNumber).join(",");
+    const prices = userSeats.map((seat) => seat.price);
 
     // Calculate total price
     const totalPrice = prices.reduce((total, price) => total + price, 0);

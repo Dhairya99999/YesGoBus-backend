@@ -308,11 +308,28 @@ exports.bookBusController = async (req, res) => {
     boarding_point,
     droping_point,} = req.body
     const response = await getSrsSeatDetails(bus_id);
+    const pickupStages =
+        response.result.bus_layout.boarding_stages.split("~");
+
+      // Initialize an empty array to store the extracted data
+      const pickupExtractedData = pickupStages.map((stage) => {
+        const [id, pickupTime, pickupTitle, pickupAdd] = stage.split("|");
+        return {
+          id,
+          pickupTime,
+          pickupTitle,
+          pickupPoint: pickupAdd,
+          pickupAdd,
+        };
+      });
+
+      const dropStages = response.result.bus_layout.dropoff_stages.split("|");
     // const response = await bookBus(req.body);
     // res.status(response.status).send(response);
     const bookingData = await busBookingModel.create({ 
-
+      
     })
+    return res.status(201).send({status:true,data:{},message:"Price Booking done"})
   } catch (error) {
     console.log(error);
     return res.status(500).send({

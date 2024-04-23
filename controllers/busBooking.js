@@ -628,15 +628,16 @@ exports.getSrsSeatDetailsController = async (req, res) => {
 
       // Separate the seats into upper and lower seats
       const upperSeats = formattedSeats.filter((seat) =>
-        seat.seatNumber.endsWith("U")
+        seat.seatNumber.endsWith("U") || seat.seatNumber.startsWith("SU") || seat.seatNumber.startsWith("DU")
       );
       const lowerSeats = formattedSeats.filter((seat) =>
-        seat.seatNumber.endsWith("L")
+        seat.seatNumber.endsWith("L") || seat.seatNumber.startsWith("DL") || seat.seatNumber.startsWith("SL")
       );
 
       return res.status(200).send({
         status: true,
         seats: { upperSeats, lowerSeats },
+        response,
         message: "Seat fetched successfully",
       });
     }
@@ -917,7 +918,11 @@ exports.get_shorted_bus = async (req, res) => {
         price,
         ratings: 0,
         avg: 0,
-        id: item.id,
+        trip_id: item.trip_id,
+        schedule_id: item.op_schedule_id,
+        is_ac_bus: item.is_ac_bus,
+        allow_reschedule: item.allow_reschedule,
+        src_type: item.type,
       };
     });
     res

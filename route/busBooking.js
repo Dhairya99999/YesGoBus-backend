@@ -48,46 +48,10 @@ const {
 
 const router = express.Router();
 
-// router.get("/searchCity/:searchParam", searchCityController);
-// router.post("/searchBus", searchBusController);
-// router.post("/getSeatLayout", getSeatLayoutController);
-// router.get("/getFilters", getBusFiltersController);
-// router.post("/getBusDetails", getBusDetailsController);
-
-// router.use(authenticateUser);
-
-// //Zuelpay API routes
-// router.get("/getCityList", getCityListController);
-
-// router.post("/blockSeat", blockSeatController);
-// router.get("/bookSeat/:ticketKey", bookSeatController);
-// router.post("/cancelTicket", cancelTicketController);
-
-
-
-// //booking routes
-// router.post("/bookBus", bookBusController);
-// router.patch("/updateBooking/:bookingId", updateBookingsController);
-// router.get("/getBookingById/:bookingId", getBookingByIdController);
-// router.get("/getAllBookings/:userId", getAllBookingsController);
-
-// //message and email
-// router.post("/sendBookingConfirmationMessage", sendBookingConfirmationMessage);
-// router.post("/sendCancelTicketMessage", sendCancelTicketMessage);
-// router.post("/sendBookingConfirmationEmail", sendBookingConfirmationEmail);
-// router.post("/sendCancelTicketEmail", sendCancelTicketEmail);
-
 
 //search city api
 router.get("/searchCity/:searchParam", searchCityController);
 
-
-
-// router.use(authenticateUser);
-
-//seatseller apis 
-
-//location routes
 router.get("/getCityList", getCityListController);
 router.get("/getAliasesCity", getAliasesCityController);
 

@@ -313,8 +313,13 @@ exports.bookBusController = async (req, res) => {
 exports.searchCityController = async (req, res) => {
   try {
     const response = await searchCity(req.params.searchParam);
-    res.status(response.status).send(response);
-    return res.status(response.status).send({status:true,cityList:response.data,message:"City details retrieved",})
+    return res
+      .status(200)
+      .send({
+        status: true,
+        cityList: response.data,
+        message: "City details retrieved",
+      });
   } catch (error) {
     console.log(error);
     return res.status(500).send({
@@ -671,7 +676,7 @@ exports.getSrsSeatDetailsController = async (req, res) => {
         const dropTime = stage[1];
         const dropPoint = stage[5];
         const dropTitle = stage[2];
-        const dropAdd = stage[3]; 
+        const dropAdd = stage[3];
 
         // Push the extracted data into the array
         dropExtractedData.push({ dropTime, dropPoint, dropTitle, dropAdd });

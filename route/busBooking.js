@@ -87,7 +87,7 @@ router.get("/busCancellationInfo/:from/:to", busCancellationInfoController);
 
 // bookings data
 router.post("/bookBus",middleware.authenticateToken, bookBusController);
-router.patch("/updateBooking/:bookingId", updateBookingsController);
+router.post("/updateBooking/:bookingId",middleware.authenticateToken, updateBookingsController);
 router.get("/getBookingById/:bookingId", getBookingByIdController);
 router.get("/getAllBookings/:userId", getAllBookingsController);
 

@@ -325,7 +325,7 @@ exports.bookBusController = async (req, res) => {
     const boardingPoint = pickupExtractedData.filter(
       (item) => item.id === req.body.boarding_point
     );
-    const userSeats = Json.parse(req.body.seats)
+    const userSeats = JSON.parse(req.body.seats)
     const seats = userSeats.map((seat) => seat.seatNumber).join(",");
     const prices = userSeats.map((seat) => seat.price);
 

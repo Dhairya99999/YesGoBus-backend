@@ -39,7 +39,7 @@ const {
   srsCancelBooking,
   getSrsFilters,
 } = require("../service/buBooking.service.js");
-const busBookingModel = require("../model/busBooking.js")
+const busBookingModel = require("../model/busBooking.js");
 const { sendMessage, sendMail } = require("../utils/helper.js");
 
 exports.getCityListController = async (req, res) => {
@@ -300,36 +300,91 @@ exports.getBusDetailsController = async (req, res) => {
 
 exports.bookBusController = async (req, res) => {
   try {
-    const {bus_id,
-    origin_id,
-    destination_id,
-    travel_date,
-    seats,
-    boarding_point,
-    droping_point,} = req.body
-    const response = await getSrsSeatDetails(bus_id);
-    const pickupStages =
-        response.result.bus_layout.boarding_stages.split("~");
+    const response = await getSrsSeatDetails(req.body.bus_id);
+    const pickupStages = response.result.bus_layout.boarding_stages.split("~");
 
-      // Initialize an empty array to store the extracted data
-      const pickupExtractedData = pickupStages.map((stage) => {
-        const [id, pickupTime, pickupTitle, pickupAdd] = stage.split("|");
-        return {
-          id,
-          pickupTime,
-          pickupTitle,
-          pickupPoint: pickupAdd,
-          pickupAdd,
-        };
-      });
+    // Initialize an empty array to store the extracted data
+    const pickupExtractedData = pickupStages.map((stage) => {
+      const [id, time, location] = stage.split("|");
+      return {
+        id,
+        time,
+        location,
+      };
+    });
 
-      const dropStages = response.result.bus_layout.dropoff_stages.split("|");
-    // const response = await bookBus(req.body);
-    // res.status(response.status).send(response);
-    const bookingData = await busBookingModel.create({ 
-      
-    })
-    return res.status(201).send({status:true,data:{},message:"Price Booking done"})
+    const dropStages = response.result.bus_layout.dropoff_stages.split("|");
+    const droppingPoint =
+      dropStages[0] === req.body.droping_point
+        ? {
+            id: dropStages[0],
+            time: dropStages[1],
+            location: dropStages[5],
+          }
+        : {};
+    const boardingPoint = pickupExtractedData.filter(
+      (item) => item.id === req.body.boarding_point
+    );
+    const seats = req.body.seats.map((seat) => seat.seatNumber).join(",");
+    const prices = req.body.seats.map((seat) => seat.price);
+
+    // Calculate total price
+    const totalPrice = prices.reduce((total, price) => total + price, 0);
+
+    const currentDate = new Date(); // Current date
+
+    // Split time strings into hours and minutes
+    const [pickUpHours, pickUpMinutes] = boardingPoint[0].time
+      .split(":")
+      .map(Number);
+    const [reachHours, reachMinutes] = droppingPoint.time
+      .split(":")
+      .map(Number);
+
+    // Set the time components for the current date
+    currentDate.setHours(pickUpHours, pickUpMinutes, 0, 0);
+
+    // Create Date objects for pick-up time and reach time
+    const pickUpDate = new Date(currentDate);
+    const reachDate = new Date(currentDate);
+
+    // Set the time components for pick-up and reach times
+    pickUpDate.setHours(pickUpHours, pickUpMinutes, 0, 0);
+    reachDate.setHours(reachHours, reachMinutes, 0, 0);
+
+    // Calculate the difference in milliseconds
+    const timeDifference = reachDate - pickUpDate;
+
+    // Convert milliseconds to hours and minutes
+    const totalHours = Math.floor(timeDifference / (1000 * 60 * 60));
+    const totalMinutes = Math.floor(
+      (timeDifference % (1000 * 60 * 60)) / (1000 * 60)
+    );
+
+    const bookingData = await busBookingModel.create({
+      userId: req.user,
+      boardingPoint: boardingPoint[0],
+      droppingPoint,
+      sourceCity: req.body.origin_id,
+      destinationCity: req.body.destination_id,
+      doj: req.body.travel_date,
+      pickUpTime: boardingPoint[0].time,
+      reachTime: droppingPoint.time,
+      selectedSeats: seats,
+      totalAmount: totalPrice,
+      busOperator: response.result.service_name,
+      busType: response.result.bus_type,
+      totalDuration: `${totalHours}:${totalMinutes}`,
+    });
+    return res.status(201).send({
+      status: true,
+      bookingData: {
+        bookingId: bookingData._id,
+        totalAmount: bookingData.totalAmount,
+        totalDuration: bookingData.totalDuration,
+      },
+      message: "Pre-Booking done",
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).send({
@@ -342,13 +397,11 @@ exports.bookBusController = async (req, res) => {
 exports.searchCityController = async (req, res) => {
   try {
     const response = await searchCity(req.params.searchParam);
-    return res
-      .status(200)
-      .send({
-        status: true,
-        cityList: response.data,
-        message: "City details retrieved",
-      });
+    return res.status(200).send({
+      status: true,
+      cityList: response.data,
+      message: "City details retrieved",
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).send({
@@ -362,8 +415,19 @@ exports.searchCityController = async (req, res) => {
 exports.updateBookingsController = async (req, res) => {
   try {
     const { bookingId } = req.params;
-    const response = await updateBookings(bookingId, req.body);
-    res.status(response.status).send(response);
+    const passenger = JSON.parse(req.body.passenger)
+    const blockSeatPaxDetails = passenger.map((item)=>{
+      return{
+        age: item.age,
+        name: item.fullName,
+        sex: item.gender,
+        fare: 0,
+        totalFareWithTaxes: 0,
+        ladiesSeat: item.seatType,
+      }
+    })
+    const response = await updateBookings(bookingId, {cancellationPolicy:req.body.free_cancellation,customerPhone:req.body.mobile_number,emergencyPhNumber:req.body.alternate_mobile_number,blockSeatPaxDetails});
+    res.status(response.status).send({status:true,booking_data:{},message:"Seat Booked successfully"});
   } catch (error) {
     console.log(error);
     return res.status(500).send({
@@ -656,11 +720,17 @@ exports.getSrsSeatDetailsController = async (req, res) => {
       });
 
       // Separate the seats into upper and lower seats
-      const upperSeats = formattedSeats.filter((seat) =>
-        seat.seatNumber.endsWith("U") || seat.seatNumber.startsWith("SU") || seat.seatNumber.startsWith("DU")
+      const upperSeats = formattedSeats.filter(
+        (seat) =>
+          seat.seatNumber.endsWith("U") ||
+          seat.seatNumber.startsWith("SU") ||
+          seat.seatNumber.startsWith("DU")
       );
-      const lowerSeats = formattedSeats.filter((seat) =>
-        seat.seatNumber.endsWith("L") || seat.seatNumber.startsWith("DL") || seat.seatNumber.startsWith("SL")
+      const lowerSeats = formattedSeats.filter(
+        (seat) =>
+          seat.seatNumber.endsWith("L") ||
+          seat.seatNumber.startsWith("DL") ||
+          seat.seatNumber.startsWith("SL")
       );
 
       return res.status(200).send({
@@ -690,8 +760,17 @@ exports.getSrsSeatDetailsController = async (req, res) => {
         status: true,
         seats: {
           pickupPoints: pickupExtractedData,
-          dropPoints: [{ id:dropStages[0],dropTime:dropStages[1], dropPoint:dropStages[5], dropTitle:dropStages[2], dropAdd:dropStages[3] }],
+          dropPoints: [
+            {
+              id: dropStages[0],
+              dropTime: dropStages[1],
+              dropPoint: dropStages[5],
+              dropTitle: dropStages[2],
+              dropAdd: dropStages[3],
+            },
+          ],
         },
+        response,
         message: "Location fetched successfully",
       });
     }

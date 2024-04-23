@@ -3,18 +3,21 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const boardingPointSchema = new Schema({
+  _id:false,
   id: String,
   location: String,
   time: String,
 });
 
 const droppingPointSchema = new Schema({
+  _id:false,
   id: String,
   location: String,
   time: String,
 });
 
 const seatDetailsSchema = new Schema({
+  _id:false,
   age: String,
   name: String,
   seatNbr: String,
@@ -66,6 +69,7 @@ const busBookingSchema = new Schema({
   cancellationCharges: String,
   pickUpTime: String,
   reachTime: String,
+  totalDuration:String,
   cancellationPolicy:String,
   sentBookingRemainer: {
     type: String,

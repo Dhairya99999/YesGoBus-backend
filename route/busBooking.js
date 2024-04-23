@@ -48,7 +48,7 @@ const {
 
 const router = express.Router();
 
-
+const middleware = require("../middleware/authenticateUser");
 //search city api
 router.get("/searchCity/:searchParam", searchCityController);
 
@@ -86,7 +86,7 @@ router.get("/busCancellationInfo/:from/:to", busCancellationInfoController);
 // yesgobus APIs
 
 // bookings data
-router.post("/bookBus", bookBusController);
+router.post("/bookBus",middleware.authenticateToken, bookBusController);
 router.patch("/updateBooking/:bookingId", updateBookingsController);
 router.get("/getBookingById/:bookingId", getBookingByIdController);
 router.get("/getAllBookings/:userId", getAllBookingsController);

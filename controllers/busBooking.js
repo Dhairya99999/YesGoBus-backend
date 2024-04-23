@@ -39,6 +39,7 @@ const {
   srsCancelBooking,
   getSrsFilters,
 } = require("../service/buBooking.service.js");
+const busBookingModel = require("../model/busBooking.js")
 const { sendMessage, sendMail } = require("../utils/helper.js");
 
 exports.getCityListController = async (req, res) => {
@@ -299,8 +300,19 @@ exports.getBusDetailsController = async (req, res) => {
 
 exports.bookBusController = async (req, res) => {
   try {
-    const response = await bookBus(req.body);
-    res.status(response.status).send(response);
+    const {bus_id,
+    origin_id,
+    destination_id,
+    travel_date,
+    seats,
+    boarding_point,
+    droping_point,} = req.body
+    const response = await getSrsSeatDetails(bus_id);
+    // const response = await bookBus(req.body);
+    // res.status(response.status).send(response);
+    const bookingData = await busBookingModel.create({ 
+
+    })
   } catch (error) {
     console.log(error);
     return res.status(500).send({
@@ -623,7 +635,7 @@ exports.getSrsSeatDetailsController = async (req, res) => {
       // Map over the array to create the desired format
       const formattedSeats = seatsArray.map((seat) => {
         const [seatNumber, price] = seat.split("|");
-        return { seatNumber, price: parseFloat(price) };
+        return { seatNumber, price: parseFloat(price), seatType: "" };
       });
 
       // Separate the seats into upper and lower seats
@@ -637,7 +649,6 @@ exports.getSrsSeatDetailsController = async (req, res) => {
       return res.status(200).send({
         status: true,
         seats: { upperSeats, lowerSeats },
-        response,
         message: "Seat fetched successfully",
       });
     }
@@ -646,50 +657,25 @@ exports.getSrsSeatDetailsController = async (req, res) => {
         response.result.bus_layout.boarding_stages.split("~");
 
       // Initialize an empty array to store the extracted data
-      const pickupExtractedData = [];
-
-      // Loop through each stage and extract the required information
-      pickupStages.forEach((stage) => {
-        const data = stage.split("|"); // Split the stage by '|'
-        const pickupTime = data[1];
-        const pickupPoint = data[5].split(" ")[0]; // Extract the main location name
-        const pickupTitle = data[2];
-        const pickupAdd = data[3];
-
-        // Push the extracted data into the array
-        pickupExtractedData.push({
+      const pickupExtractedData = pickupStages.map((stage) => {
+        const [id, pickupTime, pickupTitle, pickupAdd] = stage.split("|");
+        return {
+          id,
           pickupTime,
-          pickupPoint,
           pickupTitle,
+          pickupPoint: pickupAdd,
           pickupAdd,
-        });
+        };
       });
-
-      console.log(pickupExtractedData);
 
       const dropStages = response.result.bus_layout.dropoff_stages.split("|");
-
-      // Initialize an empty array to store the extracted data
-      const dropExtractedData = [];
-      dropStages.forEach((stage) => {
-        // Extract the required information
-        //const data = stage.split("|");
-        const dropTime = stage[1];
-        const dropPoint = stage[5];
-        const dropTitle = stage[2];
-        const dropAdd = stage[3];
-
-        // Push the extracted data into the array
-        dropExtractedData.push({ dropTime, dropPoint, dropTitle, dropAdd });
-      });
-      console.log(dropExtractedData, dropStages);
       return res.status(200).send({
         status: true,
         seats: {
           pickupPoints: pickupExtractedData,
-          dropPoints: dropExtractedData,
+          dropPoints: [{ id:dropStages[0],dropTime:dropStages[1], dropPoint:dropStages[5], dropTitle:dropStages[2], dropAdd:dropStages[3] }],
         },
-        message: "Seat fetched successfully",
+        message: "Location fetched successfully",
       });
     }
   } catch (error) {

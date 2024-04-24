@@ -43,7 +43,7 @@ const {
     getSrsCanCancelDetailsController,
     srsCancelBookingController,
     getSrsFiltersController,
-
+    srsSeatDetails,
 } = require("../controllers/busBooking.js");
 
 const router = express.Router();
@@ -116,6 +116,7 @@ router.post("/getVrlBusDetails", getVrlBusDetailsController);
 router.get("/getSrsCities", getSrsCitiesController);
 router.get("/getSrsSchedules/:origin_id/:destination_id/:travel_date", getSrsSchedulesController);
 router.get("/getSrsSeatDetails/:schedule_id/:type", getSrsSeatDetailsController);
+router.get("/srsSeatDetails",srsSeatDetails)
 router.get("/getSrsOperatorSchedules/:travel_id/:travel_date", getSrsOperatorSchedulesController);
 router.get("/getSrsAvailabilities/:origin_id/:destination_id/:travel_date", getSrsAvailabilitiesController);
 router.get("/getSrsAvailability/:schedule_id", getSrsAvailabilityController);

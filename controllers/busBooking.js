@@ -707,7 +707,20 @@ exports.getSrsSchedulesController = async (req, res) => {
     });
   }
 };
-
+exports.srsSeatDetails = async (req, res) => {
+  try {
+    const { schedule_id } = req.params;
+    const response = await getSrsSeatDetails(schedule_id);
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "Internal Server Error",
+      error: error,
+    });
+  }
+};
 exports.getSrsSeatDetailsController = async (req, res) => {
   try {
     const { schedule_id } = req.params;

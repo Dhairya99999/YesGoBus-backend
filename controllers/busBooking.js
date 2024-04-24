@@ -641,6 +641,7 @@ exports.getVrlBusDetailsController = async (req, res) => {
       destinationCity: req.body.destinationCity,
       doj: req.body.doj,
     };
+    console.log(sourceCity,destinationCity,doj)
     let filters = {};
     if (
       req.body.boardingPoints !== null &&
@@ -667,7 +668,7 @@ exports.getVrlBusDetailsController = async (req, res) => {
     res.status(response.status).send(response);
   } catch (error) {
     // console.log(error);
-    return res.status(500).send({
+    return res.status(500).send({ 
       status: 500,
       message: "An error occurred while getting bus details with filters",
     });

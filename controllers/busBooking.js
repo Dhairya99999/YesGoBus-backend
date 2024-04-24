@@ -727,9 +727,9 @@ exports.getSrsSeatDetailsController = async (req, res) => {
     const { schedule_id } = req.params;
     const response = await getSrsSeatDetails(schedule_id);
     if (req.params.type === "seat") {
-      const seatsArray = response.result.bus_layout.available.split(",");
+      const seatsArray = response?.result?.bus_layout?.available.split(",");
       // Map over the array to create the desired format
-      const formattedSeats = seatsArray.map((seat) => {
+      const formattedSeats = seatsArray?.map((seat) => {
         const [seatNumber, price] = seat.split("|");
         return { seatNumber, price: parseFloat(price), seatType: "" };
       });
@@ -756,10 +756,10 @@ exports.getSrsSeatDetailsController = async (req, res) => {
     }
     if (req.params.type === "location") {
       const pickupStages =
-        response.result.bus_layout.boarding_stages.split("~");
+        response.result?.bus_layout?.boarding_stages?.split("~");
 
       // Initialize an empty array to store the extracted data
-      const pickupExtractedData = pickupStages.map((stage) => {
+      const pickupExtractedData = pickupStages?.map((stage) => {
         const [id, pickupTime, pickupTitle, pickupAdd] = stage.split("|");
         return {
           id,
@@ -771,7 +771,7 @@ exports.getSrsSeatDetailsController = async (req, res) => {
       });
 
       const dropStages = response.result.bus_layout.dropoff_stages.split("|");
-      return res.status(200).send({
+      return res.status(200).send({ 
         status: true,
         seats: {
           pickupPoints: pickupExtractedData,

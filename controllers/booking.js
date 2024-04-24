@@ -292,8 +292,8 @@ exports.get_bus_list = async (req, res) => {
       try {
         const oauth = OAuth({
           consumer: {
-            key: "xXpBse9xTp16PQKLtHP09rVzXyywLd",
-            secret: "xNC5D3MrqstrP44ehnvssUjka5gywK",
+            key: process.env.CUSTOMER_KEY,
+            secret: process.env.CUSTOMER_SECRET,
           },
           signature_method: "HMAC-SHA1",
           hash_function(base_string, key) {

@@ -481,7 +481,6 @@ exports.getVrlBusDetails = async (searchArgs, filters) => {
       VrlCity.findOne({ CityName: capitalizeFirstLetter(searchArgs.sourceCity) }),
       VrlCity.findOne({ CityName: capitalizeFirstLetter(searchArgs.destinationCity) }),
     ]);
-
     const dateParts = searchArgs.doj.split('-');
     const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
 
@@ -490,7 +489,7 @@ exports.getVrlBusDetails = async (searchArgs, filters) => {
       toID: parseInt(vrlDesctinationCity.CityID),
       journeyDate: formattedDate.toString(),
     }
-
+    console.log(requestBody)
     let searchResponse = await sendVrlRequest("GetAvailableRoutes", requestBody);
     searchResponse = searchResponse.data.AllRouteBusLists;
     searchResponse = searchResponse.map((route) => {

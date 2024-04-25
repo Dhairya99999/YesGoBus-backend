@@ -1048,3 +1048,22 @@ exports.sendVrlRequestController = async (req, res) => {
     });
   }
 };
+
+exports.srsSchedulesController = async (req, res) => {
+  try {
+    const { origin_id, destination_id, travel_date } = req.params;
+    const response = await getSrsSchedules(
+      origin_id,
+      destination_id,
+      travel_date
+    );
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "Internal Server Error",
+      error: error,
+    });
+  }
+};

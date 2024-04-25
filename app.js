@@ -25,10 +25,29 @@ const busBookingRoute = require("./route/busBooking")
 const app = express();
 
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
+  const allowedOrigins = ['https://yesgobus-web-seat.onrender.com'];
+  const origin = req.headers.origin;
+  
+  // Allow requests from any origin if the request does not include credentials
+  if (!req.headers['authorization']) {
+    res.header("Access-Control-Allow-Origin", "*");
+  } else if (allowedOrigins.includes(origin)) {
+    // Allow requests from specified origins if the request includes credentials
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  
   res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
   res.header("Access-Control-Allow-Headers", "Content-Type, authorization");
-  next();
+  res.header("Access-Control-Allow-Credentials", "true"); // Allow credentials
+  
+  // Check if this is a preflight request
+  if (req.method === "OPTIONS") {
+    // Respond with 200 OK and the appropriate headers
+    res.status(200).end();
+  } else {
+    // Pass control to the next middleware function
+    next();
+  }
 });
 
 app.use(logger("dev"));

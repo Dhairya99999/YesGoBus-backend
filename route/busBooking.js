@@ -44,6 +44,7 @@ const {
     srsCancelBookingController,
     getSrsFiltersController,
     srsSeatDetails,
+    srsSchedulesController,
 } = require("../controllers/busBooking.js");
 const busModel = require("../model/bus.js")
 const router = express.Router();
@@ -115,6 +116,7 @@ router.post("/getVrlBusDetails", getVrlBusDetailsController);
 // SRS buses
 router.get("/getSrsCities", getSrsCitiesController);
 router.get("/getSrsSchedules/:origin_id/:destination_id/:travel_date", getSrsSchedulesController);
+router.get("/srcSchedules/:origin_id/:destination_id/:travel_date",srsSchedulesController)
 router.get("/getSrsSeatDetails/:schedule_id/:type", getSrsSeatDetailsController);
 router.get("/srsSeatDetails/:schedule_id",srsSeatDetails)
 router.get("/getSrsOperatorSchedules/:travel_id/:travel_date", getSrsOperatorSchedulesController);
@@ -126,41 +128,5 @@ router.get("/getSrsBookingDetails/:ticket_number/:agent_ref_number", getSrsBooki
 router.get("/getSrsCanCancelDetails/:ticket_number/:seat_numbers", getSrsCanCancelDetailsController);
 router.get("/srsCancelBooking/:ticket_number/:seat_numbers", srsCancelBookingController);
 router.get("/getSrsFilters", getSrsFiltersController);
-
-router.post("/add_bus",async(req,res)=>{
-    try{
-        const data = await busModel.create({
-            bus_id:req.body.bus_id
-        })
-        return res.status(200).send({
-            status: true,
-            data: { data },
-            message: "packages fetch successfully",
-          }); 
-        }catch(err){
-            return res.status(500).send({
-                status: false,
-                data: { errorMessage: err.message },
-                message: "server error",
-              });
-        }
-})
-
-router.get("/get_bus/:bus_id",async(req,res)=>{
-    try{
-        const bus = await busModel.findOne({bus_id:req.params.bus_id})
-        return res.status(200).send({
-            status: true,
-            data: { bus },
-            message: "packages fetch successfully",
-          }); 
-    }catch(err){
-        return res.status(500).send({
-            status: false,
-            data: { errorMessage: err.message },
-            message: "server error",
-          }); 
-    }
-})
 
 module.exports = router;

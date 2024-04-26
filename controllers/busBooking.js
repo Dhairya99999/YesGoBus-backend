@@ -326,11 +326,7 @@ exports.bookBusController = async (req, res) => {
       (item) => item.id === req.body.boarding_point
     );
     const userSeats = JSON.parse(req.body.seats)
-    const seats = userSeats.map((seat) => seat.seatNumber).join(",");
-    const prices = userSeats.map((seat) => seat.price);
-
-    // Calculate total price
-    const totalPrice = prices.reduce((total, price) => total + price, 0);
+    const seats = userSeats.map((seat) => seat.seatId).join(",");
 
     const currentDate = new Date(); // Current date
 
@@ -372,7 +368,7 @@ exports.bookBusController = async (req, res) => {
       pickUpTime: boardingPoint[0].time,
       reachTime: droppingPoint.time,
       selectedSeats: seats,
-      totalAmount: totalPrice,
+      totalAmount: req.body.totalFare,
       busOperator: response.result.service_name,
       busType: response.result.bus_type,
       totalDuration: `${totalHours}:${totalMinutes}`,

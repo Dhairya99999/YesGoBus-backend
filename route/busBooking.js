@@ -154,7 +154,6 @@ router.get(
 router.get("/getSrsFilters", getSrsFiltersController);
 router.post("/add_bus", async (req, res) => {
   try {
-    console.log(req.body);
     const data = await busModel.create({
       seats: req.body.selectedSeats,
       bus_id: req.body.bus_id,
@@ -162,7 +161,7 @@ router.post("/add_bus", async (req, res) => {
     });
     return res.status(200).send({
       status: true,
-      data: { data },
+      data,
       message: "Bus added successfully",
     });
   } catch (err) {
@@ -176,7 +175,7 @@ router.post("/add_bus", async (req, res) => {
 
 router.get("/get_bus/:bus_id", async (req, res) => {
   try {
-    const busData = await busModel.findOne({ bus_id: req.params.bus_id });
+    const busData = await busModel.findOne({ _id: req.params.bus_id });
     return res.status(200).send({
       status: true,
       data: { busData },
@@ -189,6 +188,23 @@ router.get("/get_bus/:bus_id", async (req, res) => {
       message: "server error",
     });
   }
+});
+
+router.post("/delete_bus", async (req, res) => {
+    try{
+        const data = await busModel.deleteOne({_id:req.body.bus_id})
+        return res.status(200).send({
+            status: true,
+            data: { data },
+            message: "Bus deleted successfully",
+          });
+    }catch (err) {
+        return res.status(500).send({
+          status: false,
+          data: { errorMessage: err.message },
+          message: "server error",
+        });
+}
 });
 
 module.exports = router;

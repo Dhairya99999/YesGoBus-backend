@@ -5,7 +5,10 @@ const busSchema = new mongoose.Schema(
      bus_id:{
         type:String
      },
-     seat:[Object]
+     seats:[Object],
+     totalFare:{
+      type:Number
+     }
     }
   );
   

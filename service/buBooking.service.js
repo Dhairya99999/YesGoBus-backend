@@ -34,6 +34,7 @@ const sendRequest = async (url, method, data) => {
       headers: headers,
       data: data,
     });
+    console.log(response.data)
     return response.data;
 
   } catch (error) {
@@ -388,6 +389,7 @@ const sendVrlRequest = async (url, data) => {
       url: `https://itsplatform.itspl.net/api/${url}`,
       data: data,
     });
+    console.log(response)
     return response.data;
   } catch (error) {
     console.log(error);

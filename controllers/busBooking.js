@@ -686,24 +686,24 @@ exports.getSrsCitiesController = async (req, res) => {
   }
 };
 
-exports.getSrsSchedulesController = async (req, res) => {
-  try {
-    const { origin_id, destination_id, travel_date } = req.params;
-    const response = await getSrsSchedules(
-      origin_id,
-      destination_id,
-      travel_date
-    );
-    res.status(200).send(response);
-  } catch (error) {
-    console.log(error);
-    return res.status(500).send({
-      status: 500,
-      message: "Internal Server Error",
-      error: error,
-    });
-  }
-};
+// exports.getSrsSchedulesController = async (req, res) => {
+//   try {
+//     const { origin_id, destination_id, travel_date } = req.params;
+//     const response = await getSrsSchedules(
+//       origin_id,
+//       destination_id,
+//       travel_date
+//     );
+//     res.status(200).send(response);
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).send({
+//       status: 500,
+//       message: "Internal Server Error",
+//       error: error,
+//     });
+//   }
+// };
 exports.srsSeatDetails = async (req, res) => {
   try {
     const { schedule_id } = req.params;
@@ -943,7 +943,10 @@ exports.getSrsSchedulesController = async (req, res) => {
       destination_id,
       travel_date
     );
-    const data = response?.map((item) => {
+    const bus = response.filter(
+      (bus) => bus?.status === "New" || bus.status === "Update"
+    )
+    const data = bus?.map((item) => {
       const [type] = item.bus_type
         ?.split(",")
         .filter((type) => type.includes("AC") || type.includes("Non-AC"));

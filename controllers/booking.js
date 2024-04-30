@@ -205,7 +205,7 @@ exports.customer_sport = async (req, res) => {
       userId: req.user,
     });
 
-    return res.status(201).send({
+    return res.status(201).send({ 
       status: true,
       data: { sportData },
       message: "Query has been raised our team will connect you soon",

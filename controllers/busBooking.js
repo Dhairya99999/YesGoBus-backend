@@ -297,7 +297,7 @@ exports.getBusDetailsController = async (req, res) => {
     });
   }
 };
-
+//getUserBooking
 exports.bookBusController = async (req, res) => {
   try {
     const response = await getSrsSeatDetails(req.body.bus_id);
@@ -325,7 +325,7 @@ exports.bookBusController = async (req, res) => {
     const boardingPoint = pickupExtractedData.filter(
       (item) => item.id === req.body.boarding_point
     );
-    const userSeats = JSON.parse(req.body.seats)
+    const userSeats = JSON.parse(req.body.seats);
     const seats = userSeats.map((seat) => seat.seatId).join(",");
 
     const currentDate = new Date(); // Current date
@@ -412,19 +412,30 @@ exports.searchCityController = async (req, res) => {
 exports.updateBookingsController = async (req, res) => {
   try {
     const { bookingId } = req.params;
-    const passenger = JSON.parse(req.body.passenger)
-    const blockSeatPaxDetails = passenger.map((item)=>{
-      return{
+    const passenger = JSON.parse(req.body.passenger);
+    const blockSeatPaxDetails = passenger.map((item) => {
+      return {
         age: item.age,
         name: item.fullName,
         sex: item.gender,
         fare: 0,
         totalFareWithTaxes: 0,
         ladiesSeat: item.seatType,
-      }
-    })
-    const response = await updateBookings(bookingId, {cancellationPolicy:req.body.free_cancellation,customerPhone:req.body.mobile_number,emergencyPhNumber:req.body.alternate_mobile_number,blockSeatPaxDetails});
-    res.status(response.status).send({status:true,booking_data:{},message:"Seat Booked successfully"});
+      };
+    });
+    const response = await updateBookings(bookingId, {
+      cancellationPolicy: req.body.free_cancellation,
+      customerPhone: req.body.mobile_number,
+      emergencyPhNumber: req.body.alternate_mobile_number,
+      blockSeatPaxDetails,
+    });
+    res
+      .status(response.status)
+      .send({
+        status: true,
+        booking_data: {},
+        message: "Seat Booked successfully",
+      });
   } catch (error) {
     console.log(error);
     return res.status(500).send({
@@ -461,7 +472,19 @@ exports.getAllBookingsController = async (req, res) => {
     });
   }
 };
-
+exports.getUserBooking = async (req, res) => {
+  try {
+    const userId  = req.user;
+    const response = await getAllBookings(userId);
+    res.status(response.status).send({status:true,data:response.data,message:"Booking data fetched successfully"});
+  } catch (error) {
+    return res.status(500).send({
+      status: false,
+      data:{},
+      message: "An error occurred while getting booking details",
+    });
+  }
+};
 exports.sendBookingConfirmationMessage = async (req, res) => {
   try {
     const {
@@ -637,7 +660,7 @@ exports.getVrlBusDetailsController = async (req, res) => {
       destinationCity: req.body.destinationCity,
       doj: req.body.doj,
     };
-    console.log(sourceCity,destinationCity,doj)
+    console.log(sourceCity, destinationCity, doj);
     let filters = {};
     if (
       req.body.boardingPoints !== null &&
@@ -664,7 +687,7 @@ exports.getVrlBusDetailsController = async (req, res) => {
     res.status(response.status).send(response);
   } catch (error) {
     // console.log(error);
-    return res.status(500).send({ 
+    return res.status(500).send({
       status: 500,
       message: "An error occurred while getting bus details with filters",
     });
@@ -767,7 +790,7 @@ exports.getSrsSeatDetailsController = async (req, res) => {
       });
 
       const dropStages = response.result.bus_layout.dropoff_stages.split("|");
-      return res.status(200).send({ 
+      return res.status(200).send({
         status: true,
         seats: {
           pickupPoints: pickupExtractedData,
@@ -945,7 +968,7 @@ exports.getSrsSchedulesController = async (req, res) => {
     );
     const bus = response.filter(
       (bus) => bus?.status === "New" || bus.status === "Update"
-    )
+    );
     const data = bus?.map((item) => {
       const [type] = item.bus_type
         ?.split(",")

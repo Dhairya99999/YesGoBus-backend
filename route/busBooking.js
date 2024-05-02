@@ -45,6 +45,7 @@ const {
   getSrsFiltersController,
   srsSeatDetails,
   srsSchedulesController,
+  getUserBooking,
 } = require("../controllers/busBooking.js");
 const busModel = require("../model/bus.js");
 const router = express.Router();
@@ -94,6 +95,7 @@ router.post(
 );
 router.get("/getBookingById/:bookingId", getBookingByIdController);
 router.get("/getAllBookings/:userId", getAllBookingsController);
+router.get("/get_user_booking",middleware.authenticateToken,getUserBooking)
 
 //get filter and bus with filters
 router.get("/getFilters", getBusFiltersController);

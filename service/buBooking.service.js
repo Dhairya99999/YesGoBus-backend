@@ -363,8 +363,7 @@ exports.getBookingById = async (bookingId) => {
 
 exports.getAllBookings = async (userId) => {
   try {
-    const booking = await BusBooking.find({ userId: userId},
-    { _id: 1, sourceCity: 1, destinationCity: 1, busOperator: 1,busType:1,selectedSeats:1,pickUpTime:1, reachTime:1,droppingPoint:1,boardingPoint:1  });
+    const booking = await BusBooking.find({ userId: userId});
     if (!booking) {
       return {
         status: 404,
@@ -372,6 +371,7 @@ exports.getAllBookings = async (userId) => {
         data: null,
       };
     }
+    console.log(booking)
     return {
       status: 200,
       message: "Booking retrieved",

@@ -329,11 +329,10 @@ exports.bookBusController = async (req, res) => {
     const userSeats = JSON.parse(req.body.seats);
     const seats = userSeats.map((seat) => seat.seatId).join(",");
 
-
     const bookingData = await busBookingModel.create({
       userId: req.user,
-      boardingPoint: boardingPoint[0].location,
-      droppingPoint:droppingPoint.location,
+      boardingPoint: boardingPoint[0],
+      droppingPoint:droppingPoint,
       sourceCity: req.body.origin_id,
       destinationCity: req.body.destination_id,
       doj: req.body.travel_date,
@@ -460,7 +459,7 @@ exports.getUserBooking = async (req, res) => {
         (timeDifference % (1000 * 60 * 60)) / (1000 * 60)
       );
       return {
-            "_id": item._id,
+        "_id": item._id,
             "sourceCity": item.sourceCity,
             "destinationCity": item.destinationCity,
             "busOperator": item.busOperator,
@@ -468,8 +467,8 @@ exports.getUserBooking = async (req, res) => {
             "selectedSeats": item.selectedSeats,
             "pickUpTime": item.pickUpTime,
             "reachTime": item.reachTime,
-            droppingPoint:item.droppingPoint,
-            boardingPoint:item.boardingPoint,
+            droppingPoint:item.droppingPoint.location,
+            boardingPoint:item.boardingPoint.location,
             travelingTime: `${hours}H ${minutes}m`,
             totalSeats:1,
             rating: 0

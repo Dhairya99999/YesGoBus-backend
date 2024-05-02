@@ -460,7 +460,7 @@ exports.getUserBooking = async (req, res) => {
         (timeDifference % (1000 * 60 * 60)) / (1000 * 60)
       );
       return {
-        "_id": item._id,
+            "_id": item._id,
             "sourceCity": item.sourceCity,
             "destinationCity": item.destinationCity,
             "busOperator": item.busOperator,
@@ -468,6 +468,8 @@ exports.getUserBooking = async (req, res) => {
             "selectedSeats": item.selectedSeats,
             "pickUpTime": item.pickUpTime,
             "reachTime": item.reachTime,
+            droppingPoint:item.droppingPoint,
+            boardingPoint:item.boardingPoint,
             travelingTime: `${hours}H ${minutes}m`,
             totalSeats:1,
             rating: 0

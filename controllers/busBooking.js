@@ -496,6 +496,8 @@ exports.getUserBooking = async (req, res) => {
             "pickUpTime": item.pickUpTime,
             "reachTime": item.reachTime,
             travelingTime: `${hours}H ${minutes}m`,
+            totalSeats:1,
+            rating: 0
       };
     });
     res

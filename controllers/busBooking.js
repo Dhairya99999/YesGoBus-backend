@@ -502,7 +502,7 @@ exports.getUserBooking = async (req, res) => {
       .status(response.status)
       .send({
         status: true,
-        data: response.data,
+        data: bookingData,
         message: "Booking data fetched successfully",
       });
   } catch (error) {

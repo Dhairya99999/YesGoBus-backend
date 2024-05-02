@@ -363,7 +363,9 @@ exports.getBookingById = async (bookingId) => {
 
 exports.getAllBookings = async (userId) => {
   try {
-    const booking = await BusBooking.find({ userId: userId});
+    const booking = await BusBooking.find({ userId: userId
+      //, bookingStatus: { $ne: "pending" } 
+    });
     if (!booking) {
       return {
         status: 404,
@@ -371,7 +373,6 @@ exports.getAllBookings = async (userId) => {
         data: null,
       };
     }
-    console.log(booking)
     return {
       status: 200,
       message: "Booking retrieved",

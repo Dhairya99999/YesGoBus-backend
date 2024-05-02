@@ -331,8 +331,8 @@ exports.bookBusController = async (req, res) => {
 
     const bookingData = await busBookingModel.create({
       userId: req.user,
-      boardingPoint: boardingPoint[0],
-      droppingPoint:droppingPoint,
+      boardingPoint: boardingPoint[0].location,
+      droppingPoint:droppingPoint.location,
       sourceCity: req.body.origin_id,
       destinationCity: req.body.destination_id,
       doj: req.body.travel_date,
@@ -467,8 +467,8 @@ exports.getUserBooking = async (req, res) => {
             "selectedSeats": item.selectedSeats,
             "pickUpTime": item.pickUpTime,
             "reachTime": item.reachTime,
-            droppingPoint:item.droppingPoint.location,
-            boardingPoint:item.boardingPoint.location,
+            droppingPoint:item.droppingPoint,
+            boardingPoint:item.boardingPoint,
             travelingTime: `${hours}H ${minutes}m`,
             totalSeats:1,
             rating: 0

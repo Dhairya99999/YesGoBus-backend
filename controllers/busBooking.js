@@ -429,13 +429,11 @@ exports.updateBookingsController = async (req, res) => {
       emergencyPhNumber: req.body.alternate_mobile_number,
       blockSeatPaxDetails,
     });
-    res
-      .status(response.status)
-      .send({
-        status: true,
-        booking_data: {},
-        message: "Seat Booked successfully",
-      });
+    res.status(response.status).send({
+      status: true,
+      booking_data: {},
+      message: "Seat Booked successfully",
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).send({
@@ -474,13 +472,43 @@ exports.getAllBookingsController = async (req, res) => {
 };
 exports.getUserBooking = async (req, res) => {
   try {
-    const userId  = req.user;
+    const userId = req.user;
     const response = await getAllBookings(userId);
-    res.status(response.status).send({status:true,data:response.data,message:"Booking data fetched successfully"});
+    const bookingData = response.data.map((item) => {
+      const pickUpDateTime = new Date(`2000-01-01T${item.pickUpTime}`);
+      const reachDateTime = new Date(`2000-01-01T${item.reachTime}`);
+
+      // Calculate the time difference in milliseconds
+      const timeDifference = reachDateTime - pickUpDateTime;
+
+      // Convert milliseconds to hours and minutes
+      const hours = Math.floor(timeDifference / (1000 * 60 * 60));
+      const minutes = Math.floor(
+        (timeDifference % (1000 * 60 * 60)) / (1000 * 60)
+      );
+      return {
+        "_id": item._id,
+            "sourceCity": item.sourceCity,
+            "destinationCity": item.destinationCity,
+            "busOperator": item.busOperator,
+            "busType": item.busType,
+            "selectedSeats": item.selectedSeats,
+            "pickUpTime": item.pickUpTime,
+            "reachTime": item.reachTime,
+            travelingTime: `${hours}H ${minutes}m`,
+      };
+    });
+    res
+      .status(response.status)
+      .send({
+        status: true,
+        data: response.data,
+        message: "Booking data fetched successfully",
+      });
   } catch (error) {
     return res.status(500).send({
       status: false,
-      data:{},
+      data: {},
       message: "An error occurred while getting booking details",
     });
   }

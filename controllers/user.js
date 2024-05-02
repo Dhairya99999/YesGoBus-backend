@@ -56,8 +56,9 @@ exports.user_login = async (req, res) => {
     const user = await userModel.findOne({
       mobileNumber: req.body.mobileNumber,
     });
-
+    
     if (!user) {
+      //const  
       return res
         .status(200)
         .send({ status: false, data: {}, message: "user dose not exist" });

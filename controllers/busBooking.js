@@ -40,6 +40,7 @@ const {
   getSrsFilters,
 } = require("../service/buBooking.service.js");
 const busBookingModel = require("../model/busBooking.js");
+const busModel = require("../model/bus.js")
 const { sendMessage, sendMail } = require("../utils/helper.js");
 
 exports.getCityListController = async (req, res) => {
@@ -328,40 +329,11 @@ exports.bookBusController = async (req, res) => {
     const userSeats = JSON.parse(req.body.seats);
     const seats = userSeats.map((seat) => seat.seatId).join(",");
 
-    const currentDate = new Date(); // Current date
-
-    // Split time strings into hours and minutes
-    const [pickUpHours, pickUpMinutes] = boardingPoint[0].time
-      .split(":")
-      .map(Number);
-    const [reachHours, reachMinutes] = droppingPoint.time
-      .split(":")
-      .map(Number);
-
-    // Set the time components for the current date
-    currentDate.setHours(pickUpHours, pickUpMinutes, 0, 0);
-
-    // Create Date objects for pick-up time and reach time
-    const pickUpDate = new Date(currentDate);
-    const reachDate = new Date(currentDate);
-
-    // Set the time components for pick-up and reach times
-    pickUpDate.setHours(pickUpHours, pickUpMinutes, 0, 0);
-    reachDate.setHours(reachHours, reachMinutes, 0, 0);
-
-    // Calculate the difference in milliseconds
-    const timeDifference = reachDate - pickUpDate;
-
-    // Convert milliseconds to hours and minutes
-    const totalHours = Math.floor(timeDifference / (1000 * 60 * 60));
-    const totalMinutes = Math.floor(
-      (timeDifference % (1000 * 60 * 60)) / (1000 * 60)
-    );
 
     const bookingData = await busBookingModel.create({
       userId: req.user,
-      boardingPoint: boardingPoint[0],
-      droppingPoint,
+      boardingPoint: boardingPoint[0].location,
+      droppingPoint:droppingPoint.location,
       sourceCity: req.body.origin_id,
       destinationCity: req.body.destination_id,
       doj: req.body.travel_date,
@@ -371,7 +343,6 @@ exports.bookBusController = async (req, res) => {
       totalAmount: req.body.totalFare,
       busOperator: response.result.service_name,
       busType: response.result.bus_type,
-      totalDuration: `${totalHours}:${totalMinutes}`,
     });
     return res.status(201).send({
       status: true,
@@ -412,24 +383,26 @@ exports.searchCityController = async (req, res) => {
 exports.updateBookingsController = async (req, res) => {
   try {
     const { bookingId } = req.params;
-    const passenger = JSON.parse(req.body.passenger);
-    const blockSeatPaxDetails = passenger.map((item) => {
-      return {
-        age: item.age,
-        name: item.fullName,
-        sex: item.gender,
-        fare: 0,
-        totalFareWithTaxes: 0,
-        ladiesSeat: item.seatType,
-      };
-    });
-    const response = await updateBookings(bookingId, {
-      cancellationPolicy: req.body.free_cancellation,
-      customerPhone: req.body.mobile_number,
-      emergencyPhNumber: req.body.alternate_mobile_number,
-      blockSeatPaxDetails,
-    });
-    res.status(response.status).send({
+    const selectedBus = await busModel.findOne({_id:req.body.selected_bus_id})
+    console.log(selectedBus)
+    //const passenger = JSON.parse(req.body.passenger);
+    // const blockSeatPaxDetails = passenger.map((item) => {
+    //   return {
+    //     age: item.age,
+    //     name: item.fullName,
+    //     sex: item.gender,
+    //     fare: 0,
+    //     totalFareWithTaxes: 0,
+    //     ladiesSeat: item.seatType,
+    //   };
+    // });
+    // const response = await updateBookings(bookingId, {
+    //   cancellationPolicy: req.body.free_cancellation,
+    //   customerPhone: req.body.mobile_number,
+    //   emergencyPhNumber: req.body.alternate_mobile_number,
+    //   reservationSchema:blockSeatPaxDetails,
+    // });
+    res.status(200).send({
       status: true,
       booking_data: {},
       message: "Seat Booked successfully",

@@ -385,23 +385,23 @@ exports.updateBookingsController = async (req, res) => {
     const { bookingId } = req.params;
     const selectedBus = await busModel.findOne({_id:req.body.selected_bus_id})
     console.log(selectedBus)
-    //const passenger = JSON.parse(req.body.passenger);
-    // const blockSeatPaxDetails = passenger.map((item) => {
-    //   return {
-    //     age: item.age,
-    //     name: item.fullName,
-    //     sex: item.gender,
-    //     fare: 0,
-    //     totalFareWithTaxes: 0,
-    //     ladiesSeat: item.seatType,
-    //   };
-    // });
-    // const response = await updateBookings(bookingId, {
-    //   cancellationPolicy: req.body.free_cancellation,
-    //   customerPhone: req.body.mobile_number,
-    //   emergencyPhNumber: req.body.alternate_mobile_number,
-    //   reservationSchema:blockSeatPaxDetails,
-    // });
+    const passenger = JSON.parse(req.body.passenger);
+    const blockSeatPaxDetails = passenger.map((item) => {
+      return {
+        age: item.age,
+        name: item.fullName,
+        sex: item.gender,
+        fare: 0,
+        totalFareWithTaxes: 0,
+        ladiesSeat: item.seatType,
+      };
+    });
+    const response = await updateBookings(bookingId, {
+      cancellationPolicy: req.body.free_cancellation,
+      customerPhone: req.body.mobile_number,
+      emergencyPhNumber: req.body.alternate_mobile_number,
+      reservationSchema:blockSeatPaxDetails,
+    });
     res.status(200).send({
       status: true,
       booking_data: {},

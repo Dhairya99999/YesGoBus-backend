@@ -46,6 +46,7 @@ const {
   srsSeatDetails,
   srsSchedulesController,
   getUserBooking,
+  get_shorted_bus,
 } = require("../controllers/busBooking.js");
 const busModel = require("../model/bus.js");
 const router = express.Router();
@@ -152,8 +153,9 @@ router.get(
 router.get(
   "/srsCancelBooking/:ticket_number/:seat_numbers",
   srsCancelBookingController
-);
+); 
 router.get("/getSrsFilters", getSrsFiltersController);
+router.post("/get_filtered_bus", get_shorted_bus)
 router.post("/add_bus", async (req, res) => {
   try {
     const data = await busModel.create({

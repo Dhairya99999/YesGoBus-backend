@@ -1031,17 +1031,17 @@ exports.get_shorted_bus = async (req, res) => {
         .filter((type) => type.includes("AC") || type.includes("Non-AC"));
       const price = item.show_fare_screen.split("/")[0];
       return {
-        id: item.id,
-        operatorName: item.operator_service_name,
+        id: item?.id,
+        operatorName: item?.operator_service_name,
         type,
-        bus_type: item.bus_type,
-        dep_time: item.dep_time,
-        arr_time: item.arr_time,
-        duration: `${item.duration.split(":")[0]}hr ${
-          item.duration.split(":")[1]
+        bus_type: item?.bus_type,
+        dep_time: item?.dep_time,
+        arr_time: item?.arr_time,
+        duration: `${item?.duration.split(":")[0]}hr ${
+          item?.duration?.split(":")[1]
         }mins`,
-        available_seats: item.available_seats,
-        total_seats: item.total_seats,
+        available_seats: item?.available_seats,
+        total_seats: item?.total_seats,
         price,
         ratings: 0,
         avg: 0,
@@ -1061,16 +1061,17 @@ exports.get_shorted_bus = async (req, res) => {
           itemPrice >= req.body.startPrice && itemPrice <= req.body.endPrice
         );
       }),...data];
-    }
-    if(req.body.busType){
+    } 
+    if(req.body.busType && req.body.busType.length>0){
       data = [...data.filter((item)=>{
         return req.body.busType.some(type =>item.bus_type.includes((type)))
       }),...data]
     }
-    res
+    res 
       .status(200)
       .send({ status: true, busData: data, message: "Bus fetch successfully" });
   } catch (err) {
+    console.log(err.message)
     return res.status(500).send({
       status: 500,
       message: "Internal Server Error",

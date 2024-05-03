@@ -40,7 +40,7 @@ const {
   getSrsFilters,
 } = require("../service/buBooking.service.js");
 const busBookingModel = require("../model/busBooking.js");
-const busModel = require("../model/bus.js")
+const busModel = require("../model/bus.js");
 const { sendMessage, sendMail } = require("../utils/helper.js");
 
 exports.getCityListController = async (req, res) => {
@@ -332,7 +332,7 @@ exports.bookBusController = async (req, res) => {
     const bookingData = await busBookingModel.create({
       userId: req.user,
       boardingPoint: boardingPoint[0].location,
-      droppingPoint:droppingPoint.location,
+      droppingPoint: droppingPoint.location,
       sourceCity: req.body.origin_id,
       destinationCity: req.body.destination_id,
       doj: req.body.travel_date,
@@ -382,8 +382,10 @@ exports.searchCityController = async (req, res) => {
 exports.updateBookingsController = async (req, res) => {
   try {
     const { bookingId } = req.params;
-    const selectedBus = await busModel.findOne({_id:req.body.selected_bus_id})
-    console.log(selectedBus)
+    const selectedBus = await busModel.findOne({
+      _id: req.body.selected_bus_id,
+    });
+    console.log(selectedBus);
     const passenger = JSON.parse(req.body.passenger);
     const blockSeatPaxDetails = passenger.map((item) => {
       return {
@@ -399,7 +401,7 @@ exports.updateBookingsController = async (req, res) => {
       cancellationPolicy: req.body.free_cancellation,
       customerPhone: req.body.mobile_number,
       emergencyPhNumber: req.body.alternate_mobile_number,
-      reservationSchema:blockSeatPaxDetails,
+      reservationSchema: blockSeatPaxDetails,
     });
     res.status(200).send({
       status: true,
@@ -462,28 +464,26 @@ exports.getUserBooking = async (req, res) => {
         (timeDifference % (1000 * 60 * 60)) / (1000 * 60)
       );
       return {
-        "_id": item._id,
-            "sourceCity": item.sourceCity,
-            "destinationCity": item.destinationCity,
-            "busOperator": item.busOperator,
-            "busType": item.busType,
-            "selectedSeats": item.selectedSeats,
-            "pickUpTime": item.pickUpTime,
-            "reachTime": item.reachTime,
-            droppingPoint:item.droppingPoint?item.droppingPoint:"",
-            boardingPoint:item.boardingPoint?item.boardingPoint:"",
-            travelingTime: `${hours}H-${minutes}m`,
-            totalSeats:1,
-            rating: 0
+        _id: item._id,
+        sourceCity: item.sourceCity,
+        destinationCity: item.destinationCity,
+        busOperator: item.busOperator,
+        busType: item.busType,
+        selectedSeats: item.selectedSeats,
+        pickUpTime: item.pickUpTime,
+        reachTime: item.reachTime,
+        droppingPoint: item.droppingPoint ? item.droppingPoint : "",
+        boardingPoint: item.boardingPoint ? item.boardingPoint : "",
+        travelingTime: `${hours}H-${minutes}m`,
+        totalSeats: 1,
+        rating: 0,
       };
     });
-    res
-      .status(response.status)
-      .send({
-        status: true,
-        data: bookingData,
-        message: "Booking data fetched successfully",
-      });
+    res.status(response.status).send({
+      status: true,
+      data: bookingData,
+      message: "Booking data fetched successfully",
+    });
   } catch (error) {
     return res.status(500).send({
       status: false,
@@ -1001,7 +1001,7 @@ exports.getSrsSchedulesController = async (req, res) => {
         is_ac_bus: item.is_ac_bus,
         allow_reschedule: item.allow_reschedule,
         src_type: item.type,
-        boarding_stages:item.boarding_stages
+        boarding_stages: item.boarding_stages,
       };
     });
     res
@@ -1025,7 +1025,7 @@ exports.get_shorted_bus = async (req, res) => {
       destination_id,
       travel_date
     );
-    const data = response?.map((item) => {
+    let data = response?.map((item) => {
       const [type] = item.bus_type
         ?.split(",")
         .filter((type) => type.includes("AC") || type.includes("Non-AC"));
@@ -1052,6 +1052,21 @@ exports.get_shorted_bus = async (req, res) => {
         src_type: item.type,
       };
     });
+    if (req.body.startPrice && req.body.endPrice) {
+       data = [...data.filter((item) => {
+        const itemPrice = item.price; // Assuming each item has a 'price' property
+
+        // Check if the item price falls within the specified range
+        return (
+          itemPrice >= req.body.startPrice && itemPrice <= req.body.endPrice
+        );
+      }),...data];
+    }
+    if(req.body.busType){
+      data = [...data.filter((item)=>{
+        return req.body.busType.some(type =>item.bus_type.includes((type)))
+      }),...data]
+    }
     res
       .status(200)
       .send({ status: true, busData: data, message: "Bus fetch successfully" });

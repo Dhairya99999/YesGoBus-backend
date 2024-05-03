@@ -467,8 +467,8 @@ exports.getUserBooking = async (req, res) => {
             "selectedSeats": item.selectedSeats,
             "pickUpTime": item.pickUpTime,
             "reachTime": item.reachTime,
-            droppingPoint:item.droppingPoint,
-            boardingPoint:item.boardingPoint,
+            droppingPoint:item.droppingPoint?item.droppingPoint:"",
+            boardingPoint:item.boardingPoint?item.boardingPoint:"",
             travelingTime: `${hours}H ${minutes}m`,
             totalSeats:1,
             rating: 0
@@ -998,6 +998,7 @@ exports.getSrsSchedulesController = async (req, res) => {
         is_ac_bus: item.is_ac_bus,
         allow_reschedule: item.allow_reschedule,
         src_type: item.type,
+        boarding_stages:item.boarding_stages
       };
     });
     res

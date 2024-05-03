@@ -450,6 +450,9 @@ exports.getUserBooking = async (req, res) => {
       const pickUpDateTime = new Date(`2000-01-01T${item.pickUpTime}`);
       const reachDateTime = new Date(`2000-01-01T${item.reachTime}`);
 
+      if (reachDateTime < pickUpDateTime) {
+        reachDateTime.setDate(reachDateTime.getDate() + 1); // Move to the next day
+      }
       // Calculate the time difference in milliseconds
       const timeDifference = reachDateTime - pickUpDateTime;
 
@@ -469,7 +472,7 @@ exports.getUserBooking = async (req, res) => {
             "reachTime": item.reachTime,
             droppingPoint:item.droppingPoint?item.droppingPoint:"",
             boardingPoint:item.boardingPoint?item.boardingPoint:"",
-            travelingTime: `${hours}H ${minutes}m`,
+            travelingTime: `${hours}H-${minutes}m`,
             totalSeats:1,
             rating: 0
       };

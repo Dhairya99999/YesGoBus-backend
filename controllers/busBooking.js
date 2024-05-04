@@ -39,9 +39,11 @@ const {
   srsCancelBooking,
   getSrsFilters,
 } = require("../service/buBooking.service.js");
+const userModel = require("../model/user.js")
 const busBookingModel = require("../model/busBooking.js");
 const busModel = require("../model/bus.js");
 const { sendMessage, sendMail } = require("../utils/helper.js");
+const { default: axios } = require("axios");
 
 exports.getCityListController = async (req, res) => {
   try {
@@ -381,37 +383,78 @@ exports.searchCityController = async (req, res) => {
 
 exports.updateBookingsController = async (req, res) => {
   try {
+    const user = await userModel.findOne({_id:req.user})
     const { bookingId } = req.params;
     const selectedBus = await busModel.findOne({
       _id: req.body.selected_bus_id,
     });
     console.log(selectedBus);
-    const passenger = JSON.parse(req.body.passenger);
-    const blockSeatPaxDetails = passenger.map((item) => {
-      return {
-        age: item.age,
-        name: item.fullName,
-        sex: item.gender,
-        fare: 0,
-        totalFareWithTaxes: 0,
-        ladiesSeat: item.seatType,
-      };
-    });
-    const response = await updateBookings(bookingId, {
-      cancellationPolicy: req.body.free_cancellation,
-      customerPhone: req.body.mobile_number,
-      emergencyPhNumber: req.body.alternate_mobile_number,
-      reservationSchema: blockSeatPaxDetails,
-    });
-    res.status(200).send({
-      status: true,
-      booking_data: {},
-      message: "Seat Booked successfully",
-    });
+    //const passenger = JSON.parse(req.body.passenger);
+    // const blockSeatPaxDetails = passenger.map((item) => {
+    //   return {
+    //     age: item.age,
+    //     name: item.fullName,
+    //     sex: item.gender,
+    //     fare: 0,
+    //     totalFareWithTaxes: 0,
+    //     ladiesSeat: item.seatType,
+    //   };
+    // });
+    // const response = await updateBookings(bookingId, {
+    //   cancellationPolicy: req.body.free_cancellation,
+    //   customerPhone: req.body.mobile_number,
+    //   emergencyPhNumber: req.body.alternate_mobile_number,
+    //   reservationSchema: blockSeatPaxDetails,
+    // });
+    const options = {
+      method: "POST",
+      url:"https://sandbox.cashfree.com/pg/orders",
+      headers:{
+        accept:"application/json",
+        "x-api-version":"2023-08-01",
+        "content-type":"application/json",
+        "x-client-id": process.env.CASHFREE_ID,
+        "x-client-secret": process.env.CASHFREE_SECKRET
+      },
+      data:{
+        customer_details:{
+          customer_id:req.user,
+          customer_email: user.email,
+          customer_phone: user.phoneNumber? `${user.phoneNumber}`: `${user.mobileNumber}`,
+          customer_name: user.fullName?user.fullName: `${user.firstName} ${user.lastName}`,
+        },
+        order_meta:{
+          notify_url:"https://webhook.site/",
+          payment_methods:"cc,dc,ppc,ccc,emi,paypal,upi,nb,app,paylater",
+        },
+        order_amount:selectedBus.totalFare,
+        order_id:bookingId,
+        order_currency:"INR",
+        order_note:"This is my testing order"
+      }
+    }
+    // const paymentRes = await axios.request(options)
+    // console.log(paymentRes.data.payment_session_id)
+    // res.status(200).send({
+    //   status: true,
+    //   data: {payment_session:paymentRes.data.payment_session_id,order_id:bookingId},
+    //   message: "Session id created successful",
+    // }); 
+    const paymentRes = await axios.request(options).then((order_response)=>{
+      console.log(order_response)
+      return res.status(200).send({status:true,data: {payment_session:order_response.payment_session_id,order_id:bookingId},message:"Session id"})
+    }).catch((err)=>{ 
+      return res.status(500).send({ 
+        status: false,
+        data:{},
+        message: "Payment failed",
+      });
+    })
   } catch (error) {
     console.log(error);
     return res.status(500).send({
       status: 500,
+      error:error.message,
       message: "An error occurred while updating booking details",
     });
   }
@@ -481,7 +524,7 @@ exports.getUserBooking = async (req, res) => {
     });
     res.status(response.status).send({
       status: true,
-      data: bookingData,
+      data: response.data,
       message: "Booking data fetched successfully",
     });
   } catch (error) {
@@ -1052,20 +1095,23 @@ exports.get_shorted_bus = async (req, res) => {
         src_type: item.type,
       };
     });
-    if (req.body.startPrice && req.body.endPrice) {
-       data = [...data.filter((item) => {
+    if (req.body.startPrice>0 && req.body.endPrice>0) {
+       data = data.filter((item) => {
         const itemPrice = item.price; // Assuming each item has a 'price' property
 
         // Check if the item price falls within the specified range
         return (
           itemPrice >= req.body.startPrice && itemPrice <= req.body.endPrice
         );
-      }),...data];
+      });
     } 
     if(req.body.busType && req.body.busType.length>0){
-      data = [...data.filter((item)=>{
+      console.log(data.filter((item)=>{
         return req.body.busType.some(type =>item.bus_type.includes((type)))
-      }),...data]
+      }))
+      data = data.filter((item)=>{
+        return req.body.busType.some(type =>item.bus_type.includes((type)))
+      })
     }
     res 
       .status(200)

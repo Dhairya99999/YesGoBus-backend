@@ -440,16 +440,13 @@ exports.updateBookingsController = async (req, res) => {
     //   data: {payment_session:paymentRes.data.payment_session_id,order_id:bookingId},
     //   message: "Session id created successful",
     // }); 
-    const paymentRes = await axios.request(options).then((order_response)=>{
-      console.log(order_response)
-      return res.status(200).send({status:true,data: {payment_session:order_response.payment_session_id,order_id:bookingId},message:"Session id"})
-    }).catch((err)=>{ 
-      return res.status(500).send({ 
-        status: false,
-        data:{},
-        message: "Payment failed",
-      });
-    })
+     const paymentRes = await axios.request(options)
+    console.log(paymentRes.data.payment_session_id)
+    res.status(200).send({
+      status: true,
+      data: {payment_session:paymentRes.data.payment_session_id,order_id:bookingId},
+      message: "Session id created successful",
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).send({

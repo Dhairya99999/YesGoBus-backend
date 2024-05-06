@@ -28,6 +28,9 @@ const subAdminSchema = new mongoose.Schema(
       required: [true, "mobile number is required"],
       unique: true,
     },
+    password:{
+      type:String
+    },
     gander: { type: String },
     dateOfBarth: { type: String },
     profileImage: { type: String },

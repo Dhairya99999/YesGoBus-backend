@@ -3,7 +3,7 @@ const supportModel = require("../model/customerSupport");
 const hotelModel = require("../model/hotels");
 const userModel = require("../model/user")
 const itineraryPlansModel = require("../model/itineraryPlans");
-const { cashfree } = require("../service/payment.service");
+const { default: axios } = require("axios");
 
 exports.make_booking = async (req, res) => {
   try {
@@ -175,11 +175,38 @@ exports.edit_booking = async (req, res) => {
         spancelRequest: req.body.spancelRequest,
       }
     );
-    const response = await cashfree({userId:req.user,user,bookingId:req.body.bookingId,totalFare:req.body.totalPackagePrice})
-    console.log(response)
+    const options = {
+      method: "POST",
+      url:"https://sandbox.cashfree.com/pg/orders",
+      headers:{
+        accept:"application/json",
+        "x-api-version":"2023-08-01",
+        "content-type":"application/json",
+        "x-client-id": process.env.CASHFREE_ID,
+        "x-client-secret": process.env.CASHFREE_SECKRET
+      },
+      data:{
+        customer_details:{
+          customer_id:req.user,
+          customer_email: user.email,
+          customer_phone: user.phoneNumber? `${user.phoneNumber}`: `${req.body.mobileNumber}`,
+          customer_name: user.fullName?user.fullName: `${user.firstName} ${user.lastName}`,
+        },
+        order_meta:{
+          notify_url:"https://webhook.site/",
+          payment_methods:"cc,dc,ppc,ccc,emi,paypal,upi,nb,app,paylater",
+        },
+        order_amount:req.body.totalPackagePrice,
+        order_id:req.body.bookingId,
+        order_currency:"INR",
+        order_note:"This is my testing order"
+      }
+    }
+    const paymentRes = await axios.request(options)
+    console.log(paymentRes)
     return res.status(200).send({
       status: true,
-      data: response,
+      data: {payment_session:paymentRes.data.payment_session_id,order_id:req.body.bookingId},
       message: "Booking updated successfully",
     });
   } catch (err) {

@@ -1,11 +1,9 @@
 const bookingModel = require("../model/booking");
 const supportModel = require("../model/customerSupport");
 const hotelModel = require("../model/hotels");
+const userModel = require("../model/user")
 const itineraryPlansModel = require("../model/itineraryPlans");
-const cityModel = require("../model/cities");
-const OAuth = require("oauth-1.0a");
-const crypto = require("crypto");
-const axios = require("axios");
+const { cashfree } = require("../service/payment.service");
 
 exports.make_booking = async (req, res) => {
   try {
@@ -158,6 +156,7 @@ exports.get_Itinerary_plans = async (req, res) => {
 
 exports.edit_booking = async (req, res) => {
   try {
+    const user = await userModel.findOne({_id:req.user})
     const bookingData = await bookingModel.findOneAndUpdate(
       { _id: req.body.bookingId },
       {
@@ -176,9 +175,10 @@ exports.edit_booking = async (req, res) => {
         spancelRequest: req.body.spancelRequest,
       }
     );
+    const response = await cashfree({userId:req.user,user,bookingId:req.body.bookingId,totalFare:req.body.totalPackagePrice})
     return res.status(200).send({
       status: true,
-      data: { bookingData },
+      data: response,
       message: "Booking updated successfully",
     });
   } catch (err) {

@@ -23,7 +23,7 @@ const subAdminSchema = new mongoose.Schema(
       address: { type: String },
       postalCode: { type: String },
     },
-    mobileNumber: {
+    phoneNumber: {
       type: Number,
       required: [true, "mobile number is required"],
       unique: true,

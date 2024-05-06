@@ -129,3 +129,39 @@ exports.refundPayment = async (args) => {
 
   return sendRequest(url, "POST", headers, requestData);
 };
+
+exports.cashfree = async (args) => {
+  try{
+    const options = {
+      method: "POST",
+      url:"https://sandbox.cashfree.com/pg/orders",
+      headers:{
+        accept:"application/json",
+        "x-api-version":"2023-08-01",
+        "content-type":"application/json",
+        "x-client-id": process.env.CASHFREE_ID,
+        "x-client-secret": process.env.CASHFREE_SECKRET
+      },
+      data:{
+        customer_details:{
+          customer_id:args.userId,
+          customer_email: args.email,
+          customer_phone: args.phoneNumber? `${args.phoneNumber}`: `${args.mobileNumber}`,
+          customer_name: args.fullName?args.fullName: `${args.firstName} ${args.lastName}`,
+        },
+        order_meta:{
+          notify_url:"https://webhook.site/",
+          payment_methods:"cc,dc,ppc,ccc,emi,paypal,upi,nb,app,paylater",
+        },
+        order_amount:args.totalFare,
+        order_id:args.bookingId,
+        order_currency:"INR",
+        order_note:"This is my testing order"
+      }
+    }
+    const paymentRes = await axios.request(options)
+    return {payment_session:paymentRes.data.payment_session_id,order_id:bookingId}; 
+  }catch(err){
+
+  }
+}

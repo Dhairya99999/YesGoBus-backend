@@ -1,4 +1,4 @@
-const {
+import {
   getCityList,
   getAliasesCity,
   searchBus,
@@ -38,14 +38,10 @@ const {
   getSrsCanCancelDetails,
   srsCancelBooking,
   getSrsFilters,
-} = require("../service/buBooking.service.js");
-const userModel = require("../model/user.js")
-const busBookingModel = require("../model/busBooking.js");
-const busModel = require("../model/bus.js");
-const { sendMessage, sendMail } = require("../utils/helper.js");
-const { default: axios } = require("axios");
+} from "../service/buBooking.service.js";
+import { sendMessage, sendMail } from "../utils/helper.js";
 
-exports.getCityListController = async (req, res) => {
+export const getCityListController = async (req, res) => {
   try {
     const response = await getCityList();
     res.status(200).send(response);
@@ -59,7 +55,7 @@ exports.getCityListController = async (req, res) => {
   }
 };
 
-exports.getAliasesCityController = async (req, res) => {
+export const getAliasesCityController = async (req, res) => {
   try {
     const response = await getAliasesCity();
     res.status(200).send(response);
@@ -73,7 +69,7 @@ exports.getAliasesCityController = async (req, res) => {
   }
 };
 
-exports.searchBusController = async (req, res) => {
+export const searchBusController = async (req, res) => {
   try {
     const response = await searchBus(
       req.body.sourceCity,
@@ -91,7 +87,7 @@ exports.searchBusController = async (req, res) => {
   }
 };
 
-exports.getSeatLayoutController = async (req, res) => {
+export const getSeatLayoutController = async (req, res) => {
   try {
     const response = await getSeatLayout(req.params.id);
     res.status(200).send(response);
@@ -105,7 +101,7 @@ exports.getSeatLayoutController = async (req, res) => {
   }
 };
 
-exports.getBpDpDetailsController = async (req, res) => {
+export const getBpDpDetailsController = async (req, res) => {
   try {
     const response = await getBpDpDetails(req.params.id);
     res.status(200).send(response);
@@ -119,7 +115,7 @@ exports.getBpDpDetailsController = async (req, res) => {
   }
 };
 
-exports.getSeatLayoutV2Controller = async (req, res) => {
+export const getSeatLayoutV2Controller = async (req, res) => {
   try {
     const response = await getSeatLayoutV2(req.body);
     res.status(200).send(response);
@@ -133,7 +129,7 @@ exports.getSeatLayoutV2Controller = async (req, res) => {
   }
 };
 
-exports.blockSeatController = async (req, res) => {
+export const blockSeatController = async (req, res) => {
   try {
     const response = await blockSeat(req.body);
     res.status(200).send(response);
@@ -147,7 +143,7 @@ exports.blockSeatController = async (req, res) => {
   }
 };
 
-exports.getRTCFareBreakupController = async (req, res) => {
+export const getRTCFareBreakupController = async (req, res) => {
   try {
     const response = await getRTCFareBreakup(req.params.blockKey);
     res.status(200).send(response);
@@ -161,7 +157,7 @@ exports.getRTCFareBreakupController = async (req, res) => {
   }
 };
 
-exports.bookSeatController = async (req, res) => {
+export const bookSeatController = async (req, res) => {
   try {
     const response = await bookSeat(req.params.blockKey);
     res.status(200).send(response);
@@ -175,7 +171,7 @@ exports.bookSeatController = async (req, res) => {
   }
 };
 
-exports.cancelTicketDataController = async (req, res) => {
+export const cancelTicketDataController = async (req, res) => {
   try {
     const response = await cancelTicketData(req.params.tin);
     res.status(200).send(response);
@@ -189,7 +185,7 @@ exports.cancelTicketDataController = async (req, res) => {
   }
 };
 
-exports.cancelTicketController = async (req, res) => {
+export const cancelTicketController = async (req, res) => {
   try {
     const response = await cancelTicket(req.body);
     res.status(200).send(response);
@@ -203,7 +199,7 @@ exports.cancelTicketController = async (req, res) => {
   }
 };
 
-exports.getTicketController = async (req, res) => {
+export const getTicketController = async (req, res) => {
   try {
     const response = await getTicket(req.params.tin);
     res.status(200).send(response);
@@ -217,7 +213,7 @@ exports.getTicketController = async (req, res) => {
   }
 };
 
-exports.checkBookedTicketController = async (req, res) => {
+export const checkBookedTicketController = async (req, res) => {
   try {
     const response = await checkBookedTicket(req.params.blockKey);
     res.status(200).send(response);
@@ -231,7 +227,7 @@ exports.checkBookedTicketController = async (req, res) => {
   }
 };
 
-exports.busCancellationInfoController = async (req, res) => {
+export const busCancellationInfoController = async (req, res) => {
   try {
     const response = await busCancellationInfo(req.params.from, req.params.to);
     res.status(200).send(response);
@@ -245,7 +241,7 @@ exports.busCancellationInfoController = async (req, res) => {
   }
 };
 
-exports.getBusFiltersController = async (req, res) => {
+export const getBusFiltersController = async (req, res) => {
   try {
     const response = await getBusFilters(req.query);
     res.status(response.status).send(response);
@@ -258,7 +254,7 @@ exports.getBusFiltersController = async (req, res) => {
   }
 };
 
-exports.getBusDetailsController = async (req, res) => {
+export const getBusDetailsController = async (req, res) => {
   try {
     const searchArgs = {
       sourceCity: req.body.sourceCity,
@@ -300,60 +296,11 @@ exports.getBusDetailsController = async (req, res) => {
     });
   }
 };
-//getUserBooking
-exports.bookBusController = async (req, res) => {
+
+export const bookBusController = async (req, res) => {
   try {
-    const response = await getSrsSeatDetails(req.body.bus_id);
-    const pickupStages = response.result.bus_layout.boarding_stages.split("~");
-
-    // Initialize an empty array to store the extracted data
-    const pickupExtractedData = pickupStages.map((stage) => {
-      const [id, time, location] = stage.split("|");
-      return {
-        id,
-        time,
-        location,
-      };
-    });
-
-    const dropStages = response.result.bus_layout.dropoff_stages.split("|");
-    const droppingPoint =
-      dropStages[0] === req.body.droping_point
-        ? {
-            id: dropStages[0],
-            time: dropStages[1],
-            location: dropStages[5],
-          }
-        : {};
-    const boardingPoint = pickupExtractedData.filter(
-      (item) => item.id === req.body.boarding_point
-    );
-    const userSeats = JSON.parse(req.body.seats);
-    const seats = userSeats.map((seat) => seat.seatId).join(",");
-
-    const bookingData = await busBookingModel.create({
-      userId: req.user,
-      boardingPoint: boardingPoint[0].location,
-      droppingPoint: droppingPoint.location,
-      sourceCity: req.body.origin_id,
-      destinationCity: req.body.destination_id,
-      doj: req.body.travel_date,
-      pickUpTime: boardingPoint[0].time,
-      reachTime: droppingPoint.time,
-      selectedSeats: seats,
-      totalAmount: req.body.totalFare,
-      busOperator: response.result.service_name,
-      busType: response.result.bus_type,
-    });
-    return res.status(201).send({
-      status: true,
-      bookingData: {
-        bookingId: bookingData._id,
-        totalAmount: bookingData.totalAmount,
-        totalDuration: bookingData.totalDuration,
-      },
-      message: "Pre-Booking done",
-    });
+    const response = await bookBus(req.body);
+    res.status(response.status).send(response);
   } catch (error) {
     console.log(error);
     return res.status(500).send({
@@ -363,101 +310,34 @@ exports.bookBusController = async (req, res) => {
   }
 };
 
-exports.searchCityController = async (req, res) => {
+export const searchCityController = async (req, res) => {
   try {
     const response = await searchCity(req.params.searchParam);
-    return res.status(200).send({
-      status: true,
-      cityList: response.data,
-      message: "City details retrieved",
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).send({
-      status: false,
-      data: { errorMessage: error.message },
-      message: "server error",
-    });
-  }
-};
-
-exports.updateBookingsController = async (req, res) => {
-  try {
-    const user = await userModel.findOne({_id:req.user})
-    const { bookingId } = req.params;
-    const selectedBus = await busModel.findOne({
-      _id: req.body.selected_bus_id,
-    });
-    console.log(selectedBus);
-    //const passenger = JSON.parse(req.body.passenger);
-    // const blockSeatPaxDetails = passenger.map((item) => {
-    //   return {
-    //     age: item.age,
-    //     name: item.fullName,
-    //     sex: item.gender,
-    //     fare: 0,
-    //     totalFareWithTaxes: 0,
-    //     ladiesSeat: item.seatType,
-    //   };
-    // });
-    // const response = await updateBookings(bookingId, {
-    //   cancellationPolicy: req.body.free_cancellation,
-    //   customerPhone: req.body.mobile_number,
-    //   emergencyPhNumber: req.body.alternate_mobile_number,
-    //   reservationSchema: blockSeatPaxDetails,
-    // });
-    const options = {
-      method: "POST",
-      url:"https://sandbox.cashfree.com/pg/orders",
-      headers:{
-        accept:"application/json",
-        "x-api-version":"2023-08-01",
-        "content-type":"application/json",
-        "x-client-id": process.env.CASHFREE_ID,
-        "x-client-secret": process.env.CASHFREE_SECKRET
-      },
-      data:{
-        customer_details:{
-          customer_id:req.user,
-          customer_email: user.email,
-          customer_phone: user.phoneNumber? `${user.phoneNumber}`: `${user.mobileNumber}`,
-          customer_name: user.fullName?user.fullName: `${user.firstName} ${user.lastName}`,
-        },
-        order_meta:{
-          notify_url:"https://webhook.site/",
-          payment_methods:"cc,dc,ppc,ccc,emi,paypal,upi,nb,app,paylater",
-        },
-        order_amount:selectedBus.totalFare,
-        order_id:bookingId,
-        order_currency:"INR",
-        order_note:"This is my testing order"
-      }
-    }
-    // const paymentRes = await axios.request(options)
-    // console.log(paymentRes.data.payment_session_id)
-    // res.status(200).send({
-    //   status: true,
-    //   data: {payment_session:paymentRes.data.payment_session_id,order_id:bookingId},
-    //   message: "Session id created successful",
-    // }); 
-     const paymentRes = await axios.request(options)
-    console.log(paymentRes.data.payment_session_id)
-    res.status(200).send({
-      status: true,
-      data: {payment_session:paymentRes.data.payment_session_id,order_id:bookingId},
-      message: "Session id created successful",
-    });
+    res.status(response.status).send(response);
   } catch (error) {
     console.log(error);
     return res.status(500).send({
       status: 500,
-      error:error.message,
+      message: "An error occurred while searching city",
+    });
+  }
+};
+
+export const updateBookingsController = async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    const response = await updateBookings(bookingId, req.body);
+    res.status(response.status).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
       message: "An error occurred while updating booking details",
     });
   }
 };
 
-exports.getBookingByIdController = async (req, res) => {
+export const getBookingByIdController = async (req, res) => {
   try {
     const { bookingId } = req.params;
     const response = await getBookingById(bookingId);
@@ -471,7 +351,7 @@ exports.getBookingByIdController = async (req, res) => {
   }
 };
 
-exports.getAllBookingsController = async (req, res) => {
+export const getAllBookingsController = async (req, res) => {
   try {
     const { userId } = req.params;
     const response = await getAllBookings(userId);
@@ -484,55 +364,8 @@ exports.getAllBookingsController = async (req, res) => {
     });
   }
 };
-exports.getUserBooking = async (req, res) => {
-  try {
-    const userId = req.user;
-    const response = await getAllBookings(userId);
-    const bookingData = response.data.map((item) => {
-      const pickUpDateTime = new Date(`2000-01-01T${item.pickUpTime}`);
-      const reachDateTime = new Date(`2000-01-01T${item.reachTime}`);
 
-      if (reachDateTime < pickUpDateTime) {
-        reachDateTime.setDate(reachDateTime.getDate() + 1); // Move to the next day
-      }
-      // Calculate the time difference in milliseconds
-      const timeDifference = reachDateTime - pickUpDateTime;
-
-      // Convert milliseconds to hours and minutes
-      const hours = Math.floor(timeDifference / (1000 * 60 * 60));
-      const minutes = Math.floor(
-        (timeDifference % (1000 * 60 * 60)) / (1000 * 60)
-      );
-      return {
-        _id: item._id,
-        sourceCity: item.sourceCity,
-        destinationCity: item.destinationCity,
-        busOperator: item.busOperator,
-        busType: item.busType,
-        selectedSeats: item.selectedSeats,
-        pickUpTime: item.pickUpTime,
-        reachTime: item.reachTime,
-        droppingPoint: item.droppingPoint ? item.droppingPoint : "",
-        boardingPoint: item.boardingPoint ? item.boardingPoint : "",
-        travelingTime: `${hours}H-${minutes}m`,
-        totalSeats: 1,
-        rating: 0,
-      };
-    });
-    res.status(response.status).send({
-      status: true,
-      data: response.data,
-      message: "Booking data fetched successfully",
-    });
-  } catch (error) {
-    return res.status(500).send({
-      status: false,
-      data: {},
-      message: "An error occurred while getting booking details",
-    });
-  }
-};
-exports.sendBookingConfirmationMessage = async (req, res) => {
+export const sendBookingConfirmationMessage = async (req, res) => {
   try {
     const {
       fullName,
@@ -567,7 +400,7 @@ exports.sendBookingConfirmationMessage = async (req, res) => {
   }
 };
 
-exports.sendBookingConfirmationEmail = async (req, res) => {
+export const sendBookingConfirmationEmail = async (req, res) => {
   try {
     const {
       fullName,
@@ -622,7 +455,7 @@ exports.sendBookingConfirmationEmail = async (req, res) => {
   }
 };
 
-exports.sendCancelTicketMessage = async (req, res) => {
+export const sendCancelTicketMessage = async (req, res) => {
   try {
     const { fullName, opPNR, sourceCity, destinationCity, to } = req.body;
     const message = `Dear ${fullName} Your PNR: ${opPNR} Journey: ${sourceCity} to  ${destinationCity} is Cancelled. Thank You, Shine Gobus`;
@@ -638,7 +471,7 @@ exports.sendCancelTicketMessage = async (req, res) => {
   }
 };
 
-exports.sendCancelTicketEmail = async (req, res) => {
+export const sendCancelTicketEmail = async (req, res) => {
   try {
     const { fullName, opPNR, sourceCity, destinationCity, to } = req.body;
     const messageBody = `Dear ${fullName} 
@@ -670,7 +503,7 @@ exports.sendCancelTicketEmail = async (req, res) => {
 };
 
 //vrl travels buses
-exports.sendVrlRequestController = async (req, res) => {
+export const sendVrlRequestController = async (req, res) => {
   try {
     const url = req.params.url;
     const response = await sendVrlRequest(url, req.body);
@@ -686,7 +519,7 @@ exports.sendVrlRequestController = async (req, res) => {
 };
 
 //vrl filters
-exports.getVrlFiltersController = async (req, res) => {
+export const getVrlFiltersController = async (req, res) => {
   try {
     const response = await getVrlFilters(req.body);
     res.status(200).send(response);
@@ -700,14 +533,13 @@ exports.getVrlFiltersController = async (req, res) => {
   }
 };
 
-exports.getVrlBusDetailsController = async (req, res) => {
+export const getVrlBusDetailsController = async (req, res) => {
   try {
     const searchArgs = {
       sourceCity: req.body.sourceCity,
       destinationCity: req.body.destinationCity,
       doj: req.body.doj,
     };
-    console.log(sourceCity, destinationCity, doj);
     let filters = {};
     if (
       req.body.boardingPoints !== null &&
@@ -742,7 +574,7 @@ exports.getVrlBusDetailsController = async (req, res) => {
 };
 
 //vrl travels buses
-exports.getSrsCitiesController = async (req, res) => {
+export const getSrsCitiesController = async (req, res) => {
   try {
     const response = await getSrsCities();
     res.status(200).send(response);
@@ -756,25 +588,26 @@ exports.getSrsCitiesController = async (req, res) => {
   }
 };
 
-// exports.getSrsSchedulesController = async (req, res) => {
-//   try {
-//     const { origin_id, destination_id, travel_date } = req.params;
-//     const response = await getSrsSchedules(
-//       origin_id,
-//       destination_id,
-//       travel_date
-//     );
-//     res.status(200).send(response);
-//   } catch (error) {
-//     console.log(error);
-//     return res.status(500).send({
-//       status: 500,
-//       message: "Internal Server Error",
-//       error: error,
-//     });
-//   }
-// };
-exports.srsSeatDetails = async (req, res) => {
+export const getSrsSchedulesController = async (req, res) => {
+  try {
+    const { origin_id, destination_id, travel_date } = req.params;
+    const response = await getSrsSchedules(
+      origin_id,
+      destination_id,
+      travel_date
+    );
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "Internal Server Error",
+      error: error,
+    });
+  }
+};
+
+export const getSrsSeatDetailsController = async (req, res) => {
   try {
     const { schedule_id } = req.params;
     const response = await getSrsSeatDetails(schedule_id);
@@ -788,84 +621,8 @@ exports.srsSeatDetails = async (req, res) => {
     });
   }
 };
-exports.getSrsSeatDetailsController = async (req, res) => {
-  try {
-    const { schedule_id } = req.params;
-    const response = await getSrsSeatDetails(schedule_id);
-    if (req.params.type === "seat") {
-      const seatsArray = response?.result?.bus_layout?.available.split(",");
-      // Map over the array to create the desired format
-      const formattedSeats = seatsArray?.map((seat) => {
-        const [seatNumber, price] = seat.split("|");
-        return { seatNumber, price: parseFloat(price), seatType: "" };
-      });
 
-      // Separate the seats into upper and lower seats
-      const upperSeats = formattedSeats.filter(
-        (seat) =>
-          seat.seatNumber.endsWith("U") ||
-          seat.seatNumber.startsWith("SU") ||
-          seat.seatNumber.startsWith("DU")
-      );
-      const lowerSeats = formattedSeats.filter(
-        (seat) =>
-          seat.seatNumber.endsWith("L") ||
-          seat.seatNumber.startsWith("DL") ||
-          seat.seatNumber.startsWith("SL")
-      );
-
-      return res.status(200).send({
-        status: true,
-        seats: { upperSeats, lowerSeats },
-        message: "Seat fetched successfully",
-      });
-    }
-    if (req.params.type === "location") {
-      const pickupStages =
-        response.result?.bus_layout?.boarding_stages?.split("~");
-
-      // Initialize an empty array to store the extracted data
-      const pickupExtractedData = pickupStages?.map((stage) => {
-        const [id, pickupTime, pickupTitle, pickupAdd] = stage.split("|");
-        return {
-          id,
-          pickupTime,
-          pickupTitle,
-          pickupPoint: pickupAdd,
-          pickupAdd,
-        };
-      });
-
-      const dropStages = response.result.bus_layout.dropoff_stages.split("|");
-      return res.status(200).send({
-        status: true,
-        seats: {
-          pickupPoints: pickupExtractedData,
-          dropPoints: [
-            {
-              id: dropStages[0],
-              dropTime: dropStages[1],
-              dropPoint: dropStages[5],
-              dropTitle: dropStages[2],
-              dropAdd: dropStages[3],
-            },
-          ],
-        },
-        response,
-        message: "Location fetched successfully",
-      });
-    }
-  } catch (error) {
-    console.log(error);
-    return res.status(500).send({
-      status: 500,
-      message: "Internal Server Error",
-      error: error,
-    });
-  }
-};
-
-exports.getSrsOperatorSchedulesController = async (req, res) => {
+export const getSrsOperatorSchedulesController = async (req, res) => {
   try {
     const { travel_id, travel_date } = req.params;
     const response = await getSrsOperatorSchedules(travel_id, travel_date);
@@ -880,7 +637,7 @@ exports.getSrsOperatorSchedulesController = async (req, res) => {
   }
 };
 
-exports.getSrsAvailabilitiesController = async (req, res) => {
+export const getSrsAvailabilitiesController = async (req, res) => {
   try {
     const { origin_id, destination_id, travel_date } = req.params;
     const response = await getSrsAvailabilities(
@@ -899,7 +656,7 @@ exports.getSrsAvailabilitiesController = async (req, res) => {
   }
 };
 
-exports.getSrsAvailabilityController = async (req, res) => {
+export const getSrsAvailabilityController = async (req, res) => {
   try {
     const { schedule_id } = req.params;
     const response = await getSrsAvailability(schedule_id);
@@ -914,7 +671,7 @@ exports.getSrsAvailabilityController = async (req, res) => {
   }
 };
 
-exports.getSrsBlockSeatController = async (req, res) => {
+export const getSrsBlockSeatController = async (req, res) => {
   try {
     const { schedule_id } = req.params;
     const response = await getSrsBlockSeat(schedule_id, req.body);
@@ -929,7 +686,7 @@ exports.getSrsBlockSeatController = async (req, res) => {
   }
 };
 
-exports.srsConfirmBookingController = async (req, res) => {
+export const srsConfirmBookingController = async (req, res) => {
   try {
     const { ticket_number } = req.params;
     const response = await srsConfirmBooking(ticket_number);
@@ -944,7 +701,7 @@ exports.srsConfirmBookingController = async (req, res) => {
   }
 };
 
-exports.getSrsBookingDetailsController = async (req, res) => {
+export const getSrsBookingDetailsController = async (req, res) => {
   try {
     const { ticket_number, agent_ref_number } = req.params;
     const response = await getSrsBookingDetails(
@@ -962,7 +719,7 @@ exports.getSrsBookingDetailsController = async (req, res) => {
   }
 };
 
-exports.getSrsCanCancelDetailsController = async (req, res) => {
+export const getSrsCanCancelDetailsController = async (req, res) => {
   try {
     const { ticket_number, seat_numbers } = req.params;
     const response = await getSrsCanCancelDetails(ticket_number, seat_numbers);
@@ -977,7 +734,7 @@ exports.getSrsCanCancelDetailsController = async (req, res) => {
   }
 };
 
-exports.srsCancelBookingController = async (req, res) => {
+export const srsCancelBookingController = async (req, res) => {
   try {
     const { ticket_number, seat_numbers } = req.params;
     const response = await srsCancelBooking(ticket_number, seat_numbers);
@@ -992,7 +749,7 @@ exports.srsCancelBookingController = async (req, res) => {
   }
 };
 
-exports.getSrsFiltersController = async (req, res) => {
+export const getSrsFiltersController = async (req, res) => {
   try {
     const response = await getSrsFilters(req.query);
     res.status(200).send(response);
@@ -1001,158 +758,6 @@ exports.getSrsFiltersController = async (req, res) => {
     return res.status(500).send({
       status: 500,
       message: "An error occurred while getting filters",
-    });
-  }
-};
-
-exports.getSrsSchedulesController = async (req, res) => {
-  try {
-    const { origin_id, destination_id, travel_date } = req.params;
-    const response = await getSrsSchedules(
-      origin_id,
-      destination_id,
-      travel_date
-    );
-    const bus = response.filter(
-      (bus) => bus?.status === "New" || bus.status === "Update"
-    );
-    const data = bus?.map((item) => {
-      const [type] = item.bus_type
-        ?.split(",")
-        .filter((type) => type.includes("AC") || type.includes("Non-AC"));
-      const price = item.show_fare_screen.split("/")[0];
-      return {
-        id: item.id,
-        operatorName: item.operator_service_name,
-        type,
-        bus_type: item.bus_type,
-        dep_time: item.dep_time,
-        arr_time: item.arr_time,
-        duration: `${item.duration.split(":")[0]}hr ${
-          item.duration.split(":")[1]
-        }mins`,
-        available_seats: item.available_seats,
-        total_seats: item.total_seats,
-        price,
-        ratings: 0,
-        avg: 0,
-        trip_id: item.trip_id,
-        schedule_id: item.op_schedule_id,
-        is_ac_bus: item.is_ac_bus,
-        allow_reschedule: item.allow_reschedule,
-        src_type: item.type,
-        boarding_stages: item.boarding_stages,
-      };
-    });
-    res
-      .status(200)
-      .send({ status: true, busData: data, message: "Bus fetch successfully" });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).send({
-      status: 500,
-      message: "Internal Server Error",
-      error: error,
-    });
-  }
-};
-
-exports.get_shorted_bus = async (req, res) => {
-  try {
-    const { origin_id, destination_id, travel_date } = req.body;
-    const response = await getSrsSchedules(
-      origin_id,
-      destination_id,
-      travel_date
-    );
-    let data = response?.map((item) => {
-      const [type] = item.bus_type
-        ?.split(",")
-        .filter((type) => type.includes("AC") || type.includes("Non-AC"));
-      const price = item.show_fare_screen.split("/")[0];
-      return {
-        id: item?.id,
-        operatorName: item?.operator_service_name,
-        type,
-        bus_type: item?.bus_type,
-        dep_time: item?.dep_time,
-        arr_time: item?.arr_time,
-        duration: `${item?.duration.split(":")[0]}hr ${
-          item?.duration?.split(":")[1]
-        }mins`,
-        available_seats: item?.available_seats,
-        total_seats: item?.total_seats,
-        price,
-        ratings: 0,
-        avg: 0,
-        trip_id: item.trip_id,
-        schedule_id: item.op_schedule_id,
-        is_ac_bus: item.is_ac_bus,
-        allow_reschedule: item.allow_reschedule,
-        src_type: item.type,
-      };
-    });
-    if (req.body.startPrice>0 && req.body.endPrice>0) {
-       data = data.filter((item) => {
-        const itemPrice = item.price; // Assuming each item has a 'price' property
-
-        // Check if the item price falls within the specified range
-        return (
-          itemPrice >= req.body.startPrice && itemPrice <= req.body.endPrice
-        );
-      });
-    } 
-    if(req.body.busType && req.body.busType.length>0){
-      console.log(data.filter((item)=>{
-        return req.body.busType.some(type =>item.bus_type.includes((type)))
-      }))
-      data = data.filter((item)=>{
-        return req.body.busType.some(type =>item.bus_type.includes((type)))
-      })
-    }
-    res 
-      .status(200)
-      .send({ status: true, busData: data, message: "Bus fetch successfully" });
-  } catch (err) {
-    console.log(err.message)
-    return res.status(500).send({
-      status: 500,
-      message: "Internal Server Error",
-      error: err,
-    });
-  }
-};
-
-exports.sendVrlRequestController = async (req, res) => {
-  try {
-    const url = req.params.url;
-    const response = await sendVrlRequest(url, req.body);
-    res.status(200).send(response);
-  } catch (error) {
-    console.log(error);
-    return res.status(500).send({
-      status: 500,
-      message: "Internal Server Error",
-      error: error,
-    });
-  }
-};
-
-exports.srsSchedulesController = async (req, res) => {
-  try {
-    const { origin_id, destination_id, travel_date } = req.params;
-    const response = await getSrsSchedules(
-      origin_id,
-      destination_id,
-      travel_date
-    );
-    res.status(200).send(response);
-  } catch (error) {
-    console.log(error);
-    return res.status(500).send({
-      status: 500,
-      message: "Internal Server Error",
-      error: error,
     });
   }
 };

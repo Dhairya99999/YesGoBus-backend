@@ -1,5 +1,6 @@
 const userModel = require("../model/user");
 const deletedAccountModel = require("../model/deletedAccount");
+const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken");
 const {
   signUp,
@@ -11,28 +12,32 @@ const {
 
 exports.user_signup = async (req, res) => {
   try {
-    const { firstName, email, lastName, mobileNumber } = await req.body;
+    const { firstName, email, lastName, mobileNumber,password } = await req.body;
+    console.log(firstName, email, lastName, mobileNumber,password)
     const reqUser = await userModel.findOne({
-      mobileNumber: mobileNumber,
+      phoneNumber: mobileNumber,
     });
     if(email !== "" && !/\w+([\.-]?\w)*@\w+([\.-]?\w)*(\.\w{2,3})+$/.test(email.trim())){
       console.log(/\w+([\.-]?\w)*@\w+([\.-]?\w)*(\.\w{2,3})+$/.test(email))
      return res.status(200).send({status:false,data:{},message:"Invalid email id"})
     }
+    console.log(reqUser)
     if (reqUser) {
       return res
         .status(200)
         .send({ status: false, data: {}, message: "User already exists" });
     }
+    const hashedPassword = bcrypt.hashSync(password, 5);
     const user = await userModel.create({
       firstName,
       lastName,
       email,
-      mobileNumber,
+      phoneNumber:mobileNumber,
+      password:hashedPassword
     });
     const payload = {
       userId: user._id,
-      mobileNumber: req.body.mobileNumber,
+      phoneNumber: req.body.mobileNumber,
     };
 
     const generatedToken = jwt.sign(payload, process.env.JWT_SECRET_KEY);
@@ -54,7 +59,7 @@ exports.user_signup = async (req, res) => {
 exports.user_login = async (req, res) => {
   try {
     const user = await userModel.findOne({
-      mobileNumber: req.body.mobileNumber,
+      phoneNumber: req.body.mobileNumber,
     });
     
     if (!user) {
@@ -63,10 +68,18 @@ exports.user_login = async (req, res) => {
         .status(200)
         .send({ status: false, data: {}, message: "user dose not exist" });
     }
+    const isPasswordValid = bcrypt.compareSync(req.body.password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).send({
+        status: false,
+        data:{},
+        message: "Invalid password",
+      });
+    }
     if (user) {
       const payload = {
         userId: user._id,
-        mobileNumber: req.body.mobileNumber,
+        phoneNumber: req.body.mobileNumber,
       };
 
       const generatedToken = jwt.sign(payload, process.env.JWT_SECRET_KEY);

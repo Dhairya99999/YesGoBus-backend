@@ -176,6 +176,7 @@ exports.edit_booking = async (req, res) => {
       }
     );
     const response = await cashfree({userId:req.user,user,bookingId:req.body.bookingId,totalFare:req.body.totalPackagePrice})
+    console.log(response)
     return res.status(200).send({
       status: true,
       data: response,

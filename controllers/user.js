@@ -40,7 +40,7 @@ exports.user_signup = async (req, res) => {
       phoneNumber: req.body.mobileNumber,
     };
 
-    const generatedToken = jwt.sign(payload, process.env.JWT_SECRET_KEY);
+    const generatedToken = jwt.sign(payload, process.env.JWT_KEY);
     return res.status(200).send({
       status: true,
       data: { token: generatedToken, user: user },
@@ -82,7 +82,7 @@ exports.user_login = async (req, res) => {
         phoneNumber: req.body.mobileNumber,
       };
 
-      const generatedToken = jwt.sign(payload, process.env.JWT_SECRET_KEY);
+      const generatedToken = jwt.sign(payload, process.env.JWT_KEY);
       return res.status(200).send({
         status: true,
         data: { token: generatedToken, user: user },

@@ -156,7 +156,16 @@ exports.get_Itinerary_plans = async (req, res) => {
 
 exports.edit_booking = async (req, res) => {
   try {
-    const user = await userModel.findOne({_id:req.user})
+    if(req.body.paymentStatus){
+      const bookingData = await bookingModel.findOneAndUpdate({bookingId:req.body.bookingId},{
+        paymentStatus:req.body.paymentStatus
+      })
+      return res.status(200).send({
+        status: true,
+        data: {bookingData},
+        message: "Booking updated successfully",
+      });
+    }
     const bookingData = await bookingModel.findOneAndUpdate(
       { _id: req.body.bookingId },
       {
@@ -175,39 +184,9 @@ exports.edit_booking = async (req, res) => {
         spancelRequest: req.body.spancelRequest,
       }
     );
-    const options = {
-      method: "POST",
-      url:"https://sandbox.cashfree.com/pg/orders",
-      headers:{
-        accept:"application/json",
-        "x-api-version":"2023-08-01",
-        "content-type":"application/json",
-        "x-client-id": process.env.CASHFREE_ID,
-        "x-client-secret": process.env.CASHFREE_SECKRET
-      },
-      data:{
-        customer_details:{
-          customer_id:req.user,
-          customer_email: user.email,
-          customer_phone: user.phoneNumber? `${user.phoneNumber}`: `${req.body.mobileNumber}`,
-          customer_name: user.fullName?user.fullName: `${user.firstName} ${user.lastName}`,
-        },
-        order_meta:{
-          notify_url:"https://webhook.site/",
-          payment_methods:"cc,dc,ppc,ccc,emi,paypal,upi,nb,app,paylater",
-        },
-        order_amount:req.body.totalPackagePrice,
-        order_id:req.body.bookingId,
-        order_currency:"INR",
-        order_note:"This is my testing order"
-      }
-    }
-    const paymentRes = await axios.request(options)
-    console.log(paymentRes)
     return res.status(200).send({
       status: true,
-      data: {payment_session:paymentRes.data.payment_session_id,order_id:req.body.bookingId},
-      message: "Booking updated successfully",
+      data: {bookingData},
     });
   } catch (err) {
     return res.status(500).send({
@@ -290,6 +269,7 @@ exports.get_customer_booking = async (req, res) => {
 
 exports.get_booking = async (req, res) => {
   try {
+    console.log(req.body.bookingId)
     const booking = await bookingModel.findOne({
       bookingId: req.body.bookingId,
     });
@@ -306,3 +286,23 @@ exports.get_booking = async (req, res) => {
     });
   }
 };
+
+exports.update_booking_payment = async(req,res)=>{
+  try {
+    console.log(req.body.bookingId)
+    const booking = await bookingModel.findOneAndUpdate({bookingId:req.body.bookingId},{
+      merchantTransactionId: req.body.merchantTransactionId,
+    });
+    return res.status(200).send({
+      status: true,
+      data: { booking },
+      message: "Booking Data fetch successfully",
+    });
+  } catch (err) {
+    return res.status(500).send({
+      status: false,
+      data: { errorMessage: err.message },
+      message: "server error",
+    });
+  }
+}

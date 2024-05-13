@@ -12,7 +12,7 @@ router.post("/update_booking",bookingController.edit_booking);
 router.post("/update_booking_payment",bookingController.update_booking_payment)
 router.post("/add_booking_query",middleware.authenticateToken,bookingController.customer_sport)
 router.get("/get_user_booking", middleware.authenticateToken, bookingController.get_customer_booking)
-router.post("/get_booking",  middleware.authenticateToken, bookingController.get_booking)
+router.post("/get_booking", bookingController.get_booking)
 
 router.post("/add_stories",async(req,res)=>{
     try{

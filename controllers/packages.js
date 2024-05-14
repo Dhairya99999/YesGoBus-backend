@@ -85,9 +85,9 @@ exports.get_packages = async (req, res) => {
 
 exports.popular_destinations = async (req, res) => {
   try {
-    console.log(req.body.destination.toUpperCase());
+    console.log(req.body.destination.charAt(0).toUpperCase() + req.body.destination.slice(1));
     const packages = await packageModel.find({
-      destination: req.body.destination,
+      destination: req.body.destination.charAt(0).toUpperCase() + req.body.destination.slice(1),
     });
     const wishlist = await wishlistModel.find({ userId: req.user });
     const updatedData = packages.map((item) => {

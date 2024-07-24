@@ -1,41 +1,33 @@
 {
-  "name": "yesgobus",
+  "name": "api",
   "version": "1.0.0",
-  "description": "a travling app",
-  "main": "app.js",
+  "description": "",
+  "main": "server.js",
+  "type": "module",
   "scripts": {
-    "start": "node ./bin/www",
-    "dev": "nodemon ./bin/www"
+    "start": "nodemon --es-module-specifier-resolution=node server.js",
+    "build": "npm install"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Balaji798/yesbus-backend.git"
-  },
-  "author": "balaji yadav",
+  "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Balaji798/yesbus-backend/issues"
-  },
-  "homepage": "https://github.com/Balaji798/yesbus-backend#readme",
   "dependencies": {
-    "@sendgrid/mail": "^8.1.3",
-    "axios": "^1.6.8",
+    "@sendgrid/mail": "^7.7.0",
+    "aws-sdk": "^2.1618.0",
+    "axios": "^1.6.2",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
-    "crypto": "^1.0.1",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "fs-promise": "^2.0.3",
     "http": "^0.0.1-security",
-    "http-errors": "^2.0.0",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.3.1",
-    "morgan": "^1.10.0",
+    "jsonwebtoken": "^9.0.1",
+    "mongoose": "^7.4.3",
     "multer": "^1.4.5-lts.1",
-    "nodemon": "^3.1.0",
+    "node-schedule": "^2.1.1",
+    "nodemon": "^3.0.1",
     "oauth-1.0a": "^2.2.6",
-    "otp-generator": "^4.0.1",
-    "twilio": "^5.0.3"
+    "twilio": "^4.18.0"
   }
 }

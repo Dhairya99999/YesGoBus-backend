@@ -1,26 +1,45 @@
-const User = require("../model/user");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+import User from "../modals/user.modal.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { generateRandomNumber } from "../utils/generateRandomNumber.js";
+import Agent from "../modals/agents.modal.js";
+import axios from "axios";
 
-exports.signUp = async (userData) => {
+export const signUp = async (userData) => {
   try {
-    console.log(userData);
     const existingUser = await User.findOne({
-      mobileNumber: userData.mobileNumber,
+      $or: [{ email: userData.email }, { phoneNumber: userData.phoneNumber }]
     });
-    console.log(existingUser);
+    console.log(existingUser)
     if (!existingUser) {
+      const userId = generateRandomNumber(8);
       //const hashedPassword = bcrypt.hashSync(userData.password, 5);
       const newUser = new User({
         ...userData,
+        userId: userId,
         //password: hashedPassword,
       });
       await newUser.save();
-
+      const response = await axios.post(
+        "https://auth.otpless.app/auth/otp/v1/send",
+        {
+          phoneNumber: `91${userData.phoneNumber}`,
+          otpLength: 6,
+          channel: "SMS",
+          expiry: 600,
+        },
+        {
+          headers: {
+            clientId: process.env.CLIENT_ID,
+            clientSecret: process.env.CLIENT_SECRET,
+            "Content-Type": "application/json",
+          },
+        }
+      );
       return {
         status: 200,
-        message: "SignUp Successful",
-        data: newUser,
+        message: "OTP send Successful",
+        data: response.data,
       };
     } else {
       return {
@@ -29,7 +48,6 @@ exports.signUp = async (userData) => {
       };
     }
   } catch (err) {
-    console.log(err);
     return {
       status: 500,
       message: err.message || "Internal server error",
@@ -37,33 +55,52 @@ exports.signUp = async (userData) => {
   }
 };
 
-exports.signIn = async (emailMobile, password) => {
+export const signIn = async (mobileNumber) => {
   try {
-    const existingUser = await User.findOne({
-      $or: [{ email: emailMobile }, { phoneNumber: emailMobile }],
+    
+    const existingAgent = await Agent.findOne({
+      $or: [{ email: mobileNumber }, { phNum: mobileNumber }],
+      status: true,
     });
+    let existingUser = "";
 
+    if (existingAgent) {
+      existingUser = await User.findOne({
+        _id: existingAgent.id
+      });
+    } else {
+      existingUser = await User.findOne({
+        $or: [{ email: mobileNumber }, { phoneNumber: mobileNumber }],
+      });
+    }
     if (!existingUser) {
       return {
         status: 401,
         message: "User not found",
       };
     }
-    const isPasswordValid = bcrypt.compareSync(password, existingUser.password);
-    if (!isPasswordValid) {
-      return {
-        status: 401,
-        message: "Invalid password",
-      };
-    }
-    const token = jwt.sign({ userId: existingUser._id }, process.env.JWT_KEY);
-    existingUser.password = undefined;
+    const response = await axios.post(
+      "https://auth.otpless.app/auth/otp/v1/send",
+      {
+        phoneNumber: `91${mobileNumber}`,
+        otpLength: 6,
+        channel: "SMS",
+        expiry: 600,
+      },
+      {
+        headers: {
+          clientId: process.env.CLIENT_ID,
+          clientSecret: process.env.CLIENT_SECRET,
+          "Content-Type": "application/json",
+        },
+      }
+    );
     return {
       status: 200,
-      message: "Successfully signed in",
-      data: existingUser,
-      token: token,
+      data: response.data,
+      message: "Signup Successfully",
     };
+
   } catch (err) {
     console.log(err);
     return {
@@ -73,15 +110,17 @@ exports.signIn = async (emailMobile, password) => {
   }
 };
 
-exports.googleSignUp = async (jwtToken) => {
+export const googleSignUp = async (jwtToken) => {
   try {
     const { email, name } = jwt.decode(jwtToken);
+    const userId = generateRandomNumber(8);
     const newUser = await User.findOneAndUpdate(
       { email },
       {
         $setOnInsert: {
           email: email,
           fullName: name,
+          userId: userId,
         },
       },
       {
@@ -106,14 +145,16 @@ exports.googleSignUp = async (jwtToken) => {
   }
 };
 
-exports.facebookSignUp = async ({ name, email }) => {
+export const facebookSignUp = async ({ name, email }) => {
   try {
+    const userId = generateRandomNumber(8);
     const newUser = await User.findOneAndUpdate(
       { email },
       {
         $setOnInsert: {
           email,
           fullName: name,
+          userId: userId,
         },
       },
       {
@@ -138,11 +179,9 @@ exports.facebookSignUp = async ({ name, email }) => {
   }
 };
 
-exports.updateUserProfile = async (userId, updatedData) => {
+export const updateUserProfile = async (userId, updatedData) => {
   try {
-    const existingUser = await User.findByIdAndUpdate(userId, updatedData, {
-      new: true,
-    });
+    const existingUser = await User.findByIdAndUpdate(userId, updatedData, { new: true });
 
     if (!existingUser) {
       return {

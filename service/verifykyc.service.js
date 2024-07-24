@@ -1,5 +1,5 @@
-const axios = require("axios");
-const BankModal = require("../model/bankDetails");
+import axios from "axios";
+import BankModal from "../modals/bankDetails.modal.js";
 
 const sendRequest = async (url, method, headers, data) => {
   try {
@@ -17,7 +17,7 @@ const sendRequest = async (url, method, headers, data) => {
   }
 };
 
-// exports.authenticate = async () => {
+// export const authenticate = async () => {
 //   const headers = {
 //     'accept': 'application/json',
 //     'x-api-key': process.env.API_KEY,
@@ -29,7 +29,7 @@ const sendRequest = async (url, method, headers, data) => {
 //   return sendRequest(url, "POST", headers, requestData);
 // };
 
-// exports.aadhaarKycGenerateOtp = async (access_token, aadhaar_number) => {
+// export const aadhaarKycGenerateOtp = async (access_token, aadhaar_number) => {
 //   const headers = {
 //     'Authorization': access_token,
 //     'accept': 'application/json',
@@ -44,7 +44,7 @@ const sendRequest = async (url, method, headers, data) => {
 //   return sendRequest(url, "POST", headers, requestData);
 // };
 
-// exports.aadhaarKycVerifyOtp = async (access_token, otp, ref_id) => {
+// export const aadhaarKycVerifyOtp = async (access_token, otp, ref_id) => {
 //   const headers = {
 //     'Authorization': access_token,
 //     'accept': 'application/json',
@@ -60,7 +60,7 @@ const sendRequest = async (url, method, headers, data) => {
 //   return sendRequest(url, "POST", headers, requestData);
 // };
 
-// exports.panVerification = async (access_token, pan) => {
+// export const panVerification = async (access_token, pan) => {
 //   const headers = {
 //     'Accept': 'application/json',
 //     'Authorization': access_token,
@@ -71,7 +71,7 @@ const sendRequest = async (url, method, headers, data) => {
 //   return sendRequest(url, "GET", headers, null);
 // };
 
-// exports.bankAccountVerification = async (access_token, ifsc, account_number) => {
+// export const bankAccountVerification = async (access_token, ifsc, account_number) => {
 //   const headers = {
 //     'Authorization': access_token,
 //     'x-api-key': process.env.API_KEY,
@@ -81,7 +81,7 @@ const sendRequest = async (url, method, headers, data) => {
 //   return sendRequest(url, "GET", headers, null);
 // };
 
-exports.aadhaarKycGenerateOtp = async (aadhaar_number) => {
+export const aadhaarKycGenerateOtp = async (aadhaar_number) => {
   const headers = {
     'accept': 'application/json',
     'api-key': process.env.API_KEY
@@ -91,7 +91,7 @@ exports.aadhaarKycGenerateOtp = async (aadhaar_number) => {
   return sendRequest(url, "POST", headers, requestData);
 };
 
-exports.aadhaarKycVerifyOtp = async (otp, client_id) => {
+export const aadhaarKycVerifyOtp = async (otp, client_id) => {
   const headers = {
     'accept': 'application/json',
     'api-key': process.env.API_KEY
@@ -104,7 +104,7 @@ exports.aadhaarKycVerifyOtp = async (otp, client_id) => {
   return sendRequest(url, "POST", headers, requestData);
 };
 
-exports.panVerification = async (panNumber, dob, fullName) => {
+export const panVerification = async (panNumber, dob, fullName) => {
   const headers = {
     'accept': 'application/json',
     'api-key': process.env.API_KEY,
@@ -119,7 +119,7 @@ exports.panVerification = async (panNumber, dob, fullName) => {
   return sendRequest(url, "POST", headers, requestData);
 };
 
-exports.bankAccountVerification = async (ifsc, account_number) => {
+export const bankAccountVerification = async (ifsc, account_number) => {
   const headers = {
     'accept': 'application/json',
     'api-key': process.env.API_KEY,
@@ -150,7 +150,7 @@ exports.bankAccountVerification = async (ifsc, account_number) => {
   return response;
 };
 
-exports.drivingLicenseVerification = async (id_number, dob) => {
+export const drivingLicenseVerification = async (id_number, dob) => {
   const headers = {
     'accept': 'application/json',
     'api-key': process.env.API_KEY,

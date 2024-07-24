@@ -1,12 +1,12 @@
-const Agent = require("../model/agent.js");
-const User = require("../model/user.js");
-const BusBooking = require("../model/busBooking.js");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const { sendSrsRequest, sendVrlRequest } = require("./buBooking.service.js");
-const { generateUserId } = require("../utils/generateRandomNumber.js");
+import Agent from "../modals/agents.modal.js";
+import User from "../modals/user.modal.js";
+import BusBooking from "../modals/busBooking.modal.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { sendSrsRequest, sendVrlRequest } from "./buBooking.service.js";
+import { generateUserId } from "../utils/generateRandomNumber.js";
 
-exports.registerAgent = async (agentData) => {
+export const registerAgent = async (agentData) => {
   try {
     const existingUserAccount = await User.findOne({
       userId: agentData.userId,
@@ -57,7 +57,7 @@ exports.registerAgent = async (agentData) => {
   }
 };
 
-exports.loginAgent = async (emailMobile, password) => {
+export const loginAgent = async (emailMobile, password) => {
   try {
     const existingAgent = await Agent.findOne({
       $or: [{ email: emailMobile }, { phNum: emailMobile }],
@@ -121,7 +121,7 @@ exports.loginAgent = async (emailMobile, password) => {
   }
 };
 
-exports.getAgentBookings = async (agentId, filter) => {
+export const getAgentBookings = async (agentId, filter) => {
   try {
     const agent = await Agent.findById(agentId);
     if (!agent) {
@@ -158,7 +158,7 @@ exports.getAgentBookings = async (agentId, filter) => {
   }
 };
 
-exports.getAllAgentsBookings = async () => {
+export const getAllAgentsBookings = async () => {
   try {
     const agents = await Agent.find({ email: { $ne: "admin@yesgobus.com" } });
     const allBookings = await Promise.all(
@@ -193,7 +193,7 @@ exports.getAllAgentsBookings = async () => {
   }
 };
 
-exports.getBalanceAPI = async () => {
+export const getBalanceAPI = async () => {
   const url = `gds/api/get_balance.json`;
   const ticketSimplyResponse = await sendSrsRequest(url, "GET");
   const vrl_url = `GetCurrentAccountBalance`;
@@ -204,7 +204,7 @@ exports.getBalanceAPI = async () => {
   };
 };
 
-exports.adminApproveAgent = async (agentId) => {
+export const adminApproveAgent = async (agentId) => {
   try {
     const agent = await Agent.findByIdAndUpdate(
       agentId,
@@ -231,7 +231,7 @@ exports.adminApproveAgent = async (agentId) => {
   }
 };
 
-exports.adminRejectAgent = async (agentId) => {
+export const adminRejectAgent = async (agentId) => {
   try {
     const agent = await Agent.findByIdAndDelete(agentId);
     if (!agent) {
@@ -254,7 +254,7 @@ exports.adminRejectAgent = async (agentId) => {
   }
 };
 
-exports.getAllPendingAgents = async () => {
+export const getAllPendingAgents = async () => {
   try {
     const agents = await Agent.find({ status: false });
     return {
@@ -271,7 +271,7 @@ exports.getAllPendingAgents = async () => {
   }
 };
 
-exports.getAllBookings = async (agentId, filter) => {
+export const getAllBookings = async (agentId, filter) => {
   try {
     const agent = await Agent.findById(agentId);
     if (!agent) {
@@ -338,7 +338,7 @@ exports.getAllBookings = async (agentId, filter) => {
   }
 };
 
-exports.getAllBookingRefund = async (agentId, filter) => {
+export const getAllBookingRefund = async (agentId, filter) => {
   try {
     const agent = await Agent.findById(agentId);
     if (!agent) {
@@ -405,7 +405,7 @@ exports.getAllBookingRefund = async (agentId, filter) => {
   }
 };
 
-exports.getAgentPerformanceReport = async (filter) => {
+export const getAgentPerformanceReport = async (filter) => {
   try {
     const agentFilter = {
       email: { $ne: "admin@yesgobus.com" },
@@ -465,7 +465,7 @@ exports.getAgentPerformanceReport = async (filter) => {
 };
 
 
-exports.verifyAgentCode = async (agentCode) => {
+export const verifyAgentCode = async (agentCode) => {
   try {
     const existingAgent = await Agent.findOne({ agentCode: agentCode });
     const checkLimit = await getAgentRemainingTicketByDay(existingAgent._id);
@@ -496,7 +496,7 @@ exports.verifyAgentCode = async (agentCode) => {
   }
 };
 
-exports.isAgent = async (userId) => {
+export const isAgent = async (userId) => {
   try {
     const existingAgent = await Agent.findOne({ userId: userId, status: true });
     if (existingAgent) {
@@ -522,7 +522,7 @@ exports.isAgent = async (userId) => {
   }
 };
 
-exports.getAgentStats = async (agentId) => {
+export const getAgentStats = async (agentId) => {
   try {
     const agent = await Agent.findById(agentId);
     if (!agent) {
@@ -596,7 +596,7 @@ exports.getAgentStats = async (agentId) => {
   }
 };
 
-exports.updateAgent = async (agentId, updateData) => {
+export const updateAgent = async (agentId, updateData) => {
   try {
     const agent = await Agent.findByIdAndUpdate(
       agentId,
@@ -623,7 +623,7 @@ exports.updateAgent = async (agentId, updateData) => {
   }
 };
 
-exports.getAgentRemainingTicketByDay = async (agentId) => {
+export const getAgentRemainingTicketByDay = async (agentId) => {
   try {
     const agent = await Agent.findById(agentId);
     if (!agent) {
@@ -664,7 +664,7 @@ exports.getAgentRemainingTicketByDay = async (agentId) => {
   }
 }
 
-exports.adminInactivateAgent = async (agentId) => {
+export const adminInactivateAgent = async (agentId) => {
   try {
     const agent = await Agent.findByIdAndUpdate(
       agentId,

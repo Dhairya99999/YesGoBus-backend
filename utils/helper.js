@@ -1,12 +1,12 @@
 // import twilio from 'twilio';
-const sgMail = require('@sendgrid/mail');
-const dotenv = require("dotenv");
-const axios = require("axios");
+import sgMail from '@sendgrid/mail';
+import dotenv from "dotenv";
+import axios from "axios";
 
 dotenv.config();
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-exports.sendMessage = async (message, to, templateId) => {
+export const sendMessage = async (message, to, templateId) => {
   try {
     const authKey = process.env.AUTH_KEY;
     const senderId = process.env.SENDER_ID;
@@ -32,7 +32,7 @@ exports.sendMessage = async (message, to, templateId) => {
   }
 };
 
-exports.sendMail = async (to, subject, message) => {
+export const sendMail = async (to, subject, message) => {
   try {
     const msg = {
       to: to,

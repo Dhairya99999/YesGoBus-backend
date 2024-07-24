@@ -1,6 +1,6 @@
-const Cab = require("../model/cab");
+import Cab from "../modals/cab.modal.js";
 
-exports.getCabDetails = async (query) => {
+export const getCabDetails = async (query) => {
   try {
     query.cab_status = "available";
     const cabDetails = await Cab.find(query);
@@ -26,7 +26,7 @@ exports.getCabDetails = async (query) => {
   }
 };
 
-exports.addCabDetails = async (cabData) => {
+export const addCabDetails = async (cabData) => {
   try {
     const driverId = cabData.userId;
     const location = cabData.location.toLowerCase();
@@ -51,7 +51,7 @@ exports.addCabDetails = async (cabData) => {
   }
 };
 
-exports.updateCabDetails = async (cabId, updatedData) => {
+export const updateCabDetails = async (cabId, updatedData) => {
   try {
     const updatedCab = await Cab.findByIdAndUpdate(
       cabId, {
@@ -80,7 +80,7 @@ exports.updateCabDetails = async (cabId, updatedData) => {
   }
 };
 
-exports.getCabDetailsByUser = async (driverId) => {
+export const getCabDetailsByUser = async (driverId) => {
   try {
     const cabDetails = await Cab.find({ driverId });
     
@@ -105,7 +105,7 @@ exports.getCabDetailsByUser = async (driverId) => {
   }
 };
 
-exports.inactiveCab = async (cabId) => {
+export const inactiveCab = async (cabId) => {
   try {
     const updatedCab = await Cab.findByIdAndUpdate(
       cabId, {

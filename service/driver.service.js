@@ -1,9 +1,9 @@
-const Driver = require("../model/driver.js");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const { sendMail } = require("../utils/helper.js");
+import Driver from "../modals/driver.modal.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { sendMail } from "../utils/helper.js";
 
-exports.signUp = async (userData) => {
+export const signUp = async (userData) => {
   try {
     const existingUser = await Driver.findOne({ email: userData.email });
     if (!existingUser) {
@@ -49,7 +49,7 @@ exports.signUp = async (userData) => {
   }
 };
 
-exports.signIn = async (email, password) => {
+export const signIn = async (email, password) => {
   try {
     const existingUser = await Driver.findOne({ email });
     if (!existingUser) {
@@ -84,7 +84,7 @@ exports.signIn = async (email, password) => {
   }
 };
 
-exports.updateDriver = async (driverId, newData) => {
+export const updateDriver = async (driverId, newData) => {
   try {
     const updatedDriver = await Driver.findByIdAndUpdate(driverId, 
       {
@@ -112,7 +112,7 @@ exports.updateDriver = async (driverId, newData) => {
   }
 };
 
-exports.getDriverById = async (driverId) => {
+export const getDriverById = async (driverId) => {
   try {
     const driver = await Driver.findById(driverId);
     if(!driver) {

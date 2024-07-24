@@ -1,12 +1,13 @@
-const axios = require("axios");
-const OAuth = require("oauth-1.0a");
-const crypto = require('crypto');
-const BusBooking = require("../model/busBooking.js");
-const City = require("../model/cities.js");
-const VrlCity = require("../model/vrlcities.js");
-const SrsCity = require("\../model/srscities.js");
-const { stages } = require("../utils/stages.js");
- 
+import axios from "axios";
+import OAuth from "oauth-1.0a";
+import crypto from 'crypto';
+import BusBooking from "../modals/busBooking.modal.js";
+import City from "../modals/cities.modal.js";
+import VrlCity from "../modals/vrlcities.modal.js";
+import Tickets from "../modals/ticket.modal.js";
+import SrsCity from "../modals/srscities.modal.js";
+import { stages } from "../utils/stages.js";
+
 const sendRequest = async (url, method, data) => {
   try {
     const oauth = OAuth({
@@ -19,7 +20,7 @@ const sendRequest = async (url, method, data) => {
         return crypto.createHmac('sha1', key).update(base_string).digest('base64');
       },
     });
-    
+
     const requestData = {
       url: url,
       method: method,
@@ -27,14 +28,14 @@ const sendRequest = async (url, method, data) => {
     };
 
     const headers = oauth.toHeader(oauth.authorize(requestData));
-    
+
     const response = await axios({
       method: method,
       url: url,
       headers: headers,
       data: data,
     });
-    console.log(response.data)
+
     return response.data;
 
   } catch (error) {
@@ -43,82 +44,79 @@ const sendRequest = async (url, method, data) => {
   }
 };
 
-exports.getCityList = async () => {
+export const getCityList = async () => {
   const requestData = {};
   const url = "http://api.seatseller.travel/cities";
   return sendRequest(url, "GET", requestData);
 };
 
-exports.getAliasesCity = async () => {
+export const getAliasesCity = async () => {
   const requestData = {};
   const url = "http://api.seatseller.travel/aliases";
   return sendRequest(url, "GET", requestData);
 };
-const searchBus = async (sourceId, destinationId, doj) => {
-  const url = `http://api.seatseller.travel/availabletrips?source=${sourceId}&destination=${destinationId}&doj=${doj}`;
-  return sendRequest(url, "GET", null);
-}
-exports.searchBus = async (sourceId, destinationId, doj) => {
+
+export const searchBus = async (sourceId, destinationId, doj) => {
   const url = `http://api.seatseller.travel/availabletrips?source=${sourceId}&destination=${destinationId}&doj=${doj}`;
   return sendRequest(url, "GET", null);
 };
 
-exports.getSeatLayout = async (id) => {
+export const getSeatLayout = async (id) => {
   const url = `http://api.seatseller.travel/tripdetails?id=${id}`;
   return sendRequest(url, "GET", null);
 };
 
-exports.getBpDpDetails = async (id) => {
+export const getBpDpDetails = async (id) => {
   const url = `http://api.seatseller.travel/bpdpDetails?id=${id}`;
   return sendRequest(url, "GET", null);
 };
 
-exports.getSeatLayoutV2 = async (args) => {
+export const getSeatLayoutV2 = async (args) => {
   const url = "http://api.seatseller.travel/tripdetailsV2";
   return sendRequest(url, "POST", args);
 };
 
-exports.blockSeat = async (args) => {
+export const blockSeat = async (args) => {
   const url = "http://api.seatseller.travel/blockTicket";
   return sendRequest(url, "POST", args);
 };
 
-exports.getRTCFareBreakup = async (blockKey) => {
+export const getRTCFareBreakup = async (blockKey) => {
   const url = `http://api.seatseller.travel/rtcfarebreakup?blockKey=${blockKey}`;
   return sendRequest(url, "GET", null);
 };
 
-exports.bookSeat = async (blockKey) => {
+export const bookSeat = async (blockKey) => {
   const url = `http://api.seatseller.travel/bookticket?blockKey=${blockKey}`;
   return sendRequest(url, "POST", null);
 };
 
-exports.cancelTicketData = async (tin) => {
+export const cancelTicketData = async (tin) => {
   const url = `http://api.seatseller.travel/cancellationdata?tin=${tin}`;
   return sendRequest(url, "GET", null);
 };
 
-exports.cancelTicket = async (args) => {
+export const cancelTicket = async (args) => {
   const url = `http://api.seatseller.travel/cancelticket`;
   return sendRequest(url, "POST", args);
 };
 
-exports.getTicket = async (tin) => {
+export const getTicket = async (tin) => {
   const url = `http://api.seatseller.travel/ticket?tin=${tin}`;
   return sendRequest(url, "GET", null);
 };
 
-exports.checkBookedTicket = async (blockKey) => {
+export const checkBookedTicket = async (blockKey) => {
   const url = `http://api.seatseller.travel/checkBookedTicket?blockKey=${blockKey}`;
   return sendRequest(url, "GET", null);
 };
 
-exports.busCancellationInfo = async (from, to) => {
+export const busCancellationInfo = async (from, to) => {
   const url = `http://api.seatseller.travel/busCancellationInfo?from=${from}&to=${to}`;
   return sendRequest(url, "GET", null);
 };
 
-exports.getBusFilters = async (args) => {
+export const getBusFilters = async (args) => {
   try {
     const [sourceCity, destinationCity] = await Promise.all([
       City.findOne({ name: capitalizeFirstLetter(args.sourceCity) }),
@@ -174,7 +172,6 @@ exports.getBusFilters = async (args) => {
       destinationCity: destinationCity.id,
     };
   } catch (error) {
-    console.log(error)
     throw error.message;
   }
 };
@@ -190,7 +187,7 @@ function hasFilters(filters) {
 }
 
 
-exports.getBusDetails = async (searchArgs, filters) => {
+export const getBusDetails = async (searchArgs, filters) => {
   try {
     const [sourceCity, destinationCity] = await Promise.all([
       City.findOne({ name: capitalizeFirstLetter(searchArgs.sourceCity) }),
@@ -268,7 +265,7 @@ exports.getBusDetails = async (searchArgs, filters) => {
   }
 };
 
-exports.bookBus = async (bookingDetails) => {
+export const bookBus = async (bookingDetails) => {
   try {
     const booking = new BusBooking({
       ...bookingDetails
@@ -284,7 +281,7 @@ exports.bookBus = async (bookingDetails) => {
   }
 }
 
-exports.searchCity = async (searchParam) => {
+export const searchCity = async (searchParam) => {
   try {
     const cities = await City.find({
       name: { $regex: `^${searchParam}`, $options: 'i' }
@@ -297,9 +294,9 @@ exports.searchCity = async (searchParam) => {
   } catch (error) {
     throw error.message;
   }
-}
+} 
 
-exports.updateBookings = async (bookingId, bookingDetails) => {
+export const updateBookings = async (bookingId, bookingDetails) => {
   try {
     const updatedBooking = await BusBooking.findOneAndUpdate(
       { _id: bookingId },
@@ -323,7 +320,7 @@ exports.updateBookings = async (bookingId, bookingDetails) => {
   }
 };
 
-exports.getBookingById = async (bookingId) => {
+export const getBookingById = async (bookingId) => {
   try {
     const booking = await BusBooking.findById(bookingId);
     if (!booking) {
@@ -361,11 +358,9 @@ exports.getBookingById = async (bookingId) => {
 };
 
 
-exports.getAllBookings = async (userId) => {
+export const getAllBookings = async (userId) => {
   try {
-    const booking = await BusBooking.find({ userId: userId
-      //, bookingStatus: { $ne: "pending" } 
-    });
+    const booking = await BusBooking.find({ userId: userId, bookingStatus: { $ne: "pending" } });
     if (!booking) {
       return {
         status: 404,
@@ -383,23 +378,9 @@ exports.getAllBookings = async (userId) => {
   }
 };
 
-const sendVrlRequest = async (url, data) => {
-  try {
-    data.verifyCall = process.env.VERIFY_CALL;
-    const response = await axios({
-      method: "POST",
-      url: `https://itsplatform.itspl.net/api/${url}`,
-      data: data,
-    });
-    console.log(response)
-    return response.data;
-  } catch (error) {
-    console.log(error);
-    throw error.message;
-  }
-};
+
 // vrl travels buses
-exports.sendVrlRequest = async (url, data) => {
+export const sendVrlRequest = async (url, data) => {
   try {
     data.verifyCall = process.env.VERIFY_CALL;
     const response = await axios({
@@ -419,7 +400,7 @@ const capitalizeFirstLetter = (str) => {
 };
 
 // get vrl bus filters
-exports.getVrlFilters = async (args) => {
+export const getVrlFilters = async (args) => {
   try {
     const [vrlSourceCity, vrlDesctinationCity] = await Promise.all([
       VrlCity.findOne({ CityName: capitalizeFirstLetter(args.sourceCity) }),
@@ -472,7 +453,7 @@ exports.getVrlFilters = async (args) => {
 };
 
 
-exports.getVrlBusDetails = async (searchArgs, filters) => {
+export const getVrlBusDetails = async (searchArgs, filters) => {
   try {
     if (filters.busPartners && filters.busPartners.every(partner => partner.trim() !== "VRL Travels")) {
       return {
@@ -485,6 +466,7 @@ exports.getVrlBusDetails = async (searchArgs, filters) => {
       VrlCity.findOne({ CityName: capitalizeFirstLetter(searchArgs.sourceCity) }),
       VrlCity.findOne({ CityName: capitalizeFirstLetter(searchArgs.destinationCity) }),
     ]);
+
     const dateParts = searchArgs.doj.split('-');
     const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
 
@@ -493,7 +475,7 @@ exports.getVrlBusDetails = async (searchArgs, filters) => {
       toID: parseInt(vrlDesctinationCity.CityID),
       journeyDate: formattedDate.toString(),
     }
-    console.log(requestBody)
+
     let searchResponse = await sendVrlRequest("GetAvailableRoutes", requestBody);
     searchResponse = searchResponse.data.AllRouteBusLists;
     searchResponse = searchResponse.map((route) => {
@@ -569,33 +551,10 @@ exports.getVrlBusDetails = async (searchArgs, filters) => {
 };
 
 
-const sendSrsRequest = async (url, method, data) => {
-  try {
-    const headers = {
-      'api-key': process.env.SRS_API_KEY,
-      'Content-Type': 'application/json',
-      'Accept-Encoding': 'application/gzip',
-    };
-    const response = await axios({
-      method: method,
-      //test
-      // url: `http://gds-stg.ticketsimply.co.in/${url}`,
 
-      //live
-      url: `https://gds.ticketsimply.com/${url}`,
-
-      headers: headers,
-      data: data,
-    });
-
-    return response;
-  } catch (error) {
-    throw error.message;
-  }
-};
 
 // srs buses APIS
-exports.sendSrsRequest = async (url, method, data) => {
+export const sendSrsRequest = async (url, method, data) => {
   try {
     const headers = {
       'api-key': process.env.SRS_API_KEY,
@@ -621,7 +580,7 @@ exports.sendSrsRequest = async (url, method, data) => {
 };
 
 
-exports.getSrsCities = async () => {
+export const getSrsCities = async () => {
   const url = "/gds/api/cities.json";
   const response = await sendSrsRequest(url, "GET");
   const key = response.data.result[0];
@@ -635,14 +594,14 @@ exports.getSrsCities = async () => {
   return resultArray;
 };
 
-exports.getSrsSchedules = async (origin_id, destination_id, travel_date) => {
+export const getSrsSchedules = async (origin_id, destination_id, travel_date) => {
   const [srsSourceCity, srsDesctinationCity] = await Promise.all([
     SrsCity.findOne({ name: capitalizeFirstLetter(origin_id) }),
     SrsCity.findOne({ name: capitalizeFirstLetter(destination_id) }),
   ]);
   const url = `/gds/api/schedules/${srsSourceCity.id}/${srsDesctinationCity.id}/${travel_date}.json`;
   const response = await sendSrsRequest(url, "GET");
-  const key = response?.data?.result[0];
+  const key = response.data.result[0];
   let resultArray = response.data.result?.slice(1).map(row => {
     const obj = {};
     key.forEach((header, index) => {
@@ -677,13 +636,13 @@ exports.getSrsSchedules = async (origin_id, destination_id, travel_date) => {
   return resultArray;
 };
 
-exports.getSrsSeatDetails = async (schedule_id) => {
+export const getSrsSeatDetails = async (schedule_id) => {
   const url = `/gds/api/schedule/${schedule_id}.json`;
   const response = await sendSrsRequest(url, "GET");
   return response.data;
 };
 
-exports.getSrsOperatorSchedules = async (travel_id, travel_date) => {
+export const getSrsOperatorSchedules = async (travel_id, travel_date) => {
   const url = `/gds/api/operator_schedules/${travel_id}/${travel_date}.json`;
   const response = await sendSrsRequest(url, "GET");
   const key = response.data.result[0];
@@ -697,7 +656,7 @@ exports.getSrsOperatorSchedules = async (travel_id, travel_date) => {
   return resultArray;
 };
 
-exports.getSrsAvailabilities = async (origin_id, destination_id, travel_date) => {
+export const getSrsAvailabilities = async (origin_id, destination_id, travel_date) => {
   const url = `/gds/api/availabilities/${origin_id}/${destination_id}/${travel_date}.json`;
   const response = await sendSrsRequest(url, "GET");
   const key = response.data.result[0];
@@ -711,7 +670,7 @@ exports.getSrsAvailabilities = async (origin_id, destination_id, travel_date) =>
   return resultArray;
 };
 
-exports.getSrsAvailability = async (schedule_id) => {
+export const getSrsAvailability = async (schedule_id) => {
   const url = `/gds/api/availability/${schedule_id}.json`;
   const response = await sendSrsRequest(url, "GET");
   const key = response.data.result[0];
@@ -725,38 +684,38 @@ exports.getSrsAvailability = async (schedule_id) => {
   return resultArray;
 };
 
-exports.getSrsBlockSeat = async (schedule_id, args) => {
+export const getSrsBlockSeat = async (schedule_id, args) => {
   const url = `/gds/api/tentative_booking/${schedule_id}.json`;
   const response = await sendSrsRequest(url, "POST", args);
   return response.data;
 };
 
 //pass the ticket number from the block seat response
-exports.srsConfirmBooking = async (ticket_number) => {
+export const srsConfirmBooking = async (ticket_number) => {
   const url = `/gds/api/confirm_booking/${ticket_number}.json?api_key=${process.env.SRS_API_KEY}`;
   const response = await sendSrsRequest(url, "POST");
   return response.data;
 };
 
-exports.getSrsBookingDetails = async (ticket_number, agent_ref_number) => {
+export const getSrsBookingDetails = async (ticket_number, agent_ref_number) => {
   const url = `/gds/api/booking_details.json?pnr_number=${ticket_number}&agent_ref_number=${agent_ref_number}`;
   const response = await sendSrsRequest(url, "GET");
   return response.data;
 };
 
-exports.getSrsCanCancelDetails = async (ticket_number, seat_numbers) => {
+export const getSrsCanCancelDetails = async (ticket_number, seat_numbers) => {
   const url = `/gds/api/can_cancel.json?ticket_number=${ticket_number}&seat_numbers=${seat_numbers}`;
   const response = await sendSrsRequest(url, "GET");
   return response.data;
 };
 
-exports.srsCancelBooking = async (ticket_number, seat_numbers) => {
+export const srsCancelBooking = async (ticket_number, seat_numbers) => {
   const url = `/gds/api/cancel_booking.json?ticket_number=${ticket_number}&seat_numbers=${seat_numbers}`;
   const response = await sendSrsRequest(url, "GET");
   return response.data;
 };
 
-exports.getSrsFilters = async (args) => {
+export const getSrsFilters = async (args) => {
   try {
     let searchResponse = await getSrsSchedules(args.sourceCity, args.destinationCity, args.doj);
     const filteredBuses = searchResponse.filter(bus => bus?.status === "New" || bus.status === "Update");

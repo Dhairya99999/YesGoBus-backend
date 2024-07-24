@@ -1,7 +1,7 @@
-const CabBooking = require("../model/cabbooking.js");
-const Cab = require("../model/cab.js");
+import CabBooking from "../modals/cabbooking.modal.js";
+import Cab from "../modals/cab.modal.js";
 
-exports.createCabBooking = async (bookingData) => {
+export const createCabBooking = async (bookingData) => {
   try {
     const userId = bookingData.userId;
     const newCabBooking = new CabBooking({
@@ -25,7 +25,7 @@ exports.createCabBooking = async (bookingData) => {
   }
 };
 
-exports.getCabBookingsByUser = async (userId) => {
+export const getCabBookingsByUser = async (userId) => {
   try {
     const cabBookings = await CabBooking.find({ userId: userId });
     
@@ -50,7 +50,7 @@ exports.getCabBookingsByUser = async (userId) => {
   }
 };
 
-exports.cancelCabBooking = async (bookingId) => {
+export const cancelCabBooking = async (bookingId) => {
   try {
     const canceledBooking = await CabBooking.findByIdAndUpdate(
       bookingId,
@@ -79,7 +79,7 @@ exports.cancelCabBooking = async (bookingId) => {
   }
 };
 
-exports.getAllCabBookingByUser = async (driverId) => {
+export const getAllCabBookingByUser = async (driverId) => {
   try {
     const cabsWithBookingDetails = await Cab.aggregate([
       {
@@ -121,7 +121,7 @@ exports.getAllCabBookingByUser = async (driverId) => {
   }
 };
 
-exports.completeBooking = async (bookingId) => {
+export const completeBooking = async (bookingId) => {
   try {
     const booking = await CabBooking.findByIdAndUpdate(bookingId, {
       status: "completed",

@@ -10,16 +10,7 @@ export const signUp = async (userData) => {
     const existingUser = await User.findOne({
       $or: [{ email: userData.email }, { phoneNumber: userData.phoneNumber }]
     });
-    console.log(existingUser)
     if (!existingUser) {
-      const userId = generateRandomNumber(8);
-      //const hashedPassword = bcrypt.hashSync(userData.password, 5);
-      const newUser = new User({
-        ...userData,
-        userId: userId,
-        //password: hashedPassword,
-      });
-      await newUser.save();
       const response = await axios.post(
         "https://auth.otpless.app/auth/otp/v1/send",
         {

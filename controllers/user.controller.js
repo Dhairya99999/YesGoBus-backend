@@ -6,6 +6,7 @@ import {
   facebookSignUp,
   updateUserProfile,
 } from "../service/user.service.js";
+import { generateRandomNumber } from "../utils/generateRandomNumber.js";
 import User from "../modals/user.modal.js";
 import jwt from "jsonwebtoken";
 
@@ -54,6 +55,7 @@ export const resend_otp = async (req, res) => {
 };
 export const verify_otp = async (req, res) => {
   try {
+    console.log(req.body)
     const response = await axios.post(
       "https://auth.otpless.app/auth/otp/v1/verify",
       {
@@ -70,19 +72,26 @@ export const verify_otp = async (req, res) => {
       }
     );
     if (response.data.isOTPVerified) {
-      const user = await User.findOne({
-        phoneNumber: req.body.mobileNumber,
+      const userId = generateRandomNumber(8);
+      //const hashedPassword = bcrypt.hashSync(userData.password, 5);
+      const newUser = new User({
+        phoneNumber:req.body.mobileNumber,
+        email:req.body.email,
+        fullName:req.body.fullName,
+        userId: userId,
+        //password: hashedPassword,
       });
-      if (user) {
+      await newUser.save();
+      if (newUser) {
         const payload = {
-          userId: user._id,
+          userId: newUser._id,
           phoneNumber: req.body.mobileNumber,
         };
 
         const generatedToken = jwt.sign(payload, process.env.JWT_KEY);
         return res.status(200).send({
           status: 200,
-          data: { token: generatedToken, user: user },
+          data: { token: generatedToken, user: newUser },
           message: "OTP verified",
         });
       }

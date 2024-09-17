@@ -7,9 +7,20 @@ import axios from "axios";
 
 export const signUp = async (userData) => {
   try {
-    const existingUser = await User.findOne({
-      $or: [{ email: userData.email }, { phoneNumber: userData.phoneNumber }]
-    });
+        const existingUser = await User.findOne({ email: userData.email });
+    if (existingUser) {
+      return {
+        status: 201,
+        message: "email is already in use",
+      };
+    }
+    const phoneExist = await User.findOne({ phoneNumber: userData.phoneNumber });
+    if (phoneExist) {
+      return {
+        status: 201,
+        message: "Phone Number is already in use",
+      };
+    }
     if (!existingUser) {
       const response = await axios.post(
         "https://auth.otpless.app/auth/otp/v1/send",
@@ -32,11 +43,6 @@ export const signUp = async (userData) => {
         message: "OTP send Successful",
         data: response.data,
       };
-    } else {
-      return {
-        status: 409,
-        message: "User already exists",
-      };
     }
   } catch (err) {
     return {
@@ -47,58 +53,75 @@ export const signUp = async (userData) => {
 };
 
 export const signIn = async (mobileNumber) => {
-  try {
-    
-    const existingAgent = await Agent.findOne({
-      $or: [{ email: mobileNumber }, { phNum: mobileNumber }],
-      status: true,
-    });
-    let existingUser = "";
+	try {
+		// For testing purpose only
+		if (mobileNumber === "9999999999") {
+			const user = await User.findOne({
+				phoneNumber: mobileNumber,
+			});
+			if (user) {
+				const payload = {
+					userId: user._id,
+					phoneNumber: mobileNumber,
+				};
 
-    if (existingAgent) {
-      existingUser = await User.findOne({
-        _id: existingAgent.id
-      });
-    } else {
-      existingUser = await User.findOne({
-        $or: [{ email: mobileNumber }, { phoneNumber: mobileNumber }],
-      });
-    }
-    if (!existingUser) {
-      return {
-        status: 401,
-        message: "User not found",
-      };
-    }
-    const response = await axios.post(
-      "https://auth.otpless.app/auth/otp/v1/send",
-      {
-        phoneNumber: `91${mobileNumber}`,
-        otpLength: 6,
-        channel: "SMS",
-        expiry: 600,
-      },
-      {
-        headers: {
-          clientId: process.env.CLIENT_ID,
-          clientSecret: process.env.CLIENT_SECRET,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    return {
-      status: 200,
-      data: response.data,
-      message: "Signup Successfully",
-    };
+				const generatedToken = jwt.sign(payload, process.env.JWT_KEY);
+				return {
+					status: 203,
+					data: { token: generatedToken, user: user },
+					message: "Login Successful",
+				};
+			}
+		} else {
+			const existingAgent = await Agent.findOne({
+				$or: [{ email: mobileNumber }, { phNum: mobileNumber }],
+				status: true,
+			});
+			let existingUser = "";
 
-  } catch (err) {
-    console.log(err);
-    return {
-      status: 500,
-      message: err.message || "Internal server error",
-    };
-  }
+			if (existingAgent) {
+				existingUser = await User.findOne({
+					_id: existingAgent.id,
+				});
+			} else {
+				existingUser = await User.findOne({
+					$or: [{ email: mobileNumber }, { phoneNumber: mobileNumber }],
+				});
+			}
+			if (!existingUser) {
+				return {
+					status: 201,
+					message: "User not found",
+				};
+			}
+			const response = await axios.post(
+				"https://auth.otpless.app/auth/otp/v1/send",
+				{
+					phoneNumber: `91${mobileNumber}`,
+					otpLength: 6,
+					channel: "SMS",
+					expiry: 600,
+				},
+				{
+					headers: {
+						clientId: process.env.CLIENT_ID,
+						clientSecret: process.env.CLIENT_SECRET,
+						"Content-Type": "application/json",
+					},
+				}
+			);
+			return {
+				status: 200,
+				data: response.data,
+				message: "Signup Successfully",
+			};
+		}
+	} catch (err) {
+		return {
+			status: 500,
+			message: err.message || "Internal server error",
+		};
+	}
 };
 
 export const googleSignUp = async (jwtToken) => {

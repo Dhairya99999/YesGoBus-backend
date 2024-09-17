@@ -3,6 +3,16 @@ import Cabdriver from "../modals/cabdriver.modal.js";
 import JWT from "jsonwebtoken";
 import { uploadToS3 } from "../aws/aws.js";
 
+    function normalizeName(name) {
+      return name?.toLowerCase()?.replace(/[^a-z\s]/g, '').trim();
+  }
+  
+  function matchNames(name1, name2) {
+   
+      const normalized1 = normalizeName(name1);
+      const normalized2 = normalizeName(name2);
+      return normalized1?.includes(normalized2) || normalized2?.includes(normalized1);
+  }
 export const user_signup = async (req, res) => {
   try {
     const { firstName, email, lastName, mobileNumber } = await req.body;
@@ -163,10 +173,11 @@ export const user_login = async (req, res) => {
         },
       }
     );
+
     return res.status(200).send({
       status: true,
       data: response.data,
-      message: "Signup Successfully",
+      message: "Otp send Successfully",
     });
   } catch (err) {
     return res.status(500).send({
@@ -229,9 +240,9 @@ export const verify_aadhaar = async (req, res) => {
         },
       }
     );
-
+const isMatch = matchNames(response.data.data.full_name, user.fullName);
     if (response?.data?.data !== null && response?.data?.status === "success") {
-      if (user.fullName !== response.data.data.full_name) {
+      if (!isMatch) {
         return res.status(401).send({
           status: false,
           data: {},
@@ -283,9 +294,9 @@ export const validate_pan = async (req, res) => {
         },
       }
     );
-
+    const isMatch = matchNames(response.data.data.full_name, user.fullName);
     if (response.data.error === null) {
-      if (user.fullName !== response.data.data.full_name) {
+      if (!isMatch) {
         return res.status(401).send({
           status: false,
           data: {},
@@ -337,9 +348,9 @@ export const validate_driving_license = async (req, res) => {
         },
       }
     );
-
+const isMatch = matchNames(response?.data?.data?.name, user?.fullName);
     if (response.data.response_code === 1) {
-      if (user.fullName !== response.data.data.full_name) {
+      if (!isMatch) {
         return res.status(401).send({
           status: false,
           data: {},
@@ -385,9 +396,10 @@ export const validate_rc = async (req, res) => {
         },
       }
     );
-    console.log(user);
+       
+  const isMatch = matchNames(response.data.data.owner_name, user.fullName);
     if (response.data.response_code === 1) {
-      if (user.fullName !== response.data.data.full_name) {
+      if (!isMatch) {
         return res.status(401).send({
           status: false,
           data: {},
@@ -445,7 +457,7 @@ export const add_bank_detail = async (req, res) => {
         },
       }
     );
-    console.log(response);
+    
     if (response.data.response_code === 1) {
       // if (user.fullName !== response.data.data.full_name) {
       //   return res.status(401).send({

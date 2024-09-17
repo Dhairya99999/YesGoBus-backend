@@ -1,4 +1,4 @@
-import bookingModel from "../modals/bankDetails.modal.js";
+import bookingModel from "../modals/booking.modal.js";
 import supportModel from "../modals/customerSupport.modal.js";
 import hotelModel from "../modals/hotels.modal.js";
 //import userModel from "../model/user"
@@ -66,7 +66,7 @@ export const make_booking = async (req, res) => {
     return res.status(500).send({
       status: false,
       data: { errorMessage: err.message },
-      message: "server error",
+      message: "server error 1",
     });
   }
 };
@@ -85,7 +85,7 @@ export const add_itinerary_plans = async (req, res) => {
     return res.status(500).send({
       status: false,
       data: { errorMessage: err.message },
-      message: "server error",
+      message: "server error 2",
     });
   }
 };
@@ -149,7 +149,7 @@ export const get_Itinerary_plans = async (req, res) => {
     return res.status(500).send({
       status: false,
       data: { errorMessage: err.message },
-      message: "server error",
+      message: "server error 3",
     });
   }
 };
@@ -192,7 +192,7 @@ export const edit_booking = async (req, res) => {
     return res.status(500).send({
       status: false,
       data: { errorMessage: err.message },
-      message: "server error",
+      message: "server error 8",
     });
   }
 };
@@ -221,7 +221,7 @@ export const customer_sport = async (req, res) => {
     return res.status(500).send({
       status: false,
       data: { errorMessage: err.message },
-      message: "server error",
+      message: "server error 4",
     });
   }
 };
@@ -262,7 +262,7 @@ export const get_customer_booking = async (req, res) => {
     return res.status(500).send({
       status: false,
       data: { errorMessage: err.message },
-      message: "server error",
+      message: "server error 5",
     });
   }
 };
@@ -282,7 +282,7 @@ export const get_booking = async (req, res) => {
     return res.status(500).send({
       status: false,
       data: { errorMessage: err.message },
-      message: "server error",
+      message: "server error 6",
     });
   }
 };
@@ -302,7 +302,7 @@ export const update_booking_payment = async(req,res)=>{
     return res.status(500).send({
       status: false,
       data: { errorMessage: err.message },
-      message: "server error",
+      message: "server error 7",
     });
   }
 }

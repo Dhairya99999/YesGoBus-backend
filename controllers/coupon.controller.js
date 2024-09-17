@@ -25,7 +25,7 @@ export const add_coupon = async (req, res) => {
     return res.status(500).send({
       status: false,
       data: { errorMessage: err.message },
-      message: "server error",
+      message: "server error 1",
     });
   }
 };
@@ -62,7 +62,7 @@ export const apply_coupon_discount = async (req, res) => {
     return res.status(500).send({
       status: false,
       data: { errorMessage: err.message },
-      message: "server error",
+      message: "server error 2",
     });
   }
 };
@@ -83,7 +83,7 @@ export const get_coupon_code = async (req, res) => {
     return res.status(500).send({
       status: false,
       data: { errorMessage: err.message },
-      message: "server error",
+      message: "server error 3",
     });
   }
 };

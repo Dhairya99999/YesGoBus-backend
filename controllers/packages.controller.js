@@ -85,30 +85,60 @@ export const get_packages = async (req, res) => {
 
 export const popular_destinations = async (req, res) => {
   try {
-    console.log(req.body.destination);
+    // Log the incoming destination to ensure it's received correctly
+    console.log('Incoming Destination:', req.body.destination);
+
+    // Use a case-insensitive query for destination
     const packages = await packageModel.find({
-      destination: req.body.destination.toUpperCase(),
+      destination: new RegExp(`^${req.body.destination}$`, 'i'),
     });
+
+    // Log the packages found to check if the query is working as expected
+    console.log('Packages Found:', packages);
+
+    // If no packages are found, return a 404 response
+    if (packages.length === 0) {
+      return res.status(404).send({
+        status: false,
+        message: "No packages found for the given destination",
+      });
+    }
+
+    // Fetch the user's wishlist
     const wishlist = await wishlistModel.find({ userId: req.user });
+
+    // Log the user's wishlist
+    console.log('Wishlist:', wishlist);
+
+    // Process packages and check if each one is in the user's wishlist
     const updatedData = packages.map((item) => {
       const { _doc } = item; // Destructure _doc
       const isWishlisted = wishlist.some((wish) => {
-        if (wish?.packageId?.toString() === _doc?._id?.toString()) {
-          return true;
-        } else false;
+        return wish?.packageId?.toString() === _doc?._id?.toString();
       });
-      return { ..._doc, isWishlisted }; // Combine _doc with other properties and add isWishlisted
+
+      // Combine _doc with other properties and add isWishlisted
+      return { ..._doc, isWishlisted };
     });
+
+    // Log the final data before sending the response
+    console.log('Updated Data:', updatedData);
+
+    // Send the successful response with the updated package data
     return res.status(200).send({
       status: true,
       data: { packages: updatedData },
-      message: "packages fetch successfully",
+      message: "Packages fetched successfully",
     });
   } catch (err) {
+    // Log the error message for easier debugging
+    console.error('Error:', err.message);
+
+    // Return a server error response
     return res.status(500).send({
       status: false,
       data: { errorMessage: err.message },
-      message: "server error",
+      message: "Server error",
     });
   }
 };

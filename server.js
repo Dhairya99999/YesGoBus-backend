@@ -30,6 +30,13 @@ dotenv.config();
 const app = express();
 const PORT = 8000;
 
+const corsOptions = {
+    origin:['https://yesgobuss.netlify.app', 'https://yesgobus.com','http://localhost:5173', 'http://192.168.56.1:5173/', 'http://192.168.0.9:5173/'],
+    methods: 'GET,POST,OPTIONS',
+    allowedHeaders: 'Content-Type,Authorization',
+    credentials: true,
+};
+
 const connect = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
@@ -42,12 +49,7 @@ const connect = async () => {
 //middleware
 app.use(express.json({ limit: '100mb' }));
 app.use(cookieParser());
-app.use(
-  cors({
-    origin: ['http://localhost:5173', 'https://yesgobus.com', 'https://yesgobus.netlify.app', 'https://localhost', 'http://192.168.1.101:5173', 'http://localhost'],
-    credentials: true,
-  })
-);
+app.use(cors(corsOptions));
 app.use(bodyParser.json({ limit: '100mb' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(multer().any());
@@ -78,12 +80,15 @@ server.maxHeadersCount = 10000; // Maximum number of headers allowed in a reques
 server.maxHeaderSize = 1048576; // Maximum size of individual headers in bytes
 server.maxBodySize = 52428800; // Maximum size of the request body in bytes
 
-
-// Start the server
-server.listen(PORT, () => {
-  connect();
-  console.log(`server started on port ${PORT}`);
+server.listen(PORT, (err) => {
+  if (err) {
+    console.error("Failed to start server:", err);
+  } else {
+    connect();
+    console.log(`Server started on port ${PORT}`);
+  }
 });
+
 // app.listen(PORT, () => {
 //   connect();
 //   console.log(`server started on port ${PORT}`);

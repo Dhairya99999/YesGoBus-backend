@@ -2,21 +2,27 @@ import axios from "axios";
 import crypto from 'crypto';
 
 const sendRequest = async (url, method, headers, data) => {
-  try {
-    const response = await axios({
-      method: method,
-      url: url,
-      headers: headers,
-      data: data,
-    });
-    console.log(response.data)
-    const ResponseData = response.data
-    return ResponseData;
-  } catch (error) {
-    console.log(error);
-    throw error.message;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const response = await axios({
+        method: method,
+        url: url,
+        headers: headers,
+        data: data,
+      });
+      return response.data;
+    } catch (error) {
+      if (error.code === 'ECONNRESET' && attempt < 2) {
+        console.log(`Network error, retrying... Attempt ${attempt + 1}`);
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds before retrying
+      } else {
+        console.error(`Request failed after ${attempt + 1} attempts:`, error.message);
+        throw error; // Re-throw the error if not retryable or max attempts reached
+      }
+    }
   }
 };
+
 
 function generateId(length) {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -75,25 +81,40 @@ export const initiatePayment = async (args) => {
 export const checkPaymentStatus = async (args) => {
   const merchantId = process.env.MERCHANT_ID;
   const { merchantTransactionId } = args;
-  const requestData = {}
 
+  const requestData = {};
   const apiEndpoint = `/pg/v1/status/${merchantId}/${merchantTransactionId}`;
   const saltKey = process.env.SALT_KEY;
   const saltIndex = process.env.SALT_INDEX;
-
   const concatenatedData = apiEndpoint + saltKey;
   const sha256Hash = crypto.createHash('sha256');
   const checksum = sha256Hash.update(concatenatedData).digest('hex');
   const xVerify = checksum.toString() + "###" + saltIndex;
+
   const headers = {
     'Content-Type': 'application/json',
     'X-VERIFY': xVerify,
     'X-MERCHANT-ID': process.env.MERCHANT_ID,
   };
-  // const url = `https://api-preprod.phonepe.com/apis/hermes${apiEndpoint}`;
   const url = `https://api.phonepe.com/apis/hermes${apiEndpoint}`;
 
-  return sendRequest(url, "GET", headers, requestData);
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const response = await sendRequest(url, "GET", headers, requestData);
+      if (response.success) {
+        return response;
+      } else {
+        throw new Error(response.message);
+      }
+    } catch (error) {
+      if (error.message.includes('TRANSACTION_NOT_FOUND') && attempt < 2) {
+        console.log(`Retrying... Attempt ${attempt + 1}`);
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds before retrying
+      } else {
+        throw error; // If it's not a TRANSACTION_NOT_FOUND or last attempt, throw the error
+      }
+    }
+  }
 };
 
 //payment refund

@@ -191,13 +191,13 @@ export const edit_booking = async (req, res) => {
 
 //create order
 
-const url = 'https://api.cashfree.com/pg/orders';
+const url = 'https://sandbox.cashfree.com/pg/orders';
 const headers = {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
     'x-api-version': '2023-08-01',
-    'x-client-id': process.env.CASHFREE_CLIENT_ID,
-    'x-client-secret': process.env.CASHFREE_SECRET_KEY,
+    'x-client-id': process.env.SANDBOX_CASHFREE_CLIENT_ID,
+    'x-client-secret': process.env.SANDBOX_CASHFREE_SECRET_KEY,
 };
 
 const orderData =

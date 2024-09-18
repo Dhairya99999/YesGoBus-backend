@@ -294,8 +294,6 @@ export const get_customer_booking = async (req, res) => {
         withoutFlitePrice: item?.packageId?.withoutFlitePrice,
         totalDuration: item?.packageId?.totalDuration,
         hotelId: item?.packageId?.hotelId ? item?.packageId?.hotelId : "",
-        bookingStatus: item?.status[item?.status?.length - 1]?.bookingStatus,
-        statusTime: item?.status[item?.status?.length - 1]?.statusTime,
         bookingId: item?.bookingId,
       };
     });
@@ -305,6 +303,7 @@ export const get_customer_booking = async (req, res) => {
       message: "Booking Data fetch successfully",
     });
   } catch (err) {
+    console.log(err);
     return res.status(500).send({
       status: false,
       data: { errorMessage: err.message },

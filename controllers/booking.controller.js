@@ -275,8 +275,9 @@ export const get_customer_booking = async (req, res) => {
   try {
     const booking = await bookingModel
       .find(
-        { userId: req.user },
-        { _id: 1, packageId: 1, status: 1, bookingId: 1 }
+        { userId: req.user,
+			    paymentStatus: "SUCCESS"
+         },
       )
       .populate({
         path: "packageId",

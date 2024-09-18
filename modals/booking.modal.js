@@ -19,6 +19,9 @@ const bookingSchema = new mongoose.Schema(
       ref: "Packages",
       trim: true,
     },
+    orderId:{
+      type:String
+    },
     fromPlace: {
       type: String,
       require: true,

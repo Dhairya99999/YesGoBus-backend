@@ -156,19 +156,22 @@ export const get_Itinerary_plans = async (req, res) => {
 
 export const edit_booking = async (req, res) => {
   try {
-    if(req.body.paymentStatus){
-      const bookingData = await bookingModel.findOneAndUpdate({bookingId:req.body.bookingId},{
-        paymentStatus:req.body.paymentStatus
-      },
-      { new: true }
-    )
+    let bookingData; // Use 'let' here to allow reassignment
+
+    if (req.body.paymentStatus) {
+      bookingData = await bookingModel.findOneAndUpdate(
+        { bookingId: req.body.bookingId },
+        { paymentStatus: req.body.paymentStatus },
+        { new: true }
+      );
       return res.status(200).send({
         status: true,
-        data: {bookingData},
+        data: { bookingData },
         message: "Booking updated successfully",
       });
     }
-    const bookingData = await bookingModel.findOneAndUpdate(
+
+    bookingData = await bookingModel.findOneAndUpdate(
       { _id: req.body.bookingId },
       {
         totalPackagePrice: req.body.totalPackagePrice,
@@ -188,35 +191,36 @@ export const edit_booking = async (req, res) => {
       { new: true }
     );
 
+    // Create order
+    const url = 'https://sandbox.cashfree.com/pg/orders';
+    const headers = {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'x-api-version': '2023-08-01',
+      'x-client-id': process.env.SANDBOX_CASHFREE_CLIENT_ID,
+      'x-client-secret': process.env.SANDBOX_CASHFREE_SECRET_KEY,
+    };
 
-//create order
-
-const url = 'https://sandbox.cashfree.com/pg/orders';
-const headers = {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json',
-    'x-api-version': '2023-08-01',
-    'x-client-id': process.env.SANDBOX_CASHFREE_CLIENT_ID,
-    'x-client-secret': process.env.SANDBOX_CASHFREE_SECRET_KEY,
-};
-
-const orderData =
-  {
-  customer_details: {
-    customer_id: bookingData.userId,
-    customer_phone: req.body.mobileNumber,
-    customer_email: req.body.email,
-    customer_name: bookingData.guestDetails.fullName
-  },
-  order_currency: "INR",
-  order_amount: req.body.totalPackagePrice
-}
-
+    const orderData = {
+      customer_details: {
+        customer_id: bookingData.userId,
+        customer_phone: req.body.mobileNumber,
+        customer_email: req.body.email,
+        customer_name: bookingData.guestDetails.fullName,
+      },
+      order_currency: "INR",
+      order_amount: req.body.totalPackagePrice,
+    };
 
     const response = await axios.post(url, orderData, { headers });
-
-
     const { order_id, payment_session_id } = response.data;
+
+    // Update bookingData with the orderId
+    bookingData = await bookingModel.findOneAndUpdate(
+      { _id: req.body.bookingId },
+      { orderId: order_id }, 
+      { new: true }
+    );
 
     // Return bookingData along with orderId and sessionId
     return res.status(200).send({
@@ -229,11 +233,11 @@ const orderData =
     });
 
   } catch (err) {
-    console.log(err)
+    console.log(err);
     return res.status(500).send({
       status: false,
       data: { errorMessage: err.message },
-      message: "server error 8",
+      message: "Server error",
     });
   }
 };

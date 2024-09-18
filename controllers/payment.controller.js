@@ -4,6 +4,8 @@ import {
   refundPayment,
 } from "../service/payment.service.js";
 
+import bookingModel from "../modals/booking.modal.js";
+
 export const initiatePaymentController = async (req, res) => {
   try {
     const response = await initiatePayment(req.body);
@@ -52,34 +54,34 @@ export const paymentCashfreeStatus = async(req,res) =>{
     const paymentStatus = data.payment.payment_status; // Extract payment status
     const orderId = data.order.order_id; // Extract order ID
 
-    // Handle the payment status
-    if (paymentStatus === "SUCCESS") {
-      // Payment was successful, perform your logic here (e.g., update order status in database)
-      console.log(`Payment successful for order ID: ${orderId}`);
-      
-      // Example: Update order status in your database
-      // await Order.update({ status: 'COMPLETED' }, { where: { id: orderId } });
+       // Find the booking by orderId
+       const bookingData = await bookingModel.findOne({ orderId : orderId });
 
-    } else if (paymentStatus === "FAILED") {
-      // Handle failed payment
-      console.log(`Payment failed for order ID: ${orderId}`);
-      
-      // Example: Update order status in your database
-      // await Order.update({ status: 'FAILED' }, { where: { id: orderId } });
+       if (!bookingData) {
+         return res.status(404).send({ message: "Booking not found" });
+       }
+   
+       // Update the booking based on payment status
+       const paymentDone = paymentStatus === "SUCCESS";
+       const updatedBooking = await bookingModel.findOneAndUpdate(
+         { orderId },
+         {
+           paymentDone,
+           paymentStatus,
+         },
+         { new: true }
+       );
 
-    } else {
-      console.log(`Received unexpected payment status: ${paymentStatus} for order ID: ${orderId}`);
-    }
+       console.log(`Payment ${paymentDone ? 'successful' : 'failed'} for order ID: ${orderId}`);
 
-    // Respond to Cashfree
-    return res.status(200).send({ message: "Webhook processed successfully." });
-
+       // Respond to Cashfree
+       return res.status(200).send({status:paymentDone, message: "Payment processed successfully.", data: updatedBooking });
 
 
   }catch(error){
     console.log(error);
     return res.status(500).send({
-      status: 500,
+      status: false,
       message: "An error occurred"
     })
   }

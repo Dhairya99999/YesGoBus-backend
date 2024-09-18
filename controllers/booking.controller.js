@@ -282,7 +282,24 @@ export const get_customer_booking = async (req, res) => {
       .populate({
         path: "packageId",
       });
+
+      const currentDate = new Date(); // Get the current date
+
     const bookingData = booking.map((item) => {
+
+      const departureDate = new Date(item.departureDate.split("/").reverse().join("-"));
+      const returnDate = new Date(item.returnDate.split("/").reverse().join("-"));
+
+      // Determine the booking status
+      let bookingStatus;
+      if (departureDate > currentDate) {
+        bookingStatus = "UPCOMING"; // Departure in the future
+      } else if (returnDate >= currentDate) {
+        bookingStatus = "ONGOING"; // Between departure and return
+      } else {
+        bookingStatus = "COMPLETED"; // Return date has passed
+      }
+
       return {
         _id: item._id,
         name: item?.packageId?.name,
@@ -294,6 +311,8 @@ export const get_customer_booking = async (req, res) => {
         withoutFlitePrice: item?.packageId?.withoutFlitePrice,
         totalDuration: item?.packageId?.totalDuration,
         hotelId: item?.packageId?.hotelId ? item?.packageId?.hotelId : "",
+        bookingStatus: bookingStatus,
+        statusTime: item.departureDate,
         bookingId: item?.bookingId,
       };
     });

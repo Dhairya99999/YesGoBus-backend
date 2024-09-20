@@ -232,7 +232,7 @@ export const edit_booking = async (req, res) => {
 export const customer_sport = async (req, res) => {
   try {
     const bookingData = await bookingModel.findOne({
-      bookingId: req.body.bookingId,
+      _id: req.body.bookingId,
     });
     if (!bookingData) {
       return res

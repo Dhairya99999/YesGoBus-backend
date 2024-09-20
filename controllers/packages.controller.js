@@ -97,7 +97,7 @@ export const popular_destinations = async (req, res) => {
            const previousMonthName = previousMonth.toLocaleDateString('en-US', options);
        
            // Create discount text
-           const discountText = `This Price is lower than the average price ${previousMonthName}.`;
+           const discountText = `This Price is lower than the average price of ${previousMonthName}.`;
 
 
     // Log the incoming destination to ensure it's received correctly
@@ -204,6 +204,16 @@ export const get_user_wishlist = async (req, res) => {
       .populate({
         path: "packageId",
       });
+
+     // Get the previous month name
+     const previousMonth = new Date();
+     previousMonth.setMonth(previousMonth.getMonth() - 1);
+     const options = { month: 'long' };
+     const previousMonthName = previousMonth.toLocaleDateString('en-US', options);
+ 
+     // Create discount text
+     const discountText = `This Price is lower than the average price of ${previousMonthName}.`;
+
       const modifiedData = wishlist.map((item) => {
         if (item.packageId) {
           return {
@@ -219,6 +229,9 @@ export const get_user_wishlist = async (req, res) => {
             hotelId: item.packageId.hotelId ? item.packageId.hotelId : "",
             isWishlisted: item.isWishlisted,
             userId: item.userId,
+            tripBenefit: item.packageId.tripBenifit,
+            disText :discountText,
+            couponCode : item.packageId.couponCode
           };
         } else {
           // Handle case when packageId is missing

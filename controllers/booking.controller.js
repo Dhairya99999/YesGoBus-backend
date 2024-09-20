@@ -91,68 +91,55 @@ export const add_itinerary_plans = async (req, res) => {
 };
 export const get_Itinerary_plans = async (req, res) => {
   try {
-    const [startDay, startMonth, startYear] = req.body.start_date.split("/");
-    const [endDay, endMonth, endYear] = req.body.end_date.split("/");
-    const start = new Date(`${startMonth}/${startDay}/${startYear}`);
-    const end = new Date(`${endMonth}/${endDay}/${endYear}`);
-    let count = 0;
-    for (let date = start; date <= end; date.setDate(date.getDate() + 1)) {
-      count++;
-    }
-    const hotel = await hotelModel.findOne(
-      { _id: req.body.hotelId },
-      {
-        hotelName: 1,
-        rating: 1,
-        address: 1,
-        image: 1,
-        fullAddress: 1,
-        destination: 1,
-      }
-    );
+    // Fetch the itinerary data based on the package ID
     const itineraryData = await itineraryPlansModel.findOne({
-      hotelId: req.body.hotelId,
-    });
+      packageId: req.body.packageId,
+    }).populate('hotelId');
+
+    // If no itinerary data is found, return a 404 response
+    if (!itineraryData) {
+      return res.status(404).send({
+        status: false,
+        message: "Itinerary not found",
+      });
+    }
+
+    // Extract hotel data with safe optional chaining
     const hotelData = {
-      hotelName: hotel?.hotelName,
-      rating: hotel?.rating,
-      address: hotel?.address,
-      image: hotel?.image,
-      fullAddress: hotel?.fullAddress,
-      destination: hotel?.destination,
-      checkIn: itineraryData ? itineraryData?.checkIn : "",
-      checkOut: itineraryData ? itineraryData?.checkOut : "",
+      hotelName: itineraryData.hotelId?.hotelName || "",
+      rating: itineraryData.hotelId?.rating || "",
+      address: itineraryData.hotelId?.address || "",
+      image: itineraryData.hotelId?.image || "",
+      fullAddress: itineraryData.hotelId?.fullAddress || "",
+      destination: itineraryData.hotelId?.destination || "",
+      checkIn: itineraryData.checkIn || "",
+      checkOut: itineraryData.checkOut || "",
+      room_name: itineraryData.room_name || "",
+      additional_info:itineraryData.additional_info || "",
+      end_of_day_info:itineraryData.end_of_day_info || "",
     };
 
+    // Structure the response data
     return res.status(200).send({
       status: true,
       data: {
         hotel_data: {
-          hotel: hotelData
-            ? hotelData
-            : {
-                hotelName: "",
-                rating: "",
-                address: "",
-                image: "",
-                fullAddress: "",
-                destination: "",
-                checkIn: "",
-                checkOut: "",
-              },
-          itinerary: itineraryData ? itineraryData.plans : [],
+          hotel: hotelData,
+          itinerary: itineraryData.plans || [], // Ensure plans is an empty array if not present
         },
       },
-      message: "Booking done successfully",
+      message: "Itinerary fetched successfully",
     });
   } catch (err) {
+    console.error('Error fetching itinerary:', err.message); // Log the error for debugging
     return res.status(500).send({
       status: false,
       data: { errorMessage: err.message },
-      message: "server error 3",
+      message: "Server error 3",
     });
   }
 };
+
 
 export const edit_booking = async (req, res) => {
   try {
@@ -307,7 +294,7 @@ export const get_customer_booking = async (req, res) => {
     const previousMonthName = previousMonth.toLocaleDateString('en-US', options);
 
     // Create discount text
-    const discountText = `This Price is lower than the average price ${previousMonthName}.`;
+    const discountText = `This Price is lower than the average price of ${previousMonthName}.`;
 
       return {
         _id: item._id,

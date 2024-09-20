@@ -6,7 +6,7 @@ const destinationSchema = new mongoose.Schema(
     hotelId: {
       type: ObjectId,
       required: true,
-      ref: "Hotel",
+      ref: "Hotels",
       trim: true,
     },
     plans:[Object],
@@ -15,7 +15,22 @@ const destinationSchema = new mongoose.Schema(
     },
     checkOut:{
       type:String
-    }
+    },
+    packageId:{
+      type: ObjectId,
+      required: true,
+      ref:'Packages',
+      trim:true
+    },
+    room_name:{
+      type:String
+    },
+additional_info:[{
+  type:String
+}],
+end_of_day_info:{
+  type:String
+},
   },
   { timestamps: true }
 );

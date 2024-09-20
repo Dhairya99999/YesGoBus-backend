@@ -9,15 +9,37 @@ export const add_feedback = async (req, res) => {
     const year = date.getFullYear();
 
     const formattedDate = `${day} ${month} ${year}`;
-    const totalGuest = await bookingModel.findOne({userId:req.user});
-    const feedback = await feedbackModel.create({
+
+    const booking = await bookingModel.findOne({ _id: req.body.bookingId });
+
+    // Check if feedback already exists for the user and booking
+    let feedback = await feedbackModel.findOne({
       userId: req.user,
-      rating: req.body.rating,
-      feedback: req.body.feedback,
-      feedbackDate: formattedDate,
-      totalGuest: totalGuest?.guestDetails?.length,
-      destination: totalGuest?.toPlace
+      bookingId: req.body.bookingId,
     });
+
+    if (feedback) {
+      // Update existing feedback
+      feedback.rating = req.body.rating;
+      feedback.feedback = req.body.feedback;
+      feedback.feedbackDate = formattedDate;
+      feedback.totalGuest = booking?.guestDetails?.length;
+      feedback.destination = booking?.toPlace;
+
+      await feedback.save(); // Save the updated feedback
+    } else {
+      // Create new feedback
+      feedback = await feedbackModel.create({
+        userId: req.user,
+        rating: req.body.rating,
+        feedback: req.body.feedback,
+        feedbackDate: formattedDate,
+        totalGuest: booking?.guestDetails?.length,
+        destination: booking?.toPlace,
+        bookingId: req.body.bookingId, // Make sure to store bookingId
+      });
+    }
+
     return res.status(201).send({
       status: true,
       data: { feedback },

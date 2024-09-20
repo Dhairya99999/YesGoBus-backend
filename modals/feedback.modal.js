@@ -26,7 +26,13 @@ const feedbackSchema = new mongoose.Schema(
     },   
     destination: {
       type:String
-    }
+    },
+    bookingId:{
+      type: ObjectId,
+      ref:'Booking',
+      required:true,
+      trim:true
+    },
   },
   { timestamps: true }
 );

@@ -49,7 +49,7 @@ export const get_feedback = async (req, res) => {
       )
       .populate({
         path: "userId",
-        select: "_id firstName lastName",
+        select: "_id fullName",
       });
     return res.status(200).send({
       status: true,

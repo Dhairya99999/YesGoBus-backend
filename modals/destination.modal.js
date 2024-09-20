@@ -16,6 +16,9 @@ const destinationSchema = new mongoose.Schema({
     startingPrice: {
         type:Number
     },
+    tagline:{
+        type:String
+    },
 },
 { timestamps: true })
 

@@ -85,6 +85,13 @@ export const get_packages = async (req, res) => {
 
 export const popular_destinations = async (req, res) => {
   try {
+
+    const destination = await destinationModel.findOne({destination: new RegExp(`^${req.body.destination}$`, 'i'),});
+
+    const tagline = destination.tagline;
+
+
+
     // Log the incoming destination to ensure it's received correctly
     console.log('Incoming Destination:', req.body.destination);
 
@@ -127,7 +134,7 @@ export const popular_destinations = async (req, res) => {
     // Send the successful response with the updated package data
     return res.status(200).send({
       status: true,
-      data: { packages: updatedData },
+      data: { packages: updatedData, tagline:tagline },
       message: "Packages fetched successfully",
     });
   } catch (err) {

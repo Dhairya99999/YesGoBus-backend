@@ -90,6 +90,14 @@ export const popular_destinations = async (req, res) => {
 
     const tagline = destination.tagline;
 
+           // Get the previous month name
+           const previousMonth = new Date();
+           previousMonth.setMonth(previousMonth.getMonth() - 1);
+           const options = { month: 'long' };
+           const previousMonthName = previousMonth.toLocaleDateString('en-US', options);
+       
+           // Create discount text
+           const discountText = `This Price is lower than the average price ${previousMonthName}.`;
 
 
     // Log the incoming destination to ensure it's received correctly
@@ -112,7 +120,7 @@ export const popular_destinations = async (req, res) => {
     }
 
     // Fetch the user's wishlist
-    const wishlist = await wishlistModel.find({ userId: req.user });
+    const wishlist = await wishlistModel.find({ userId: req.user, isWishlisted:true });
 
     // Log the user's wishlist
     console.log('Wishlist:', wishlist);
@@ -134,7 +142,7 @@ export const popular_destinations = async (req, res) => {
     // Send the successful response with the updated package data
     return res.status(200).send({
       status: true,
-      data: { packages: updatedData, tagline:tagline },
+      data: { packages: updatedData, tagline:tagline, discountText:discountText },
       message: "Packages fetched successfully",
     });
   } catch (err) {

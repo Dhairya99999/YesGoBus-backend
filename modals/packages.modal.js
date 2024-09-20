@@ -37,6 +37,13 @@ const destinationSchema = new mongoose.Schema(
       ref: "Hotels",
       trim: true,
     },
+    tripBenifit : [{
+      type: String
+    }],
+    couponCode:{
+      type:String
+    }
+
   },
   { timestamps: true }
 );

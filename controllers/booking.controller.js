@@ -300,6 +300,15 @@ export const get_customer_booking = async (req, res) => {
         bookingStatus = "COMPLETED"; // Return date has passed
       }
 
+       // Get the previous month name
+    const previousMonth = new Date();
+    previousMonth.setMonth(previousMonth.getMonth() - 1);
+    const options = { month: 'long' };
+    const previousMonthName = previousMonth.toLocaleDateString('en-US', options);
+
+    // Create discount text
+    const discountText = `This Price is lower than the average price ${previousMonthName}.`;
+
       return {
         _id: item._id,
         name: item?.packageId?.name,
@@ -314,6 +323,9 @@ export const get_customer_booking = async (req, res) => {
         bookingStatus: bookingStatus,
         statusTime: item.departureDate,
         bookingId: item?.bookingId,
+        tripBenifit : item?.packageId?.tripBenifit,
+        coupenCode : item?.packageId?.couponCode,
+        discountText : discountText,
       };
     });
     return res.status(200).send({

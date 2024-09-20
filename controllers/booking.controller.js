@@ -311,7 +311,7 @@ export const get_customer_booking = async (req, res) => {
         statusTime: item.departureDate,
         bookingId: item?.bookingId,
         tripBenifit : item?.packageId?.tripBenifit,
-        coupenCode : item?.packageId?.couponCode,
+        couponCode : item?.packageId?.couponCode,
         discountText : discountText,
       };
     });

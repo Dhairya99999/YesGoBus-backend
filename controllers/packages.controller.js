@@ -229,8 +229,8 @@ export const get_user_wishlist = async (req, res) => {
             hotelId: item.packageId.hotelId ? item.packageId.hotelId : "",
             isWishlisted: item.isWishlisted,
             userId: item.userId,
-            tripBenefit: item.packageId.tripBenifit,
-            disText :discountText,
+            tripBenifit: item.packageId.tripBenifit,
+            discountText :discountText,
             couponCode : item.packageId.couponCode
           };
         } else {

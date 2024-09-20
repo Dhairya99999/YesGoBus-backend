@@ -133,7 +133,7 @@ export const popular_destinations = async (req, res) => {
       });
 
       // Combine _doc with other properties and add isWishlisted
-      return { ..._doc, isWishlisted };
+      return { ..._doc, isWishlisted, discountText };
     });
 
     // Log the final data before sending the response
@@ -142,7 +142,7 @@ export const popular_destinations = async (req, res) => {
     // Send the successful response with the updated package data
     return res.status(200).send({
       status: true,
-      data: { packages: updatedData, tagline:tagline, discountText:discountText },
+      data: { packages: updatedData, tagline:tagline },
       message: "Packages fetched successfully",
     });
   } catch (err) {

@@ -22,6 +22,7 @@ import hotelRoute from "./routes/hotel.routes.js";
 import couponRouter from "./routes/coupon.routes.js";
 import feedbackRoute from "./routes/feedback.routes.js";
 import offerRoute from "./routes/offer.routes.js";
+import queryRoute from "./routes/query.routes.js"
  
 //schedular
 import { sendReminderJob, checkPaymentJob, sendMessageAfterJourneyJob } from "./utils/scheduler.js";
@@ -72,7 +73,7 @@ app.use("/api/hotel",hotelRoute)
 app.use("/api/coupon",couponRouter)
 app.use("/api/feedback",feedbackRoute)
 app.use("/api/offers",offerRoute)
-
+app.use("/api/query", queryRoute)
 const server = http.createServer(app);
 
 // Set maximum headers count, maximum header size, and maximum body size

@@ -20,6 +20,16 @@ class QueryController {
             res.status(500).json({ message: 'Error fetching queries', error });
         }
     }
+
+    async updateQuery(req,res){
+        try {
+            const queries = await queryService.updateQuery(req.body.queryId, req.body.data);
+            res.status(200).json(queries);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Error fetching queries', error });
+        }
+    }
 }
 
 export default new QueryController();

@@ -53,11 +53,13 @@ export const getAllUsersController = async (req, res) => {
 export const getAllBookingsController = async (req, res) => {
 	try {
 		const result = await getAllBookings(req, res);
-		return res.status(200).json(result);
+		res.status(200).json(result);
 	} catch (err) {
-		return res
-			.status(500)
-			.json({ message: "An error occurred while getting all bookings" });
+		res.status(500).json({
+			status: false,
+			data: { errorMessage: err.message },
+			message: "An error occurred while getting all bookings",
+		});
 	}
 };
 
@@ -85,12 +87,14 @@ export const createPackageController = async (req, res) => {
 
 export const getAllItineraryPlansController = async (req, res) => {
 	try {
-		const result = await getAllItineraryPlans();
-		res.status(result.status).send(result);
+		const result = await getAllItineraryPlans(req, res);
+		res.status(200).json(result);
 	} catch (err) {
-		res
-			.status(500)
-			.json({ message: "An error occurred while getting itinerary plans" });
+		res.status(500).json({
+			status: false,
+			data: { errorMessage: err.message },
+			message: "An error occurred while getting all Itinerary Plans",
+		});
 	}
 };
 

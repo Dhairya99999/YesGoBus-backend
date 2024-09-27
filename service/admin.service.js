@@ -91,28 +91,13 @@ export const getAllBookings = async (req, res) => {
 			.find()
 			.populate({ path: "userId" })
 			.populate({ path: "packageId" });
-		if (bookings) {
-			return res.status(200).send({
-				status: true,
-				data: { bookings },
-				message: "Booking Data fetch successfully",
-			});
-		} else {
-			// handle the case where res is undefined
-			console.error("Response object is undefined");
-		}
+		return {
+			status: true,
+			data: { bookings },
+			message: "Bookings fetch successfully",
+		};
 	} catch (err) {
-		console.error(err);
-		if (res) {
-			return res.status(500).send({
-				status: false,
-				data: { errorMessage: err.message },
-				message: "Failed to fetch bookings data",
-			});
-		} else {
-			// handle the case where res is undefined
-			console.error("Response object is undefined");
-		}
+		throw err;
 	}
 };
 // export const getAllBookings = async (req, res) => {
@@ -189,19 +174,15 @@ export const getAllItineraryPlans = async (req, res) => {
 	try {
 		const plans = await itineraryPlansModel
 			.find()
-			.populate({ path: "packageId" })
+			.populate({ path: "packageId", populate: { path: "destinationID" } })
 			.populate({ path: "hotelId" });
-		return res.status(200).send({
+		return {
 			status: true,
 			data: { plans },
-			message: "itinerary plans fetch successfully",
-		});
+			message: "Itinerary plans fetch successfully",
+		};
 	} catch (err) {
-		return res.status(500).send({
-			status: false,
-			data: { errorMessage: err.message },
-			message: "server error",
-		});
+		throw err;
 	}
 };
 

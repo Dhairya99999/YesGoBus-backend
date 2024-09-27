@@ -26,6 +26,10 @@ const querySchema = new Schema({
     userId:{
         type: Schema.Types.ObjectId,
         ref:'User'
+    },
+    status:{
+        type: String,
+        default: "pending"
     }
 });
 

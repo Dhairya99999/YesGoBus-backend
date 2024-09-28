@@ -13,6 +13,7 @@ import {
 	updateItineraryPlanController,
 	getAllHotelsController,
 	getAllDestinationsController,
+	getAllHotelAndDestinationsController,
 } from "../controllers/admin.controller.js";
 
 // http://localhost:8000/api/admin
@@ -23,13 +24,13 @@ router.get("/user/getAllUsers", getAllUsersController);
 router.get("/bookings/getAllBookings", getAllBookingsController);
 
 router.get("/packages/getAllPackages", getAllPackagesController);
-router.get("/packages/createPackage", createPackageController);
+router.post("/packages/createPackage", createPackageController);
 
 router.get(
 	"/itineraryPlans/getAllItineraryPlans",
 	getAllItineraryPlansController
 );
-router.get(
+router.post(
 	"/itineraryPlans/createItineraryPlan",
 	createItineraryPlanController
 );
@@ -41,5 +42,10 @@ router.patch(
 router.get("/hotels/getAllHotels", getAllHotelsController);
 
 router.get("/destinations/getAllDestinations", getAllDestinationsController);
+
+router.get(
+	"/hotelAndDestination/getAllHotelsAndDestinations",
+	getAllHotelAndDestinationsController
+);
 
 export default router;

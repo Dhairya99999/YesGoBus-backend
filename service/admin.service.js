@@ -124,17 +124,13 @@ export const getAllPackages = async (req, res) => {
 			.find()
 			.populate({ path: "destinationID" })
 			.populate({ path: "hotelId" });
-		return res.status(200).send({
+		return {
 			status: true,
 			data: { packages: packages },
 			message: "packages fetch successfully",
-		});
+		};
 	} catch (err) {
-		return res.status(500).send({
-			status: false,
-			data: { errorMessage: err.message },
-			message: "server error",
-		});
+		throw err;
 	}
 };
 
@@ -186,9 +182,24 @@ export const getAllItineraryPlans = async (req, res) => {
 	}
 };
 
+export const getAllHotelAndDestinations = async (req, res) => {
+	try {
+		const destinations = await destinationModel.find();
+		const hotels = await hotelModel.find();
+		return {
+			status: true,
+			data: { destinations, hotels },
+			message: "Hotels and Destinations fetch successfully",
+		};
+	} catch (err) {
+		throw err;
+	}
+};
+
 export const createItineraryPlan = async (req, res) => {
 	try {
 		const {
+			destination,
 			checkIn,
 			checkOut,
 			room_name,
@@ -196,8 +207,10 @@ export const createItineraryPlan = async (req, res) => {
 			end_of_day_info,
 			packageId,
 			hotelId,
+			plans,
 		} = req.body;
 		const itineraryData = await itineraryPlansModel.create({
+			destination,
 			packageId,
 			hotelId,
 			checkIn,
@@ -205,18 +218,15 @@ export const createItineraryPlan = async (req, res) => {
 			room_name,
 			additional_info,
 			end_of_day_info,
+			plans,
 		});
-		return res.status(201).send({
+		return {
 			status: true,
 			data: { itineraryData },
 			message: "Itinerary Plans added successfully",
-		});
+		};
 	} catch (err) {
-		return res.status(500).send({
-			status: false,
-			data: { errorMessage: err.message },
-			message: "server error",
-		});
+		throw err;
 	}
 };
 

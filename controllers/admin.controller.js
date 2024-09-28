@@ -12,6 +12,7 @@ import {
 	updateItineraryPlan,
 	getAllHotels,
 	getAllDestinations,
+	getAllHotelAndDestinations,
 } from "../service/admin.service.js";
 
 export const createUserController = async (req, res) => {
@@ -66,11 +67,13 @@ export const getAllBookingsController = async (req, res) => {
 export const getAllPackagesController = async (req, res) => {
 	try {
 		const result = await getAllPackages();
-		res.status(result.status).send(result);
+		res.status(200).json(result);
 	} catch (err) {
-		res
-			.status(500)
-			.json({ message: "An error occurred while getting all packages" });
+		res.status(500).json({
+			status: false,
+			data: { errorMessage: err.message },
+			message: "An error occurred while getting all packages",
+		});
 	}
 };
 
@@ -98,14 +101,29 @@ export const getAllItineraryPlansController = async (req, res) => {
 	}
 };
 
+export const getAllHotelAndDestinationsController = async (req, res) => {
+	try {
+		const result = await getAllHotelAndDestinations(req, res);
+		res.status(200).json(result);
+	} catch (err) {
+		res.status(500).json({
+			status: false,
+			data: { errorMessage: err.message },
+			message: "An error occurred while getting all hotels and destinations",
+		});
+	}
+};
 export const createItineraryPlanController = async (req, res) => {
 	try {
-		const result = await createItineraryPlan(req.body);
-		res.status(result.status).send(result);
+		console.log(req.body);
+		const result = await createItineraryPlan(req, res);
+		res.status(200).json(result);
 	} catch (err) {
-		res
-			.status(500)
-			.json({ message: "An error occurred while creating itinerary plan" });
+		res.status(500).json({
+			status: false,
+			data: { errorMessage: err.message },
+			message: "An error occurred while creating itinerary plan",
+		});
 	}
 };
 

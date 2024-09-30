@@ -217,3 +217,19 @@ export const updateUserProfile = async (userId, updatedData) => {
     };
   }
 };
+
+export const getUserByIdBody = async (userId)=>{
+  try{
+    const existingUser = await User.findById(userId);
+    if(!existingUser){
+      throw error("The user does not exists")
+    }
+    existingUser.password = undefined;
+    return {
+      status:200, message:"User details fetched", data: existingUser
+    }
+  }
+  catch(err){
+    return {status: 500, message: err}
+  }
+}

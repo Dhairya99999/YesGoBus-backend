@@ -5,6 +5,7 @@ import {
   googleSignUp,
   facebookSignUp,
   updateUserProfile,
+  getUserByIdBody,
 } from "../service/user.service.js";
 import { generateRandomNumber } from "../utils/generateRandomNumber.js";
 import User from "../modals/user.modal.js";
@@ -210,3 +211,13 @@ export const updateUserProfileController = async (req, res) => {
     res.status(500).json({ message: "An error occurred while signing in" });
   }
 };
+
+export const getUserByIdBodyController = async(req,res) => {
+  try{
+    const {userId} = req.body;
+    const response = await getUserByIdBody(userId);
+    res.status(response.status).send(response);
+  }catch(err){
+    res.status(500).json({ message: err });
+  }
+}

@@ -38,6 +38,7 @@ import {
   getSrsCanCancelDetails,
   srsCancelBooking,
   getSrsFilters,
+  getBookings,
 
 } from "../service/buBooking.service.js";
 import { sendMessage, sendMail } from "../utils/helper.js";
@@ -350,6 +351,20 @@ export const getAllBookingsController = async (req, res) => {
   try {
     const { userId } = req.params;
     const response = await getAllBookings(userId);
+    res.status(response.status).send(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: "An error occurred while getting booking details",
+    });
+  }
+};
+
+
+export const getBookingsController = async (req, res) => {
+  try {
+    const response = await getBookings();
     res.status(response.status).send(response);
   } catch (error) {
     console.log(error);

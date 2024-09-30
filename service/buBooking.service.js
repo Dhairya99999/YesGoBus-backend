@@ -378,6 +378,26 @@ export const getAllBookings = async (userId) => {
   }
 };
 
+export const getBookings = async () => {
+  try {
+    const booking = await BusBooking.find();
+    if (!booking) {
+      return {
+        status: 404,
+        message: "Booking not found",
+        data: null,
+      };
+    }
+    return {
+      status: 200,
+      message: "Booking retrieved",
+      data: booking,
+    };
+  } catch (error) {
+    throw error.message;
+  }
+};
+
 
 // vrl travels buses
 export const sendVrlRequest = async (url, data) => {

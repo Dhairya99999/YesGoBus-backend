@@ -43,6 +43,7 @@ import {
     getSrsCanCancelDetailsController,
     srsCancelBookingController,
     getSrsFiltersController,
+    getBookingsController,
 
 } from "../controllers/busBooking.controller.js";
 import { authenticateUser } from "../middleware/authenticateUser.js";
@@ -127,6 +128,8 @@ router.post("/bookBus", bookBusController);
 router.patch("/updateBooking/:bookingId", updateBookingsController);
 router.get("/getBookingById/:bookingId", getBookingByIdController);
 router.get("/getAllBookings/:userId", getAllBookingsController);
+router.get("/getBookings", getBookingsController);
+
 
 
 //get filter and bus with filters

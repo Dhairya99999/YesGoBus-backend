@@ -230,6 +230,89 @@ export const createItineraryPlan = async (req, res) => {
 	}
 };
 
+export const updateItineraryHotelAndPackage = async (req, res) => {
+	try {
+		const { Hotel, Package, Itinerary } = req.body.formData;
+
+		// Update Hotel model
+		const hotel = await hotelModel.findById(Hotel._id);
+		if (!hotel) {
+			throw new Error(`Hotel with id ${Hotel._id} not found`);
+		}
+		const hotelData = {
+			hotelName: Hotel.hotelName,
+			rating: Hotel.rating,
+			address: Hotel.address,
+			fullAddress: Hotel.fullAddress,
+			destination: Hotel.destination,
+		};
+		const hotelResult = await hotelModel.findByIdAndUpdate(
+			Hotel._id,
+			hotelData,
+			{ new: true }
+		);
+		console.log(hotelResult);
+		// Update Package model
+		const packages = await packageModel.findById(Package._id);
+		if (!packages) {
+			throw new Error(`Package with id ${Package._id} not found`);
+		}
+
+		const packageData = {
+			hotelName: Package.hotelName,
+			destinationId: Package.destinationId,
+			destination: Package.destination,
+			duration: Package.duration,
+			totalDuration: Package.totalDuration,
+			witheFlitePrice: Package.witheFlitePrice,
+			withoutFlitePrice: Package.withoutFlitePrice,
+			hotelId: Package.hotelId,
+			tripBenifit: Package.tripBenifit,
+			couponCode: Package.couponCode,
+		};
+
+		const packageResult = await packageModel.findByIdAndUpdate(
+			Package._id,
+			packageData,
+			{ new: true }
+		);
+		console.log(packageResult);
+
+		// Update Itinerary model
+		const itinerary = await itineraryPlansModel.findById(Itinerary._id);
+		if (!itinerary) {
+			throw new Error(`Itinerary with id ${Itinerary._id} not found`);
+		}
+		const itineraryData = {
+			destination: Itinerary.destination,
+			checkIn: Itinerary.checkIn,
+			checkOut: Itinerary.checkOut,
+			room_name: Itinerary.room_name,
+			additional_info: Itinerary.additional_info,
+			end_of_day_info: Itinerary.end_of_day_info,
+			packageId: Itinerary.packageId,
+			hotelId: Itinerary.hotelId,
+			plans: Itinerary.plans,
+		};
+		const itineraryResult = await itineraryPlansModel.findByIdAndUpdate(
+			Itinerary._id,
+			itineraryData,
+			{ new: true }
+		);
+		console.log(itineraryResult);
+
+		const result = { ...hotelResult, ...packageResult, ...itineraryResult };
+
+		return {
+			status: 200,
+			data: { result },
+			message: "Itinerary Plan updated successfully",
+		};
+	} catch (err) {
+		throw err;
+	}
+};
+
 export const updateItineraryPlan = async (req, res) => {
 	try {
 		const { id } = req.params;

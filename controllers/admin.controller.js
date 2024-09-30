@@ -13,6 +13,7 @@ import {
 	getAllHotels,
 	getAllDestinations,
 	getAllHotelAndDestinations,
+	updateItineraryHotelAndPackage,
 } from "../service/admin.service.js";
 
 export const createUserController = async (req, res) => {
@@ -157,5 +158,19 @@ export const getAllDestinationsController = async (req, res) => {
 		res
 			.status(500)
 			.json({ message: "An error occurred while getting all destinations" });
+	}
+};
+
+export const updateItineraryHotelAndPackageController = async (req, res) => {
+	try {
+		const result = await updateItineraryHotelAndPackage(req, res);
+		res.status(200).json(result);
+	} catch (err) {
+		res;
+		res.status(500).json({
+			status: false,
+			data: { errorMessage: err.message },
+			message: "An error occurred while Updating itinerary plan",
+		});
 	}
 };

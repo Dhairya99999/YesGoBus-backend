@@ -14,6 +14,7 @@ import {
 	getAllHotelsController,
 	getAllDestinationsController,
 	getAllHotelAndDestinationsController,
+	updateItineraryHotelAndPackageController,
 } from "../controllers/admin.controller.js";
 
 // http://localhost:8000/api/admin
@@ -47,5 +48,6 @@ router.get(
 	"/hotelAndDestination/getAllHotelsAndDestinations",
 	getAllHotelAndDestinationsController
 );
+router.post("/itineraryPlans/updateItineraryPlanHotelAndPackage", updateItineraryHotelAndPackageController);
 
 export default router;

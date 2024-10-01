@@ -38,11 +38,21 @@ export const signIn = async (req, res) => {
 		const token = jwt.sign({ userId: user._id, email }, process.env.JWT_KEY, {
 			expiresIn: "6h",
 		});
+
+		// Remove password from response
+		const userData = {
+			userId: user.userId,
+			fullName: user.fullName,
+			email: user.email,
+			phoneNumber: user.phoneNumber,
+			address: user.address,
+			gender: user.gender || "",
+		};
 		return {
 			status: 200,
 			message: "Successfully signed in",
 			token: token,
-			data: { ...user, password: undefined },
+			data: userData,
 		};
 	} catch (err) {
 		console.error(err);

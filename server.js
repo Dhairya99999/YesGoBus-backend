@@ -73,7 +73,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/cab", cabRoutes);
 app.use("/api/cabBooking", cabBookingRoutes);
 app.use("/api/busBooking", busBookingRoutes);
-app.use("/api/payment/", paymentRoutes);
+app.use("/api/payment", paymentRoutes);
 app.use("/api/cabdriver", cabdriverRoute);
 app.use("/api/driver", driverRoutes);
 app.use("/api/kyc", kycRoutes);

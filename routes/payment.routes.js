@@ -10,7 +10,7 @@ import { authenticateUser } from "../middleware/authenticateUser.js";
 const router = express.Router();
 
 router.post("/initiatePayment", initiatePaymentController);
-router.get("/checkPaymentStatus/:merchantTransactionId", checkPaymentStatusController);
+router.post("/checkPaymentStatus/:merchantTransactionId", checkPaymentStatusController);
 router.post("/cashfreePayment", paymentCashfreeStatus )
 
 router.use(authenticateUser);

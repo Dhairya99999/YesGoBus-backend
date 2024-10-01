@@ -33,12 +33,8 @@ function generateId(length) {
   }
   return result;
 }
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-export const initiatePayment = async (args) => {
-
-  await sleep(1000);
-  
+export const initiatePayment = async (args) => {  
   const merchantTransactionId = generateId(18);
   const merchantUserId = generateId(10);
   const { amount, redirectUrl } = args;

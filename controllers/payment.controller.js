@@ -22,7 +22,7 @@ export const initiatePaymentController = async (req, res) => {
 
 export const checkPaymentStatusController = async (req, res) => {
   try {
-    console.log("CHECK PAYMENT");
+    console.log("CHECK PAYMENT", req.body);
     const response = await checkPaymentStatus(req.params);
     console.log(response);
     res.status(200).send(response);

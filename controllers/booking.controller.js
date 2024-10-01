@@ -4,6 +4,7 @@ import hotelModel from "../modals/hotels.modal.js";
 //import userModel from "../model/user"
 import itineraryPlansModel from "../modals/itineraryPlans.modal.js";
 import axios from "axios";
+import { initiatePayment } from "../service/payment.service.js";
 
 export const make_booking = async (req, res) => {
   try {
@@ -179,46 +180,35 @@ export const edit_booking = async (req, res) => {
     );
 
     // Create order
-    const url = 'https://sandbox.cashfree.com/pg/orders';
-    const headers = {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'x-api-version': '2023-08-01',
-      'x-client-id': process.env.SANDBOX_CASHFREE_CLIENT_ID,
-      'x-client-secret': process.env.SANDBOX_CASHFREE_SECRET_KEY,
-    };
+    const paymentResponse = await initiatePayment({
+      amount: req.body.totalPackagePrice, // Ensure this is in the correct format
+      redirectUrl: req.body.redirectUrl, // Specify your redirect URL
+    });
 
-    const orderData = {
-      customer_details: {
-        customer_id: bookingData.userId,
-        customer_phone: req.body.mobileNumber,
-        customer_email: req.body.email,
-        customer_name: bookingData.guestDetails.fullName,
-      },
-      order_currency: "INR",
-      order_amount: req.body.totalPackagePrice,
-    };
 
-    const response = await axios.post(url, orderData, { headers });
-    const { order_id, payment_session_id } = response.data;
+  if (paymentResponse && paymentResponse.success === true) {
+      // Update bookingData with the orderId
+      bookingData = await bookingModel.findOneAndUpdate(
+        { _id: req.body.bookingId },
+        { orderId: paymentResponse.data.merchantTransactionId, 
+        paymentStatus: 'PENDING' }, 
+        { new: true }
+      );
+    
 
-    // Update bookingData with the orderId
-    bookingData = await bookingModel.findOneAndUpdate(
-      { _id: req.body.bookingId },
-      { orderId: order_id }, 
-      { new: true }
-    );
 
     // Return bookingData along with orderId and sessionId
     return res.status(200).send({
       status: true,
       data: {
         bookingData,
-        order_id,
-        payment_session_id,
+        bookingPaymentUrl: paymentResponse.data.instrumentResponse.redirectInfo.url,
       },
     });
-
+  }
+  else{
+    throw new Error("Cannot initialise payment procedure, please retry");
+  }
   } catch (err) {
     console.log(err);
     return res.status(500).send({

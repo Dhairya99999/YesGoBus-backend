@@ -22,10 +22,10 @@ export const initiatePaymentController = async (req, res) => {
 
 export const checkPaymentStatusController = async (req, res) => {
   try {
-    console.log("CHECK PAYMENT", req.body);
-    const response = await checkPaymentStatus(req.params);
-    console.log(response);
-    res.status(200).send(response);
+    const decodedString = atob(req.body.response);
+    const jsonObject = JSON.parse(decodedString);
+    console.log("JSON BASE64", jsonObject);
+    res.status(200).send(jsonObject);
   } catch (error) {
     console.log(error);
     return res.status(500).send({

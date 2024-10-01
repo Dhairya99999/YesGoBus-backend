@@ -250,12 +250,10 @@ export const customer_sport = async (req, res) => {
 
 export const get_customer_booking = async (req, res) => {
   try {
-    const booking = await bookingModel
-      .find(
-        { userId: req.user,
-			    paymentStatus: "SUCCESS"
-         },
-      )
+    const booking = await bookingModel.find({
+      userId: req.user,
+      paymentStatus: { $in: ["SUCCESS", "PAYMENT_SUCCESS"] }
+    })
       .populate({
         path: "packageId",
       });

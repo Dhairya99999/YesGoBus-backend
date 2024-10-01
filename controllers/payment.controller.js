@@ -24,6 +24,7 @@ export const checkPaymentStatusController = async (req, res) => {
   try {
     console.log("CHECK PAYMENT");
     const response = await checkPaymentStatus(req.params);
+    console.log(response);
     res.status(200).send(response);
   } catch (error) {
     console.log(error);

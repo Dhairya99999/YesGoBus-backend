@@ -22,6 +22,7 @@ export const initiatePaymentController = async (req, res) => {
 
 export const checkPaymentStatusController = async (req, res) => {
   try {
+    console.log(req.body.response);
     const decodedResponse = atob(req.body.response);
     const data = JSON.parse(decodedResponse);
 

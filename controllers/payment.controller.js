@@ -22,18 +22,42 @@ export const initiatePaymentController = async (req, res) => {
 
 export const checkPaymentStatusController = async (req, res) => {
   try {
-    const decodedString = atob(req.body.response);
-    const jsonObject = JSON.parse(decodedString);
-    console.log("JSON BASE64", jsonObject);
-    res.status(200).send(jsonObject);
-  } catch (error) {
+    const decodedResponse = atob(req.body.response);
+    const data = JSON.parse(decodedResponse);
+
+       // Find the booking by orderId
+       const bookingData = await bookingModel.findOne({ orderId : data.data.merchantId });
+
+       if (!bookingData) {
+         return res.status(404).send({ message: "Booking not found" });
+       }
+   
+       // Update the booking based on payment status
+       const paymentDone = data.code === "PAYMENT_SUCCESS";
+       const paymentStatus = data.code;
+       const updatedBooking = await bookingModel.findOneAndUpdate(
+         { orderId },
+         {
+           paymentDone,
+           paymentStatus,
+         },
+         { new: true }
+       );
+
+       console.log(`Payment ${paymentDone ? 'successful' : 'failed'} for order ID: ${orderId}`);
+
+       // Respond to Cashfree
+       return res.status(200).send({status:paymentDone, message: "Payment processed successfully.", data: updatedBooking });
+
+
+  }catch(error){
     console.log(error);
     return res.status(500).send({
-      status: 500,
-      message: "An error occurred while checking payment status"
+      status: false,
+      message: "An error occurred"
     })
   }
-};
+}
 
 export const refundPaymentController = async (req, res) => {
   try {

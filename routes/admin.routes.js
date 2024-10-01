@@ -15,9 +15,17 @@ import {
 	getAllDestinationsController,
 	getAllHotelAndDestinationsController,
 	updateItineraryHotelAndPackageController,
+	adminSigninController,
+	sendOtpController,
+	verifyOtpController,
 } from "../controllers/admin.controller.js";
 
 // http://localhost:8000/api/admin
+
+router.post("/signIn", adminSigninController);
+router.post("/sendOtp", sendOtpController);
+router.post("/verifyOtp", verifyOtpController);
+
 router.post("/user/createUser", createUserController);
 router.patch("/user/updateProfile/:userId", updateUserProfileController);
 router.get("/user/getAllUsers", getAllUsersController);
@@ -48,6 +56,9 @@ router.get(
 	"/hotelAndDestination/getAllHotelsAndDestinations",
 	getAllHotelAndDestinationsController
 );
-router.post("/itineraryPlans/updateItineraryPlanHotelAndPackage", updateItineraryHotelAndPackageController);
+router.post(
+	"/itineraryPlans/updateItineraryPlanHotelAndPackage",
+	updateItineraryHotelAndPackageController
+);
 
 export default router;

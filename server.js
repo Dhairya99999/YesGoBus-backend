@@ -41,10 +41,10 @@ const corsOptions = {
 		"https://yesgobuss.netlify.app",
 		"https://yesgobus.com",
 		"http://localhost:5173",
-		"http://192.168.56.1:5173/",
-		"http://192.168.0.9:5173/",
+		"http://192.168.56.1:5173",
+		"http://192.168.0.9:5173",
 	],
-	methods: "GET, POST, PATCH, PUT, DELETE, OPTIONS",
+	methods: "GET,POST,OPTIONS, PUT, PATCH, DELETE",
 	allowedHeaders: "Content-Type,Authorization",
 	credentials: true,
 };
@@ -61,7 +61,10 @@ const connect = async () => {
 //middleware
 app.use(express.json({ limit: "100mb" }));
 app.use(cookieParser());
+// Setup CORS with your custom options
 app.use(cors(corsOptions));
+// Handle preflight requests globally for all routes
+app.options("*", cors(corsOptions));
 app.use(bodyParser.json({ limit: "100mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(multer().any());

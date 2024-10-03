@@ -20,7 +20,7 @@ import {
 } from "../controllers/agents.controller.js";
 
 const router = express.Router();
-
+// http://localhost:8000/api/agent
 router.post("/register", registerAgentController);
 router.post("/login", loginAgentController);
 router.get("/getAgentBookings/:agentId", getAgentBookingsController);

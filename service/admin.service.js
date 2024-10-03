@@ -92,6 +92,8 @@ export const agentSingIn = async (req, res) => {
 			agentCode: agent.agentCode,
 			status: agent.status,
 			maxTicket: agent.maxTicket,
+			_id: agent._id,
+			pincode: agent.pincode,
 		};
 		return {
 			status: 200,

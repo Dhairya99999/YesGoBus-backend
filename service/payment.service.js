@@ -67,7 +67,7 @@ const saltKey = "96434309-7796-489d-8924-ab56988a6076";
   const concatenatedData = base64Payload + apiEndpoint + saltKey;
   const sha256Hash = crypto.createHash('sha256');
   const checksum = sha256Hash.update(concatenatedData).digest('hex');
-  const xVerify = checksum + "###" + saltKey;
+  const xVerify = checksum + "###" + 1;
 
   const headers = { 
     'Content-Type': 'application/json',

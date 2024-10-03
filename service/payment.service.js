@@ -40,8 +40,9 @@ export const initiatePayment = async (args) => {
   const { amount, redirectUrl } = args;
 
   const payload = {
-    //"merchantId": process.env.MERCHANT_ID,
-    "merchantId": "PGTESTPAYUAT86",
+     "merchantId": process.env.MERCHANT_ID,
+    // "merchantId" : "PGTESTPAYUAT",
+    //"merchantId": "PGTESTPAYUAT86",
     "merchantTransactionId": merchantTransactionId,
     "merchantUserId": merchantUserId,
     "amount": amount * 100,
@@ -57,40 +58,47 @@ export const initiatePayment = async (args) => {
   const base64Payload = Buffer.from(payloadString).toString('base64');
   const requestData = {
     request: base64Payload
-  }
+  };
 
   const apiEndpoint = "/pg/v1/pay";
- // const saltKey = process.env.SALT_KEY;
-const saltKey = "96434309-7796-489d-8924-ab56988a6076";
+   const saltKey = process.env.SALT_KEY;
+//const saltKey = "96434309-7796-489d-8924-ab56988a6076";
+//const saltKey = "099eb0cd-02cf-4e2a-8aca-3e6c6aff0399";
   const saltIndex = process.env.SALT_INDEX;
 
   const concatenatedData = base64Payload + apiEndpoint + saltKey;
   const sha256Hash = crypto.createHash('sha256');
   const checksum = sha256Hash.update(concatenatedData).digest('hex');
-  const xVerify = checksum + "###" + 1;
+  const xVerify = checksum.toString() + "###" + saltIndex;
 
   const headers = { 
+    accept: "application/json",
     'Content-Type': 'application/json',
     'X-VERIFY': xVerify,
   };
 
-   const url = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay";
-  // const url = "https://api.phonepe.com/apis/hermes/pg/v1/pay";
-  const response = sendRequest(url, "POST", headers, requestData)
-  console.log(response)
-  return response;
+ // const url = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay";
+   const url = "https://api.phonepe.com/apis/hermes/pg/v1/pay";
+
+  try {
+    const response = await sendRequest(url, "POST", headers, requestData);
+    console.log('Response:', response);
+    return response;
+  } catch (error) {
+    console.error('Error initiating payment:', error);
+    throw error; // Rethrow or handle the error as needed
+  }
 };
 
-export const checkPaymentStatus = async (args) => {
-  //const merchantId = process.env.MERCHANT_ID;
-  const { merchantTransactionId } = args;
-  const merchantId = "PGTESTPAYUAT86"
 
+export const checkPaymentStatus = async (args) => {
+  const merchantId = process.env.MERCHANT_ID;
+  const { merchantTransactionId } = args;
+  //const merchantId = "PGTESTPAYUAT86"
   //const saltKey = "96434309-7796-489d-8924-ab56988a6076"
   const requestData = {};
   const apiEndpoint = `/pg/v1/status/${merchantId}/${merchantTransactionId}`;
-  //const saltKey = process.env.SALT_KEY;
-    const saltKey = "96434309-7796-489d-8924-ab56988a6076";
+  const saltKey = process.env.SALT_KEY;
   const saltIndex = process.env.SALT_INDEX;
   const concatenatedData = apiEndpoint + saltKey;
   const sha256Hash = crypto.createHash('sha256');
@@ -102,8 +110,8 @@ export const checkPaymentStatus = async (args) => {
     'X-VERIFY': xVerify,
     'X-MERCHANT-ID': merchantId,
   };
-  //const url = `https://api.phonepe.com/apis/hermes${apiEndpoint}`;
-  const url = `https://api-preprod.phonepe.com/apis/pg-sandbox${apiEndpoint}`;
+  const url = `https://api.phonepe.com/apis/hermes${apiEndpoint}`;
+  //const url = `https://api-preprod.phonepe.com/apis/pg-sandbox${apiEndpoint}`;
 
   for (let attempt = 0; attempt < 3; attempt++) {
     try {

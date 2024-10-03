@@ -9,6 +9,8 @@ import destinationModel from "../modals/destination.modal.js";
 import hotelModel from "../modals/hotels.modal.js";
 import itineraryPlansModel from "../modals/itineraryPlans.modal.js";
 import { generateRandomNumber } from "../utils/generateRandomNumber.js";
+import agentModel from "../modals/agents.modal.js";
+import busBookingModel from "../modals/busBooking.modal.js";
 
 export const signIn = async (req, res) => {
 	const { email, password } = req.body;
@@ -59,6 +61,48 @@ export const signIn = async (req, res) => {
 		throw err;
 	}
 };
+export const agentSingIn = async (req, res) => {
+	const { email, password } = req.body;
+	try {
+		const agent = await agentModel.findOne({ email });
+		if (!agent) {
+			return {
+				status: 202,
+				message: "agent not found",
+			};
+		}
+		// Compare password
+		if (agent.password !== password) {
+			return {
+				status: 201,
+				message: "Invalid credentials",
+			};
+		}
+		const token = jwt.sign({ agentId: agent._id, email }, process.env.JWT_KEY, {
+			expiresIn: "6h",
+		});
+
+		// Remove password from response
+		const agentData = {
+			userId: agent.userId,
+			fullName: agent.firstName + " " + agent.lastName,
+			email: agent.email,
+			phoneNumber: agent.phNum,
+			address: agent.address,
+			agentCode: agent.agentCode,
+			status: agent.status,
+			maxTicket: agent.maxTicket,
+		};
+		return {
+			status: 200,
+			message: "Successfully signed in",
+			token: token,
+			data: agentData,
+		};
+	} catch (err) {
+		throw err;
+	}
+};
 
 export const sentOtp = async (req, res) => {
 	try {
@@ -82,6 +126,43 @@ export const sentOtp = async (req, res) => {
 			"https://auth.otpless.app/auth/otp/v1/send",
 			{
 				phoneNumber: `91${mobileNumber}`,
+				otpLength: 6,
+				channel: "SMS",
+				expiry: 600,
+			},
+			{
+				headers: {
+					clientId: process.env.CLIENT_ID,
+					clientSecret: process.env.CLIENT_SECRET,
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		return {
+			status: 200,
+			data: response.data,
+			message: "OTP sent successfully",
+		};
+	} catch (err) {
+		throw err;
+	}
+};
+
+export const sendAgentOtp = async (req, res) => {
+	try {
+		const { mobile } = req.body;
+		const agent = await agentModel.findOne({ phNum: mobile });
+		if (!agent) {
+			return {
+				status: 202,
+				message: "agent not found",
+			};
+		}
+		const response = await axios.post(
+			"https://auth.otpless.app/auth/otp/v1/send",
+			{
+				phoneNumber: `91${mobile}`,
 				otpLength: 6,
 				channel: "SMS",
 				expiry: 600,
@@ -137,6 +218,62 @@ export const verifyOtp = async (req, res) => {
 				},
 			}
 		);
+
+		return {
+			status: 200,
+			data: response.data,
+			message: "Signin successful, Otp verified",
+		};
+	} catch (err) {
+		throw err;
+	}
+};
+export const verifyAgentOtp = async (req, res) => {
+	try {
+		const { mobile, otp, orderId } = req.body;
+		console.log(mobile, otp);
+		const agent = await agentModel.findOne({ phNum: mobile });
+		if (!agent) {
+			return {
+				status: 202,
+				message: "agent not found",
+			};
+		}
+
+		const response = await axios.post(
+			"https://auth.otpless.app/auth/otp/v1/verify",
+			{
+				orderId: orderId,
+				otp: otp,
+				phoneNumber: `91${mobile}`,
+			},
+			{
+				headers: {
+					clientId: process.env.CLIENT_ID,
+					clientSecret: process.env.CLIENT_SECRET,
+					"Content-Type": "application/json",
+				},
+			}
+		);
+		// console.log(response);
+
+		if (response.data.isOTPVerified) {
+			const agent = await agentModel.findOne({ phNum: mobile });
+			const payload = {
+				agentId: agent._id,
+				phoneNumber: agent.phNum,
+			};
+			const generatedToken = jwt.sign(payload, process.env.JWT_KEY);
+			return {
+				status: 200,
+				data: {
+					token: generatedToken,
+					user: agent,
+				},
+
+				message: "Signin successful, Otp verified",
+			};
+		}
 
 		return {
 			status: 200,
@@ -507,67 +644,76 @@ export const getAllDestinations = async (req, res) => {
 	}
 };
 
-// export const get_Itinerary_plans = async (req, res) => {
-// 	try {
-// 		const [startDay, startMonth, startYear] = req.body.start_date.split("/");
-// 		const [endDay, endMonth, endYear] = req.body.end_date.split("/");
-// 		const start = new Date(`${startMonth}/${startDay}/${startYear}`);
-// 		const end = new Date(`${endMonth}/${endDay}/${endYear}`);
-// 		let count = 0;
-// 		for (let date = start; date <= end; date.setDate(date.getDate() + 1)) {
-// 			count++;
-// 		}
-// 		const hotel = await hotelModel.findOne(
-// 			{ _id: req.body.hotelId },
-// 			{
-// 				hotelName: 1,
-// 				rating: 1,
-// 				address: 1,
-// 				image: 1,
-// 				fullAddress: 1,
-// 				destination: 1,
-// 			}
-// 		);
-// 		const itineraryData = await itineraryPlansModel.findOne({
-// 			hotelId: req.body.hotelId,
-// 		});
-// 		const hotelData = {
-// 			hotelName: hotel?.hotelName,
-// 			rating: hotel?.rating,
-// 			address: hotel?.address,
-// 			image: hotel?.image,
-// 			fullAddress: hotel?.fullAddress,
-// 			destination: hotel?.destination,
-// 			checkIn: itineraryData ? itineraryData?.checkIn : "",
-// 			checkOut: itineraryData ? itineraryData?.checkOut : "",
-// 		};
+export const getAllAgents = async (req, res) => {
+	try {
+		const agents = await agentModel.find();
+		return {
+			status: 200,
+			data: agents,
+			message: "Itinerary Plan updated successfully",
+		};
+	} catch (err) {
+		throw err;
+	}
+};
 
-// 		return res.status(200).send({
-// 			status: true,
-// 			data: {
-// 				hotel_data: {
-// 					hotel: hotelData
-// 						? hotelData
-// 						: {
-// 								hotelName: "",
-// 								rating: "",
-// 								address: "",
-// 								image: "",
-// 								fullAddress: "",
-// 								destination: "",
-// 								checkIn: "",
-// 								checkOut: "",
-// 						  },
-// 					itinerary: itineraryData ? itineraryData.plans : [],
-// 				},
-// 			},
-// 			message: "Booking done successfully",
-// 		});
-// 	} catch (err) {
-// 		return res.status(500).send({
-// 			status: false,
-// 			data: { errorMessage: err.message },
-// 			message: "server error",
-// 		});
-// 	}
-// };
+export const createAgent = async (req, res) => {
+	try {
+		const result = await agentModel.create(req.body);
+		return {
+			status: 200,
+			data: result,
+			message: "Itinerary Plan updated successfully",
+		};
+	} catch (err) {
+		throw err;
+	}
+};
+
+export const updateAgent = async (req, res) => {
+	// console.log("req.body", req.body);
+	// console.log("req.params", req.params);
+	try {
+		const { agentId } = req.params;
+		const result = await agentModel.findOneAndUpdate(
+			{ _id: agentId },
+			{ ...req.body },
+			{ new: true }
+		);
+		console.log("result", result);
+		return {
+			status: 200,
+			data: result,
+			message: "Agent account updated successfully",
+		};
+	} catch (err) {
+		throw err;
+	}
+};
+
+export const getAgentsAllBookings = async (req, res) => {
+	try {
+		const { agentId } = req.params;
+		const agent = await agentModel.findOne({ _id: agentId });
+		if (!agent) {
+			return {
+				status: 202,
+				message: "agent not found",
+			};
+		}
+
+		const bookings = await busBookingModel.find({
+			agentCode: agent.agentCode,
+			userId: agent._id,
+		});
+		// console.log("bookings", bookings);
+
+		return {
+			status: 200,
+			data: bookings,
+			message: "Bookings fetch successfully",
+		};
+	} catch (error) {
+		throw error;
+	}
+};

@@ -17,11 +17,30 @@ import {
 	getAllDestinations,
 	getAllHotelAndDestinations,
 	updateItineraryHotelAndPackage,
+	getAllAgents,
+	createAgent,
+	updateAgent,
+	agentSingIn,
+	verifyAgentOtp,
+	sendAgentOtp,
+	getAgentsAllBookings,
 } from "../service/admin.service.js";
 
 export const adminSigninController = async (req, res) => {
 	try {
 		const result = await signIn(req, res);
+		res.status(result.status).json(result);
+	} catch (error) {
+		res.status(500).json({
+			status: false,
+			data: { errorMessage: err.message },
+			message: "An error occurred while signing in",
+		});
+	}
+};
+export const agentSigninController = async (req, res) => {
+	try {
+		const result = await agentSingIn(req, res);
 		res.status(result.status).json(result);
 	} catch (error) {
 		res.status(500).json({
@@ -44,6 +63,18 @@ export const sendOtpController = async (req, res) => {
 		});
 	}
 };
+export const agentSendOtpController = async (req, res) => {
+	try {
+		const result = await sendAgentOtp(req, res);
+		res.status(result.status).json(result);
+	} catch (error) {
+		res.status(500).json({
+			status: false,
+			data: { errorMessage: error.message }, // Changed 'err' to 'error'
+			message: "An error occurred while sending OTP",
+		});
+	}
+};
 
 export const verifyOtpController = async (req, res) => {
 	try {
@@ -53,6 +84,19 @@ export const verifyOtpController = async (req, res) => {
 		res.status(500).json({
 			status: false,
 			data: { errorMessage: err.message },
+			message: "An error occurred while verifying OTP",
+		});
+	}
+};
+
+export const agentVerifyOtpController = async (req, res) => {
+	try {
+		const result = await verifyAgentOtp(req, res);
+		res.status(result.status).json(result);
+	} catch (error) {
+		res.status(500).json({
+			status: false,
+			data: { errorMessage: error.message },
 			message: "An error occurred while verifying OTP",
 		});
 	}
@@ -214,5 +258,47 @@ export const updateItineraryHotelAndPackageController = async (req, res) => {
 			data: { errorMessage: err.message },
 			message: "An error occurred while Updating itinerary plan",
 		});
+	}
+};
+
+export const getAllAgentsController = async (req, res) => {
+	try {
+		const result = await getAllAgents(req, res);
+		res.status(result.status).send(result);
+	} catch (err) {
+		res
+			.status(500)
+			.json({ message: "An error occurred while getting all agents" });
+	}
+};
+
+export const updateAgentController = async (req, res) => {
+	try {
+		const result = await updateAgent(req, res);
+		res.status(result.status).send(result);
+	} catch (err) {
+		res.status(500).json({ message: "An error occurred while updating agent" });
+	}
+};
+
+export const createAgentController = async (req, res) => {
+	try {
+		const result = await createAgent(req, res);
+		res.status(result.status).send(result);
+	} catch (err) {
+		res
+			.status(500)
+			.json({ message: "An error occurred while creating an agent" });
+	}
+};
+
+export const getAgentsAllBookingsController = async (req, res) => {
+	try {
+		const result = await getAgentsAllBookings(req, res);
+		res.status(result.status).send(result);
+	} catch (err) {
+		res
+			.status(500)
+			.json({ message: "An error occurred while getting all bookings" });
 	}
 };

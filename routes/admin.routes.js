@@ -18,6 +18,13 @@ import {
 	adminSigninController,
 	sendOtpController,
 	verifyOtpController,
+	getAllAgentsController,
+	createAgentController,
+	updateAgentController,
+	agentSigninController,
+	agentSendOtpController,
+	agentVerifyOtpController,
+	getAgentsAllBookingsController,
 } from "../controllers/admin.controller.js";
 
 // http://localhost:8000/api/admin
@@ -60,5 +67,16 @@ router.post(
 	"/itineraryPlans/updateItineraryPlanHotelAndPackage",
 	updateItineraryHotelAndPackageController
 );
+
+// Agents
+// http://localhost:8000/api/agents
+router.post("/agents/signIn", agentSigninController);
+router.post("/agents/sendOtp", agentSendOtpController);
+router.post("/agents/verifyOtp", agentVerifyOtpController);
+router.get("/agents/getAllBookings/:agentId", getAgentsAllBookingsController);
+
+router.get("/agents/getAllAgents", getAllAgentsController);
+router.post("/agents/createAgent", createAgentController);
+router.patch("/agents/updateAgent/:agentId", updateAgentController);
 
 export default router;

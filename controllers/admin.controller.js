@@ -1,6 +1,9 @@
 import axios from "axios";
 
 import {
+	signIn,
+	sentOtp,
+	verifyOtp,
 	createUser,
 	updateUserProfile,
 	getAllUsers,
@@ -15,6 +18,45 @@ import {
 	getAllHotelAndDestinations,
 	updateItineraryHotelAndPackage,
 } from "../service/admin.service.js";
+
+export const adminSigninController = async (req, res) => {
+	try {
+		const result = await signIn(req, res);
+		res.status(result.status).json(result);
+	} catch (error) {
+		res.status(500).json({
+			status: false,
+			data: { errorMessage: err.message },
+			message: "An error occurred while signing in",
+		});
+	}
+};
+
+export const sendOtpController = async (req, res) => {
+	try {
+		const result = await sentOtp(req, res);
+		res.status(result.status).json(result);
+	} catch (error) {
+		res.status(500).json({
+			status: false,
+			data: { errorMessage: err.message },
+			message: "An error occurred while sending OTP",
+		});
+	}
+};
+
+export const verifyOtpController = async (req, res) => {
+	try {
+		const result = await verifyOtp(req, res);
+		res.status(result.status).json(result);
+	} catch (error) {
+		res.status(500).json({
+			status: false,
+			data: { errorMessage: err.message },
+			message: "An error occurred while verifying OTP",
+		});
+	}
+};
 
 export const createUserController = async (req, res) => {
 	try {

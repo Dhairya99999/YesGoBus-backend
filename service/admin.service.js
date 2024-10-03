@@ -10,6 +10,144 @@ import hotelModel from "../modals/hotels.modal.js";
 import itineraryPlansModel from "../modals/itineraryPlans.modal.js";
 import { generateRandomNumber } from "../utils/generateRandomNumber.js";
 
+export const signIn = async (req, res) => {
+	const { email, password } = req.body;
+	try {
+		const user = await User.findOne({ email });
+		if (!user) {
+			return {
+				status: 202,
+				message: "User not found",
+			};
+		}
+		// Compare password
+		if (user.password !== password) {
+			return {
+				status: 201,
+				message: "Invalid credentials",
+			};
+		}
+
+		if (user.role !== "admin") {
+			return {
+				status: 201,
+				message: "Unauthorized",
+			};
+		}
+
+		const token = jwt.sign({ userId: user._id, email }, process.env.JWT_KEY, {
+			expiresIn: "6h",
+		});
+
+		// Remove password from response
+		const userData = {
+			userId: user.userId,
+			fullName: user.fullName,
+			email: user.email,
+			phoneNumber: user.phoneNumber,
+			address: user.address,
+			gender: user.gender || "",
+		};
+		return {
+			status: 200,
+			message: "Successfully signed in",
+			token: token,
+			data: userData,
+		};
+	} catch (err) {
+		console.error(err);
+		throw err;
+	}
+};
+
+export const sentOtp = async (req, res) => {
+	try {
+		const { mobile } = req.body;
+		const user = await User.findOne({ mobile });
+		if (!user) {
+			return {
+				status: 202,
+				message: "User not found",
+			};
+		}
+
+		if (user.role !== "admin") {
+			return {
+				status: 201,
+				message: "Unauthorized",
+			};
+		}
+
+		const response = await axios.post(
+			"https://auth.otpless.app/auth/otp/v1/send",
+			{
+				phoneNumber: `91${mobileNumber}`,
+				otpLength: 6,
+				channel: "SMS",
+				expiry: 600,
+			},
+			{
+				headers: {
+					clientId: process.env.CLIENT_ID,
+					clientSecret: process.env.CLIENT_SECRET,
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		return {
+			status: 200,
+			data: response.data,
+			message: "OTP sent successfully",
+		};
+	} catch (err) {
+		throw err;
+	}
+};
+
+export const verifyOtp = async (req, res) => {
+	try {
+		const { mobile, otp } = req.body;
+		const user = await User.findOne({ mobile });
+		if (!user) {
+			return {
+				status: 202,
+				message: "User not found",
+			};
+		}
+
+		if (user.role !== "admin") {
+			return {
+				status: 201,
+				message: "Unauthorized",
+			};
+		}
+
+		const response = await axios.post(
+			"https://auth.otpless.app/auth/otp/v1/verify",
+			{
+				phoneNumber: `91${mobileNumber}`,
+				otp: otp,
+			},
+			{
+				headers: {
+					clientId: process.env.CLIENT_ID,
+					clientSecret: process.env.CLIENT_SECRET,
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		return {
+			status: 200,
+			data: response.data,
+			message: "Signin successful, Otp verified",
+		};
+	} catch (err) {
+		throw err;
+	}
+};
+
 export const createUser = async (userData) => {
 	console.log(userData);
 	try {

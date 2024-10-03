@@ -44,7 +44,7 @@ const corsOptions = {
 		"http://192.168.56.1:5173",
 		"http://192.168.0.9:5173",
 	],
-	methods: "GET,POST,OPTIONS,PUT,PATCH,DELETE",
+	methods: "GET,POST,OPTIONS",
 	allowedHeaders: "Content-Type,Authorization",
 	credentials: true,
 };

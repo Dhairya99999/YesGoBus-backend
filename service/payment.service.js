@@ -34,7 +34,7 @@ function generateId(length) {
   return result;
 }
 
-export const initiatePayment = async (args) => {  
+export const initiatePayment = async (args) => {
   const merchantTransactionId = generateId(18);
   const merchantUserId = generateId(10);
   const { amount, redirectUrl } = args;

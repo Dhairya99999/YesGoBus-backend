@@ -34,7 +34,7 @@ function generateId(length) {
   return result;
 }
 
-export const initiatePayment = async (args) => {  
+export const initiatePayment = async (args) => {
   const merchantTransactionId = generateId(18);
   const merchantUserId = generateId(10);
   const { amount, redirectUrl } = args;
@@ -67,7 +67,7 @@ const saltKey = "96434309-7796-489d-8924-ab56988a6076";
   const concatenatedData = base64Payload + apiEndpoint + saltKey;
   const sha256Hash = crypto.createHash('sha256');
   const checksum = sha256Hash.update(concatenatedData).digest('hex');
-  const xVerify = checksum + "###" + 1;
+  const xVerify = checksum + "###" + saltKey;
 
   const headers = { 
     'Content-Type': 'application/json',

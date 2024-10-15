@@ -106,6 +106,9 @@ const bookingSchema = new mongoose.Schema(
 		merchantTransactionId: {
 			type: String,
 		},
+		agentCode: {
+			type:String
+		},
 	},
 	{ timestamps: true }
 );

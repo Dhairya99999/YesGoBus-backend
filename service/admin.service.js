@@ -784,13 +784,7 @@ export const getBusBookingRevenue = async (req, res) => {
 		);
 
 		const revenueData = result.map((booking) => {
-			// const agent = agents.find((a) => a.agentCode === booking.agentCode);
 			return {
-				// agentId: agent ? agent.userId : null,
-				// agentName: agent ? `${agent.firstName} ${agent.lastName}` : null,
-				// agentStatus: agent ? agent.status : null,
-				// maxTicket: agent ? agent.maxTicket : null,
-				// agentEmail: agent ? agent.email : null,
 				agentCode: booking.agentCode || null,
 				busOperator: booking.busOperator,
 				busType: booking.busType,
@@ -808,7 +802,7 @@ export const getBusBookingRevenue = async (req, res) => {
 				customerPhone: booking.customerPhone,
 			};
 		});
-		console.log("revenueData", revenueData);
+		// console.log("revenueData", revenueData);
 		return {
 			status: 200,
 			data: { revenueData, totalRevenue },

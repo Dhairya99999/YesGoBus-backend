@@ -24,6 +24,7 @@ import feedbackRoute from "./routes/feedback.routes.js";
 import offerRoute from "./routes/offer.routes.js";
 import queryRoute from "./routes/query.routes.js";
 import adminRoute from "./routes/admin.routes.js";
+import bookingHistoryRoute from "./routes/bookingHistory.routes.js"
 
 //schedular
 import {
@@ -89,6 +90,7 @@ app.use("/api/feedback", feedbackRoute);
 app.use("/api/offers", offerRoute);
 app.use("/api/query", queryRoute);
 app.use("/api/admin", adminRoute);
+app.use("api/history", bookingHistoryRoute);
 const server = http.createServer(app);
 
 // Set maximum headers count, maximum header size, and maximum body size

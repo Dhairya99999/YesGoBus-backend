@@ -367,7 +367,7 @@ export const getAllBookings = async (req, res) => {
 		const bookings = await bookingModel
 			.find()
 			.populate({ path: "userId" })
-			.populate({ path: "packageId" });
+			.populate({ path: "packageId", populate: { path: "destinationID" } });
 		return {
 			status: true,
 			data: { bookings },
@@ -760,6 +760,55 @@ export const getRevenue = async (req, res) => {
 			};
 		});
 
+		return {
+			status: 200,
+			data: { revenueData, totalRevenue },
+			message: "Revenue fetched successfully",
+		};
+	} catch (error) {
+		throw error;
+	}
+};
+
+export const getBusBookingRevenue = async (req, res) => {
+	try {
+		const agents = await agentModel.find();
+		const result = await busBookingModel.find({
+			bookingStatus: { $in: ["paid", "PAYMENT_SUCCESS"] },
+		});
+
+		// console.log("result", result);
+		const totalRevenue = result.reduce(
+			(sum, booking) => sum + booking.totalAmount,
+			0
+		);
+
+		const revenueData = result.map((booking) => {
+			// const agent = agents.find((a) => a.agentCode === booking.agentCode);
+			return {
+				// agentId: agent ? agent.userId : null,
+				// agentName: agent ? `${agent.firstName} ${agent.lastName}` : null,
+				// agentStatus: agent ? agent.status : null,
+				// maxTicket: agent ? agent.maxTicket : null,
+				// agentEmail: agent ? agent.email : null,
+				agentCode: booking.agentCode || null,
+				busOperator: booking.busOperator,
+				busType: booking.busType,
+				selectedSeats: booking.selectedSeats,
+				totalAmount: booking.totalAmount,
+				tripId: booking.tripId,
+				sourceCity: booking.sourceCity,
+				destinationCity: booking.destinationCity,
+				departureDate: booking.doj,
+				getJourneyFeedback: booking.getJourneyFeedback,
+				driverNumber: booking.driverNumber,
+				merchantTransactionId: booking.merchantTransactionId,
+				customerName: booking.customerName,
+				customerEmail: booking.customerEmail,
+				customerPhone: booking.customerPhone,
+			};
+		});
+		console.log("revenueData", revenueData);
 		return {
 			status: 200,
 			data: { revenueData, totalRevenue },

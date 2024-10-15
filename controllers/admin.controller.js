@@ -25,6 +25,7 @@ import {
 	sendAgentOtp,
 	getAgentsAllBookings,
 	getRevenue,
+	getBusBookingRevenue,
 } from "../service/admin.service.js";
 
 export const adminSigninController = async (req, res) => {
@@ -309,8 +310,19 @@ export const getRevenueController = async (req, res) => {
 		const result = await getRevenue(req, res);
 		res.status(result.status).send(result);
 	} catch (err) {
+		res.status(500).json({
+			message: "An error occurred while getting tour and travels revenue",
+		});
+	}
+};
+
+export const getBusBookingRevenueController = async (req, res) => {
+	try {
+		const result = await getBusBookingRevenue(req, res);
+		res.status(result.status).send(result);
+	} catch (err) {
 		res
 			.status(500)
-			.json({ message: "An error occurred while getting revenue" });
+			.json({ message: "An error occurred while getting bus booking revenue" });
 	}
 };

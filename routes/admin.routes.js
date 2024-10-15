@@ -26,6 +26,7 @@ import {
 	agentVerifyOtpController,
 	getAgentsAllBookingsController,
 	getRevenueController,
+	getBusBookingRevenueController,
 } from "../controllers/admin.controller.js";
 
 // http://localhost:8000/api/admin
@@ -82,6 +83,9 @@ router.patch("/agents/updateAgent/:agentId", updateAgentController);
 
 // Revenue
 // http://localhost:8000/api/admin/revenue/getRevenue
+// for tour and travels
 router.get("/revenue/getRevenue", getRevenueController);
+// for bus booking
+router.get("/revenue/getRevenueForBus", getBusBookingRevenueController);
 
 export default router;

@@ -719,3 +719,53 @@ export const getAgentsAllBookings = async (req, res) => {
 		throw error;
 	}
 };
+
+export const getRevenue = async (req, res) => {
+	try {
+		const agents = await agentModel.find(); // Renamed to avoid shadowing
+		const result = await bookingModel
+			.find({ paymentStatus: { $in: ["SUCCESS", "PAYMENT_SUCCESS"] } }) // Corrected query
+			.populate({ path: "userId" })
+			.populate({ path: "packageId" })
+			.exec();
+
+		const totalRevenue = result.reduce(
+			(sum, booking) => sum + booking.totalPackagePrice,
+			0
+		);
+
+		const revenueData = result.map((booking) => {
+			const agent = agents.find((a) => a.agentCode === booking.agentCode);
+			return {
+				agentId: agent ? agent.userId : null,
+				agentName: agent ? `${agent.firstName} ${agent.lastName}` : null,
+				agentCode: booking.agentCode,
+				agentStatus: agent ? agent.status : null,
+				maxTicket: agent ? agent.maxTicket : null,
+				agentEmail: agent ? agent.email : null,
+				packageName: booking.packageId.name,
+				totalDuration: booking.packageId.totalDuration,
+				destination: booking.packageId.destination,
+				totalPackagePrice: booking.totalPackagePrice,
+				bookingId: booking.bookingId,
+				fromPlace: booking.fromPlace,
+				toPlace: booking.toPlace,
+				departureDate: booking.departureDate,
+				totalGuests: booking.totalGuests,
+				totalRoom: booking.totalRoom,
+				merchantTransactionId: booking.merchantTransactionId,
+				userName: booking.userId.fullName,
+				userEmail: booking.userId.email,
+				userPhoneNumber: booking.userId.phoneNumber,
+			};
+		});
+
+		return {
+			status: 200,
+			data: { revenueData, totalRevenue },
+			message: "Revenue fetched successfully",
+		};
+	} catch (error) {
+		throw error;
+	}
+};

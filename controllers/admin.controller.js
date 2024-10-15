@@ -24,6 +24,7 @@ import {
 	verifyAgentOtp,
 	sendAgentOtp,
 	getAgentsAllBookings,
+	getRevenue,
 } from "../service/admin.service.js";
 
 export const adminSigninController = async (req, res) => {
@@ -300,5 +301,16 @@ export const getAgentsAllBookingsController = async (req, res) => {
 		res
 			.status(500)
 			.json({ message: "An error occurred while getting all bookings" });
+	}
+};
+
+export const getRevenueController = async (req, res) => {
+	try {
+		const result = await getRevenue(req, res);
+		res.status(result.status).send(result);
+	} catch (err) {
+		res
+			.status(500)
+			.json({ message: "An error occurred while getting revenue" });
 	}
 };

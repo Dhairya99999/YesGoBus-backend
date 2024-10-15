@@ -25,6 +25,7 @@ import {
 	agentSendOtpController,
 	agentVerifyOtpController,
 	getAgentsAllBookingsController,
+	getRevenueController,
 } from "../controllers/admin.controller.js";
 
 // http://localhost:8000/api/admin
@@ -69,7 +70,7 @@ router.post(
 );
 
 // Agents
-// http://localhost:8000/api/agents
+// http://localhost:8000/api/admin/agents
 router.post("/agents/signIn", agentSigninController);
 router.post("/agents/sendOtp", agentSendOtpController);
 router.post("/agents/verifyOtp", agentVerifyOtpController);
@@ -78,5 +79,9 @@ router.get("/agents/getAllBookings/:agentId", getAgentsAllBookingsController);
 router.get("/agents/getAllAgents", getAllAgentsController);
 router.post("/agents/createAgent", createAgentController);
 router.patch("/agents/updateAgent/:agentId", updateAgentController);
+
+// Revenue
+// http://localhost:8000/api/admin/revenue/getRevenue
+router.get("/revenue/getRevenue", getRevenueController);
 
 export default router;

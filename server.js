@@ -90,7 +90,7 @@ app.use("/api/feedback", feedbackRoute);
 app.use("/api/offers", offerRoute);
 app.use("/api/query", queryRoute);
 app.use("/api/admin", adminRoute);
-app.use("api/bookingHistory", bookingHistoryRoute);
+app.use("/api/bookingHistory", bookingHistoryRoute);
 const server = http.createServer(app);
 
 // Set maximum headers count, maximum header size, and maximum body size

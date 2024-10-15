@@ -49,9 +49,7 @@ export const getBookingHistoryByUser = async (userId) => {
 export const getAllBookings = async () => {
 	try {
 		
-		const bookingHistory = await bookingModel.find({
-			paymentStatus: { $in: ["SUCCESS", "PAYMENT_SUCCESS"] }
-		  })
+		const bookingHistory = await bookingModel.find()
 		  .populate("packageId");
 
 		if (!bookingHistory || bookingHistory.length === 0) {

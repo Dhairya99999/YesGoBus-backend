@@ -20,12 +20,39 @@ export const getBookingHistoryByUser = async (userId) => {
 				message: "User not found",
 			};
 		}
-
 		const bookingHistory = await bookingModel.find({
 			userId: userId,
-			paymentStatus: "SUCCESS"
+			paymentStatus: { $in: ["SUCCESS", "PAYMENT_SUCCESS"] }
 		  });
-		  
+
+		if (!bookingHistory || bookingHistory.length === 0) {
+			return {
+				status: 200,
+				message: "No booking history found",
+			};
+		}
+
+		return {
+			status: 200,
+			message: "Booking History retrieved successfully",
+			data: bookingHistory,
+		};
+	} catch (err) {
+		console.log(err);
+		return {
+			status: 500,
+			message: "An error occurred while fetching booking history.",
+		};
+	}
+};
+
+export const getAllBookings = async () => {
+	try {
+		
+		const bookingHistory = await bookingModel.find({
+			paymentStatus: { $in: ["SUCCESS", "PAYMENT_SUCCESS"] }
+		  })
+		  .populate("packageId");
 
 		if (!bookingHistory || bookingHistory.length === 0) {
 			return {

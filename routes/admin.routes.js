@@ -37,8 +37,10 @@ router.post("/verifyOtp", verifyOtpController);
 
 router.post("/user/createUser", createUserController);
 router.patch("/user/updateProfile/:userId", updateUserProfileController);
+// http://localhost:8000/api/admin/user/getAllUsers
 router.get("/user/getAllUsers", getAllUsersController);
 
+// for Bus Booking
 router.get("/bookings/getAllBookings", getAllBookingsController);
 
 router.get("/packages/getAllPackages", getAllPackagesController);

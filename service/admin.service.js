@@ -724,7 +724,7 @@ export const getRevenue = async (req, res) => {
 	try {
 		const agents = await agentModel.find(); // Renamed to avoid shadowing
 		const result = await bookingModel
-			.find({ paymentStatus: { $in: ["SUCCESS", "PAYMENT_SUCCESS"] } }) // Corrected query
+			.find({ paymentStatus: "SUCCESS" })
 			.populate({ path: "userId" })
 			.populate({ path: "packageId" })
 			.exec();
@@ -774,7 +774,7 @@ export const getBusBookingRevenue = async (req, res) => {
 	try {
 		const agents = await agentModel.find();
 		const result = await busBookingModel.find({
-			bookingStatus: { $in: ["paid", "PAYMENT_SUCCESS"] },
+			bookingStatus: "paid",
 		});
 
 		// console.log("result", result);

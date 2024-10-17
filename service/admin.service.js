@@ -371,29 +371,27 @@ export const getAllBookings = async (req, res) => {
 		return {
 			status: true,
 			data: { bookings },
-			message: "Bookings fetch successfully",
+			message: "Package Bookings fetch successfully",
 		};
 	} catch (err) {
 		throw err;
 	}
 };
-// export const getAllBookings = async (req, res) => {
-// 	try {
-// 		const bookings = await bookingModel.find().populate({ path: "userId" });
-// 		return res.status(200).send({
-// 			status: true,
-// 			data: { bookings },
-// 			message: "Booking Data fetch successfully",
-// 		});
-// 	} catch (err) {
-// 		console.error(err);
-// 		return res.status(500).send({
-// 			status: false,
-// 			data: { errorMessage: err.message },
-// 			message: "Failed to fetch bookings data",
-// 		});
-// 	}
-// };
+
+export const getAllBusBookings = async (req, res) => {
+	try {
+		const bookings = await busBookingModel.find();
+		// .populate({ path: "userId" })
+		// .populate({ path: "busId" });
+		return {
+			status: true,
+			data: { bookings },
+			message: "Bus Bookings fetch successfully",
+		};
+	} catch (err) {
+		throw err;
+	}
+};
 
 export const getAllPackages = async (req, res) => {
 	try {
@@ -652,7 +650,7 @@ export const getAllAgents = async (req, res) => {
 		return {
 			status: 200,
 			data: agents,
-			message: "Itinerary Plan updated successfully",
+			message: "Agents fetch successfully",
 		};
 	} catch (err) {
 		throw err;

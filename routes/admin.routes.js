@@ -27,6 +27,7 @@ import {
 	getAgentsAllBookingsController,
 	getRevenueController,
 	getBusBookingRevenueController,
+	getAllBusBookingsController,
 } from "../controllers/admin.controller.js";
 
 // http://localhost:8000/api/admin
@@ -40,7 +41,12 @@ router.patch("/user/updateProfile/:userId", updateUserProfileController);
 // http://localhost:8000/api/admin/user/getAllUsers
 router.get("/user/getAllUsers", getAllUsersController);
 
+// For getting Bookings
+// http://localhost:8000/api/admin/busBooking/getAllBookings
 // for Bus Booking
+router.get("/busBooking/getAllBookings", getAllBusBookingsController);
+// http://localhost:8000/api/admin/bookings/getAllBookings
+// for Packages Booking
 router.get("/bookings/getAllBookings", getAllBookingsController);
 
 router.get("/packages/getAllPackages", getAllPackagesController);
@@ -79,6 +85,7 @@ router.post("/agents/sendOtp", agentSendOtpController);
 router.post("/agents/verifyOtp", agentVerifyOtpController);
 router.get("/agents/getAllBookings/:agentId", getAgentsAllBookingsController);
 
+// http://localhost:8000/api/admin/agents/getAllAgents
 router.get("/agents/getAllAgents", getAllAgentsController);
 router.post("/agents/createAgent", createAgentController);
 router.patch("/agents/updateAgent/:agentId", updateAgentController);

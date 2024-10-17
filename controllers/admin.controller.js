@@ -26,6 +26,7 @@ import {
 	getAgentsAllBookings,
 	getRevenue,
 	getBusBookingRevenue,
+	getAllBusBookings,
 } from "../service/admin.service.js";
 
 export const adminSigninController = async (req, res) => {
@@ -149,6 +150,18 @@ export const getAllBookingsController = async (req, res) => {
 			status: false,
 			data: { errorMessage: err.message },
 			message: "An error occurred while getting all bookings",
+		});
+	}
+};
+export const getAllBusBookingsController = async (req, res) => {
+	try {
+		const result = await getAllBusBookings(req, res);
+		res.status(200).json(result);
+	} catch (err) {
+		res.status(500).json({
+			status: false,
+			data: { errorMessage: err.message },
+			message: "An error occurred while getting all bus bookings",
 		});
 	}
 };

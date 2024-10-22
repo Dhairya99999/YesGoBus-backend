@@ -16,6 +16,7 @@ import {
   updateAgent,
   getAgentRemainingTicketByDay,
   adminInactivateAgent,
+  getAllAgents,
   
 } from '../service/agents.service.js';
 
@@ -209,3 +210,14 @@ export const adminInactivateAgentController = async (req, res) => {
     res.status(err.status || 500).json({ message: "Error deactivate agent" });
   }
 };
+
+export const getAllAgentsController = async(req,res) => {
+  try {
+
+    const result = await getAllAgents();
+    res.status(200).send(result);
+  } catch (err) {
+    console.log(err);
+    res.status(err.status || 500).json({ message: "Error deactivate agent" });
+  }
+}

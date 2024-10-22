@@ -755,6 +755,7 @@ export const getRevenue = async (req, res) => {
 				userName: booking.userId.fullName,
 				userEmail: booking.userId.email,
 				userPhoneNumber: booking.userId.phoneNumber,
+				createdAt : booking.createdAt
 			};
 		});
 

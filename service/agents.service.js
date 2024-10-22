@@ -690,3 +690,31 @@ export const adminInactivateAgent = async (agentId) => {
     };
   }
 };
+
+export const getAllAgents = async () =>{
+  try{
+    const agents = await Agent.find();
+    if (!agents) {
+      return {
+        status: 404,
+        message: "No Agentfound",
+      };
+    }
+
+    const totalAgents = agents.length;
+
+    return {
+      status:200, 
+      message: "Total number of agents fetched",
+      data:totalAgents 
+    }
+
+
+  }catch (error) {
+    console.log(error);
+    return {
+      status: 500,
+      message: error.message || "Internal Server Error",
+    };
+  }
+}
